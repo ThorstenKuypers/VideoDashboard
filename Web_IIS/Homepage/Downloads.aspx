@@ -83,7 +83,7 @@
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 <div class="dl-btn-container">
-                                    <a href="#" class="btn btn-sm btn-primary">Download</a>
+                                    <a href="Downloads\np++_LDF_UDL.xml" class="btn btn-sm btn-primary" type="binary">Download</a>
                                 </div>
 
                                 <h4 class="panel-title">
@@ -94,7 +94,9 @@
                             <div id="collapseTwo" class="panel-collapse collapse">
                                 <div class="panel-body">
                                     This file is an addon for the free and open source text editor Notepad++. It helps you in writing layout files for
-                                VideoDashboard by using syntax highlighting.
+                                VideoDashboard by using syntax highlighting. <br />
+                                    Save this file to a location of your choice, open Notepad++ and select Language->Define your language...->Import<br />
+                                    Select this XML file and you're done.
      
                                 </div>
                             </div>

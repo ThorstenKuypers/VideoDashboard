@@ -3,6 +3,7 @@
 #include <functional>
 #include <vector>
 #include <thread>
+#include <memory>
 
 #include "LiveChannels.h"
 
@@ -16,9 +17,6 @@ namespace libDataLogging {
 		public:
 			EventArgs() {}
 			virtual ~EventArgs() {}
-
-			ChannelsMap Channels;
-
 		};
 
 		struct SampleDataUpdateEventArgs : public EventArgs
@@ -26,12 +24,6 @@ namespace libDataLogging {
 		public:
 			SampleDataUpdateEventArgs() {}
 			virtual ~SampleDataUpdateEventArgs() {}
-
-
-			std::map<int, LiveChannel> ChannelData;
-			//std::map<int, BaseLiveChannel> ChannelData;
-			
-			std::function<int(std::string)> GetData;
 		};
 
 		typedef std::function <void(EventArgs)> Event;
@@ -60,6 +52,16 @@ namespace libDataLogging {
 			void add(const function& fn)
 			{
 				_events.push_back(fn);
+			}
+
+			void remove(function& fn)
+			{
+				//for (DWORD i = 0; i < _events.size(); i++) {
+
+				//	auto f = _events[i];
+				//	if (f == fn)
+				//		_events.erase(_events.begin() + i);
+				//}
 			}
 
 		protected:
@@ -102,6 +104,18 @@ namespace libDataLogging {
 				tmp = nullptr;
 
 				return *this;
+			}
+
+			void operator-(Event& tmp) = delete;
+			void operator-(Event&& tmp) {
+				this->remove(tmp);
+				tmp = nullptr;
+			}
+
+			void operator-=(Event& tmp) = delete;
+			void operator-=(Event&& tmp) {
+				this->remove(tmp);
+				tmp = nullptr;
 			}
 
 			SimDisconnectedEventHandler& operator+=(Event& tmp) = delete;

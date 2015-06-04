@@ -79,6 +79,7 @@ textbox {
 	fontheight = 40;
 	fontstyle = regular;
     justify = left;
+	precision = 1;
 }
 
 textbox {

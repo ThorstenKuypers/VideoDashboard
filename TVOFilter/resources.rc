@@ -27,8 +27,8 @@ LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 0,9,0,36
- PRODUCTVERSION 0,9,4,208
+ FILEVERSION 0,9,0,46
+ PRODUCTVERSION 0,9,4,219
  FILEFLAGSMASK 0x17L
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -43,12 +43,12 @@ BEGIN
     BEGIN
         BLOCK "0000" "Description", "VideoDashboard DirectShow filter"
 		BEGIN
-            VALUE "FileVersion", "0.9.0.36"
+            VALUE "FileVersion", "0.9.0.46"
             VALUE "InternalName", "TVOFilter.dll"
             VALUE "LegalCopyright", "Copyright (C) 2012-2013 Thorsten Kuypers"
             VALUE "OriginalFilename", "TVOFilter.ax"
             VALUE "ProductName", "VideoDashboard"
-            VALUE "ProductVersion", "0.9.4.208"
+            VALUE "ProductVersion", "0.9.4.219"
         END
     END
     BLOCK "VarFileInfo"

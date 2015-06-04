@@ -150,7 +150,15 @@ namespace version_builder
                 Console.Write("[*] generating new beta license...");
                 string s = File.ReadAllText(path + "privateKey.xml");
                 LicenseGenerator gen = new LicenseGenerator(s);
-                DateTime exp = new DateTime(2014, 12, 31, 23, 59, 59);
+
+//###############################################################################################################################
+//###############################################################################################################################
+                #region // License Expiration Date 
+                DateTime exp = new DateTime(2015, 6, 30, 23, 59, 59);
+                #endregion
+//###############################################################################################################################
+//###############################################################################################################################
+
                 exp = exp.ToUniversalTime();
                 string lic = gen.Generate("beta_test", Guid.NewGuid(), exp, LicenseType.Trial);
 

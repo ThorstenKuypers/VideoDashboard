@@ -51,8 +51,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 0,8,9,38
- PRODUCTVERSION 0,9,4,208
+ FILEVERSION 0,8,9,49
+ PRODUCTVERSION 0,9,4,219
  FILEFLAGSMASK 0x17L
 #ifdef _DEBUG
  FILEFLAGS 0x3L
@@ -68,12 +68,12 @@ BEGIN
         BLOCK "000004b0"
         BEGIN
             VALUE "FileDescription", "VideoDashboard DirectShow library"
-            VALUE "FileVersion", "0.8.9.38"
+            VALUE "FileVersion", "0.8.9.49"
             VALUE "InternalName", "libds.dll"
             VALUE "LegalCopyright", "Copyright (C) 2012-2013 Thorsten Kuypers"
             VALUE "OriginalFilename", "libds.dll"
             VALUE "ProductName", "VideoDashboard"
-            VALUE "ProductVersion", "0.9.4.208"
+            VALUE "ProductVersion", "0.9.4.219"
         END
     END
     BLOCK "VarFileInfo"

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <queue>
+#include <array>
 #include <memory> 
 #include <thread>
 #include <future>
@@ -16,13 +17,13 @@ using namespace std;
 
 #define MAX_DATA_QUEUE_SIZE		10
 
+
 namespace libDataLogging {
 	namespace LiveLogging {
 
-		struct sampleData
-		{
-
-		};
+#pragma region "CLiveDataLogger"
+		// This is the "Core" class of the live data acquisition system. It hosts and encapsulates the data loop thread
+		// and all other sim SDK specific information, that is transparent to the using application.
 
 		class CLiveDataLogger : public ILiveLogger
 		{
@@ -60,21 +61,62 @@ namespace libDataLogging {
 			virtual void Start() override;
 			virtual void Stop() override;
 
+			// returns a raw sample buffer from the sample queue
+			virtual bool GetSample(std::vector<BYTE>& buf);
+
+			virtual SampleValue GetSampleData(DataSample& s, CLiveChannel& c)
+			{
+				int n = c.get_Offset();
+				SampleValue val;
+
+				try {
+
+					if (c.get_Type() == irsdk_double) {
+
+						double* v = (double*)(&s.at(n));
+						return std::move(SampleValue(*v));
+					}
+					else if (c.get_Type() == irsdk_float) {
+
+						float* f = (float*)(&s.at(n));
+						return std::move(SampleValue(*f));
+					}
+					else if (c.get_Type() == irsdk_int) {
+
+						int* i = (int*)(&s.at(n));
+						return std::move(SampleValue(*i));
+					}
+					else if (c.get_Type() == irsdk_char) {
+
+						char* c = (char*)(&s.at(n));
+						return std::move(SampleValue(*c));
+					}
+					else if (c.get_Type() == irsdk_bool) {
+
+						bool* b = (bool*)(&s.at(n));
+						return std::move(SampleValue(*b));
+					}
+					else if (c.get_Type() == irsdk_bitField) {
+
+						DWORD* u = (DWORD*)(&s.at(n));
+						return std::move(SampleValue(*u));
+					}
+
+				}
+				catch (std::out_of_range ex) {
+					throw ex;
+				}
+
+				return val;
+			}
+
 		private:
 
 			void _dataLoop();
 
 			void _simConnected();
 			void _simDisconnected();
-			void _simDataUpdate(DWORD);
-
-			template<typename T>
-			T GetChannelData(const std::string channel)
-			{
-
-			}
-			//template <typename Value>
-			//std::function<Value(const std::string)> s;
+			void _simDataUpdate();
 
 			std::thread _loop;
 			std::mutex mtx; // synchronization mutex
@@ -90,8 +132,10 @@ namespace libDataLogging {
 			int _latest; // latest valid varbuf index
 			irsdk_header* irsdkHeader;
 
-			ChannelsMap channelList;
+			std::deque<DataSample> _samplesQueue;
 		};
 
-	};
-};
+#pragma endregion
+
+	}
+}

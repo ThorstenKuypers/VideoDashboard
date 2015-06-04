@@ -157,7 +157,9 @@ Gdiplus::Bitmap* CTextBox::Render(int sampleIndex)
 
 			case LabelFormatType::LabelFormatType_laptime:
 				ss.setf(ios::fixed);
-				ss.precision(3);
+				if (_precision <= 0)
+					_precision = 1;
+				ss.precision(_precision);
 
 				//int lap = 0;
 				//_dataLoggerInst->GetChannelData(string("Lap"), sampleIndex, &lap);

@@ -133,5 +133,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="VERSION" />
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
 </Project>

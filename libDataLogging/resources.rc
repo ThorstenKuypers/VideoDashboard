@@ -53,8 +53,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 0,9,9,41
- PRODUCTVERSION 0,9,4,208
+ FILEVERSION 0,9,9,50
+ PRODUCTVERSION 0,9,4,219
  FILEFLAGSMASK 0x17L
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -70,12 +70,12 @@ BEGIN
         BLOCK "000004b0"
         BEGIN
             VALUE "FileDescription", "VideoDashboard telemetry data log handling library"
-            VALUE "FileVersion", "0.9.9.41"
+            VALUE "FileVersion", "0.9.9.50"
             VALUE "InternalName", "libDataLogging.dll"
             VALUE "LegalCopyright", "Copyright (C) 2012-2014 Thorsten Kuypers"
             VALUE "OriginalFilename", "DataLogger.dll"
             VALUE "ProductName", "VideoDashboard"
-            VALUE "ProductVersion", "0.9.4.208"
+            VALUE "ProductVersion", "0.9.4.219"
         END
     END
     BLOCK "VarFileInfo"

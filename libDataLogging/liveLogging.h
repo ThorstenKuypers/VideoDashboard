@@ -10,7 +10,7 @@ namespace libDataLogging {
 
 		using namespace libDataLogging::DataLogger;
 
-#define VAR_TYPE(t) decltype(t)
+		typedef std::vector<BYTE> DataSample;
 
 		struct ILiveLogger
 		{
@@ -19,12 +19,14 @@ namespace libDataLogging {
 			SimDisconnectedEventHandler Disconnected;
 			SampleDataUpdateEventHandler DataUpdate;
 
-			ChannelsMap AvailableChannels;
+			std::shared_ptr<ChannelsMap> Channels;
 
 			virtual void Start() = 0;
 			virtual void Stop() = 0;
 
 			virtual int GetLoggerSampleRate() = 0;
+			virtual bool GetSample(DataSample&) = 0;
+			virtual SampleValue GetSampleData(DataSample& s, CLiveChannel& c) = 0;
 		};
 
 	}

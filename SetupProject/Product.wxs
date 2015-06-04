@@ -114,7 +114,7 @@
   <!--Shortcuts on start menu-->
   <Fragment>
     <DirectoryRef Id="StartMenuDir">
-      <Component Id="ApplicationShortcut" Guid="{59EECA4E-B7F2-4A7D-BA41-B48B0BA11EA8}" Win64="$(var.Win64)">
+      <Component Id="ApplicationShortcut" Guid="{59EECA4E-B7F2-4A7D-BA41-B48B0BA11EA8}">
         <Shortcut Id="StartMenuShortcut" Name="$(var.VideoDashboard.TargetName)" Description="Start VideoDashboard" Target="[#f_VideoDashboard_exe]" WorkingDirectory="INSTALLFOLDER" />
         <Shortcut Id="UninstallProduct" Name="Uninstall" Description="Uninstall $(var.VideoDashboard.TargetName)" Target="[SystemFolder]msiexec.exe" Arguments="/x [ProductCode]" />
 

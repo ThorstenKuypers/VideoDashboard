@@ -1,8 +1,8 @@
 <NotepadPlus>
-    <UserLang name="VD layout" ext="layout" udlVersion="2.1">
+    <UserLang name="LDF" ext="layout" udlVersion="2.1">
         <Settings>
             <Global caseIgnored="yes" allowFoldOfComments="no" foldCompact="no" forcePureLC="0" decimalSeparator="0" />
-            <Prefix Keywords1="no" Keywords2="no" Keywords3="no" Keywords4="no" Keywords5="no" Keywords6="no" Keywords7="no" Keywords8="no" />
+            <Prefix Keywords1="no" Keywords2="no" Keywords3="no" Keywords4="yes" Keywords5="no" Keywords6="no" Keywords7="no" Keywords8="no" />
         </Settings>
         <KeywordLists>
             <Keywords name="Comments">00// 01 02 03/* 04*/</Keywords>
@@ -25,9 +25,9 @@
             <Keywords name="Folders in comment, middle"></Keywords>
             <Keywords name="Folders in comment, close"></Keywords>
             <Keywords name="Keywords1">dashboard&#x000D;&#x000A;gauge&#x000D;&#x000A;gcircle&#x000D;&#x000A;indicator&#x000D;&#x000A;ringgauge&#x000D;&#x000A;ruler&#x000D;&#x000A;slider&#x000D;&#x000A;sweeper&#x000D;&#x000A;textbox&#x000D;&#x000A;</Keywords>
-            <Keywords name="Keywords2">ShortName&#x000D;&#x000A;PrettyName&#x000D;&#x000A;ImageFile&#x000D;&#x000A;TargetWidth&#x000D;&#x000A;Foreground&#x000D;&#x000A;Width&#x000D;&#x000A;Height&#x000D;&#x000A;Background</Keywords>
-            <Keywords name="Keywords3"></Keywords>
-            <Keywords name="Keywords4"></Keywords>
+            <Keywords name="Keywords2">ShortName&#x000D;&#x000A;PrettyName&#x000D;&#x000A;ImageFile&#x000D;&#x000A;TargetWidth&#x000D;&#x000A;foreground&#x000D;&#x000A;width&#x000D;&#x000A;height&#x000D;&#x000A;background&#x000D;&#x000A;fontheight&#x000D;&#x000A;fontname&#x000D;&#x000A;fontstyle&#x000D;&#x000A;height&#x000D;&#x000A;justify&#x000D;&#x000A;channel&#x000D;&#x000A;id&#x000D;&#x000A;layer&#x000D;&#x000A;rectangle&#x000D;&#x000A;scale</Keywords>
+            <Keywords name="Keywords3">divisions&#x000D;&#x000A;draw_face&#x000D;&#x000A;face_image&#x000D;&#x000A;needle_center&#x000D;&#x000A;needle_image&#x000D;&#x000A;needle_offset&#x000D;&#x000A;position&#x000D;&#x000A;radius&#x000D;&#x000A;range&#x000D;&#x000A;sweep&#x000D;&#x000A;format&#x000D;&#x000A;label&#x000D;&#x000A;precision&#x000D;&#x000A;signed&#x000D;&#x000A;line_width&#x000D;&#x000A;pointer&#x000D;&#x000A;pointer_size&#x000D;&#x000A;pointer_width&#x000D;&#x000A;scale_lat_accel&#x000D;&#x000A;scale_long_accel&#x000D;&#x000A;filled&#x000D;&#x000A;image_on&#x000D;&#x000A;image_off&#x000D;&#x000A;outlined&#x000D;&#x000A;rgbon&#x000D;&#x000A;rgboff&#x000D;&#x000A;shape&#x000D;&#x000A;thickness&#x000D;&#x000A;threshold&#x000D;&#x000A;rgbnegative&#x000D;&#x000A;rgbpositive&#x000D;&#x000A;extend&#x000D;&#x000A;line_end&#x000D;&#x000A;line_start&#x000D;&#x000A;path&#x000D;&#x000A;taper&#x000D;&#x000A;using&#x000D;&#x000A;draw_path&#x000D;&#x000A;path_color&#x000D;&#x000A;path_offset&#x000D;&#x000A;arc_sweep&#x000D;&#x000A;draw_label&#x000D;&#x000A;path_position&#x000D;&#x000A;draw_major&#x000D;&#x000A;major_divisions&#x000D;&#x000A;path_range&#x000D;&#x000A;path_width&#x000D;&#x000A;major_units&#x000D;&#x000A;major_margin&#x000D;&#x000A;major_color&#x000D;&#x000A;major_shape&#x000D;&#x000A;major_length&#x000D;&#x000A;major_radius&#x000D;&#x000A;major_width&#x000D;&#x000A;draw_minor&#x000D;&#x000A;minor_divisions &#x000D;&#x000A;minor_units&#x000D;&#x000A;minor_margin&#x000D;&#x000A;minor_color&#x000D;&#x000A;minor_shape&#x000D;&#x000A;minor_length&#x000D;&#x000A;minor_width&#x000D;&#x000A;minor_radius</Keywords>
+            <Keywords name="Keywords4">regular&#x000D;&#x000A;bold&#x000D;&#x000A;italic&#x000D;&#x000A;bold_italic&#x000D;&#x000A;center&#x000D;&#x000A;left&#x000D;&#x000A;right&#x000D;&#x000A;yes&#x000D;&#x000A;no&#x000D;&#x000A;true&#x000D;&#x000A;false&#x000D;&#x000A;text&#x000D;&#x000A;integer&#x000D;&#x000A;real&#x000D;&#x000A;laptime&#x000D;&#x000A;time&#x000D;&#x000A;ellipse&#x000D;&#x000A;rectangle&#x000D;&#x000A;line&#x000D;&#x000A;image&#x000D;&#x000A;sweeper&#x000D;&#x000A;arc&#x000D;&#x000A;line&#x000D;&#x000A;circle</Keywords>
             <Keywords name="Keywords5"></Keywords>
             <Keywords name="Keywords6"></Keywords>
             <Keywords name="Keywords7"></Keywords>
@@ -40,9 +40,9 @@
             <WordsStyle name="LINE COMMENTS" fgColor="FF0000" bgColor="FFFFFF" fontName="Ebrima" fontStyle="2" fontSize="10" nesting="0" />
             <WordsStyle name="NUMBERS" fgColor="000080" bgColor="FFFFFF" fontName="" fontStyle="1" nesting="0" />
             <WordsStyle name="KEYWORDS1" fgColor="000000" bgColor="FFFFFF" fontName="Arial" fontStyle="3" fontSize="10" nesting="0" />
-            <WordsStyle name="KEYWORDS2" fgColor="8080C0" bgColor="FFFFFF" fontName="" fontStyle="0" nesting="0" />
-            <WordsStyle name="KEYWORDS3" fgColor="000000" bgColor="FFFFFF" fontName="" fontStyle="0" nesting="0" />
-            <WordsStyle name="KEYWORDS4" fgColor="FF0000" bgColor="FFFFFF" fontName="" fontStyle="2" nesting="0" />
+            <WordsStyle name="KEYWORDS2" fgColor="0000FF" bgColor="FFFFFF" fontName="Arial" fontStyle="1" fontSize="10" nesting="0" />
+            <WordsStyle name="KEYWORDS3" fgColor="0000FF" bgColor="FFFFFF" fontName="Arial" fontStyle="1" fontSize="10" nesting="0" />
+            <WordsStyle name="KEYWORDS4" fgColor="000000" bgColor="FFFFFF" fontName="Arial" fontStyle="3" fontSize="10" nesting="0" />
             <WordsStyle name="KEYWORDS5" fgColor="000000" bgColor="FFFFFF" fontName="" fontStyle="0" nesting="0" />
             <WordsStyle name="KEYWORDS6" fgColor="000000" bgColor="FFFFFF" fontName="" fontStyle="0" nesting="0" />
             <WordsStyle name="KEYWORDS7" fgColor="000000" bgColor="FFFFFF" fontName="" fontStyle="0" nesting="0" />
@@ -51,8 +51,8 @@
             <WordsStyle name="FOLDER IN CODE1" fgColor="000000" bgColor="FFFFFF" fontName="" fontStyle="0" nesting="0" />
             <WordsStyle name="FOLDER IN CODE2" fgColor="000000" bgColor="FFFFFF" fontName="" fontStyle="0" nesting="0" />
             <WordsStyle name="FOLDER IN COMMENT" fgColor="000000" bgColor="FFFFFF" fontName="" fontStyle="0" nesting="0" />
-            <WordsStyle name="DELIMITERS1" fgColor="0080FF" bgColor="FFFFFF" fontName="" fontStyle="1" nesting="0" />
-            <WordsStyle name="DELIMITERS2" fgColor="008040" bgColor="FFFFFF" fontName="" fontStyle="0" nesting="0" />
+            <WordsStyle name="DELIMITERS1" fgColor="8080C0" bgColor="FFFFFF" fontName="" fontStyle="1" nesting="0" />
+            <WordsStyle name="DELIMITERS2" fgColor="008040" bgColor="FFFFFF" fontName="" fontStyle="3" nesting="0" />
             <WordsStyle name="DELIMITERS3" fgColor="000000" bgColor="FFFFFF" fontName="" fontStyle="0" nesting="0" />
             <WordsStyle name="DELIMITERS4" fgColor="000000" bgColor="FFFFFF" fontName="" fontStyle="0" nesting="0" />
             <WordsStyle name="DELIMITERS5" fgColor="000000" bgColor="FFFFFF" fontName="" fontStyle="0" nesting="0" />

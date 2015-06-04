@@ -5,24 +5,39 @@
 using namespace libDataLogging::LiveLogging;
 
 
-CLiveDataLogger::CLiveDataLogger()
+CLiveDataLogger::CLiveDataLogger() :
+running(false),
+isConnected(false),
+_initialized(false),
+_sampleRate(-1),
+_memMap(NULL),
+_map(nullptr),
+_dataEvent(NULL),
+_lastTick(INT_MAX),
+_latest(0),
+irsdkHeader(nullptr)
 {
-	running = false;
-	isConnected = false;
-	_initialized = false;
-	_sampleRate = -1;
-	_memMap = NULL;
-	_map = nullptr;
-	_dataEvent = NULL;
-	_lastTick = INT_MAX;
-	_latest = 0;
-	irsdkHeader = nullptr;
+	Channels = std::make_shared<ChannelsMap>();
 }
 
 CLiveDataLogger::~CLiveDataLogger()
 {
 	if (running)
 		Stop();
+}
+
+bool CLiveDataLogger::GetSample(std::vector<BYTE>& buf)
+{
+	if (!_samplesQueue.empty()) {
+
+		DataSample s = _samplesQueue.front();
+		buf = std::move(s);
+		_samplesQueue.pop_front();
+
+		return true;
+	}
+
+	return false;
 }
 
 void CLiveDataLogger::_simConnected()
@@ -37,32 +52,12 @@ void CLiveDataLogger::_simConnected()
 			irsdk_varHeader* hdr = (irsdk_varHeader*)((BYTE*)_map + (irsdkHeader->varHeaderOffset + (i*sizeof(irsdk_varHeader))));
 			if (hdr != nullptr)
 			{
-				channelList[std::string(hdr->name)] = LiveChannelDescriptor(std::string(hdr->name), std::string(hdr->desc), std::string(hdr->unit), hdr->type, i);
-				AvailableChannels[std::string(hdr->name)] = LiveChannelDescriptor(std::string(hdr->name), std::string(hdr->desc), std::string(hdr->unit), hdr->type, i);
-				//switch (hdr->type)
-				//{
-				//case ChannelType::irsdk_bool:
-				//	channelData[i] = static_cast<BaseLiveChannel>(LiveChannel<bool>(mtx));
-				//	break;
-				//case ChannelType::irsdk_char:
-				//	channelData[i] = static_cast<BaseLiveChannel>(LiveChannel<char>(mtx));
-				//	break;
-				//case ChannelType::irsdk_double:
-				//	channelData[i] = static_cast<BaseLiveChannel>(LiveChannel<double>(mtx));
-				//	break;
-				//case ChannelType::irsdk_float:
-				//	channelData[i] = static_cast<BaseLiveChannel>(LiveChannel<float>(mtx));
-				//	break;
-				//case ChannelType::irsdk_int:
-				//	channelData[i] = static_cast<BaseLiveChannel>(LiveChannel<int>(mtx));
-				//	break;
-				//}
+				Channels->emplace(std::string(hdr->name), CLiveChannel(std::string(hdr->name), std::string(hdr->unit), std::string(hdr->desc), i, hdr->type, hdr->offset));
 			}
 		}
 	}
 
 	EventArgs e;
-	e.Channels = channelList;
 	Connected(e);
 }
 
@@ -72,45 +67,18 @@ void CLiveDataLogger::_simDisconnected()
 	Disconnected(e);
 }
 
-void CLiveDataLogger::_simDataUpdate(DWORD data)
+void CLiveDataLogger::_simDataUpdate()
 {
 	SampleDataUpdateEventArgs e;
 
 	if (_map != nullptr) {
 		BYTE* buf = (BYTE*)((BYTE*)_map + irsdkHeader->varBuf[_latest].bufOffset);
+		int len = irsdkHeader->bufLen;
+		DataSample sample;
+		sample.assign(buf, buf + len);
+		
+		_samplesQueue.emplace_back(sample);
 
-		for (int i = 0; i < irsdkHeader->numVars; i++)
-		{
-			irsdk_varHeader* hdr = (irsdk_varHeader*)((BYTE*)_map + (irsdkHeader->varHeaderOffset + (i*sizeof(irsdk_varHeader))));
-			if (hdr != nullptr)
-			{
-				switch (hdr->type)
-				{
-				case ChannelType::irsdk_bool:
-					e.ChannelData[i].type = hdr->type;
-					e.ChannelData[i].SampleData._bool = *((int*)(buf + hdr->offset));
-					break;
-				case ChannelType::irsdk_char:
-					e.ChannelData[i].type = hdr->type;
-					e.ChannelData[i].SampleData._char = *((char*)(buf + hdr->offset));
-					break;
-				case ChannelType::irsdk_double:
-					e.ChannelData[i].type = hdr->type;
-					e.ChannelData[i].SampleData._double = *((double*)(buf + hdr->offset));
-					break;
-				case ChannelType::irsdk_float:
-					e.ChannelData[i].type = hdr->type;
-					e.ChannelData[i].SampleData._float = *((float*)(buf + hdr->offset));
-					break;
-				case ChannelType::irsdk_int:
-					e.ChannelData[i].type = hdr->type;
-					e.ChannelData[i].SampleData._int = *((int*)(buf + hdr->offset));
-					break;
-				}
-			}
-		}
-
-		e.Channels = channelList;
 		DataUpdate(e);
 	}
 
@@ -150,7 +118,7 @@ void CLiveDataLogger::Stop()
 
 int CLiveDataLogger::GetLoggerSampleRate()
 {
-	return -1;
+	return irsdkHeader->tickRate;
 }
 
 void CLiveDataLogger::_dataLoop()
@@ -209,7 +177,6 @@ void CLiveDataLogger::_dataLoop()
 
 					// NOTE: no need for a lock since the called function runs on the same thread
 					// so no changes to data possible during that time!
-					//data->mtx.lock();
 					_latest = 0;
 
 					for (int i = 1; i < irsdkHeader->numBuf; i++) {
@@ -224,7 +191,7 @@ void CLiveDataLogger::_dataLoop()
 					if (irsdkHeader->varBuf[_latest].tickCount > _lastTick) {
 						_lastTick = irsdkHeader->varBuf[_latest].tickCount;
 
-						_simDataUpdate((DWORD)_map);
+						_simDataUpdate();
 
 					}
 				}

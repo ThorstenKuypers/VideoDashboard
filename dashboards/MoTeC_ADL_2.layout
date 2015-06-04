@@ -1,0 +1,47 @@
+// Dashboard configuration file for VideoDashboardscale = 0
+// MoTeC ADL
+// v1.0
+
+dashboard {
+
+	ShortName = "MoTeC ADL";
+	PrettyName = "MoTeC ADL 1. test version";
+	ImageFile = "images\\MoTeC_ADL1.png";
+	foreground = <0,0,0>;
+}
+
+sweeper {
+	rectangle = <20,40,150,98>;
+	channel = "RPM";
+	id = "rpm";
+	extend = 20;
+	taper = 10;
+	thickness = 1;
+	range = <1000,8000>;
+	sweep = <175,55>;
+	divisions = 90;
+	scale = 0.001;
+}
+ruler {
+  	layer = 1;
+  	using = "rpm";
+  	draw_path = yes;
+  	path_color = <0,0,0>;
+  	path_offset = 0;
+  	path_width = 1;
+	path_position = inside;
+	
+  	draw_major = yes;
+  	//major_divisions = 6;
+	major_units = 1000;
+  	major_shape = line;
+  	major_length = 3;
+  	major_width = 2;
+  	major_color = <0,0,0>;
+
+  	draw_label = yes;
+  	label_margin = 10;
+  	fontheight = 8;
+  	foreground = <0,0,0>;
+	fontname = "digital-7";
+}

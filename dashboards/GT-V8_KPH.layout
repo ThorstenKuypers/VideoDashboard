@@ -30,20 +30,14 @@ gauge {
 	needle_offset = <98,12>;
 	draw_face = true;
 }
-textbox {
-	channel="RPM";
-	format=real;
-	rectangle=<0,0,50,20>;
-	foreground=<0,0,0>;
-}
 
-// indicator {
-	// channel = "RPM";
-	// position = <302, 115>;
-	// image_on="images\LED_yellow_on.png";
-	// image_off="images\LED_yellow_off.png";
-	// threshold = 6500;
-// }
+indicator {
+	channel = "RPM";
+	position = <302, 115>;
+	image_on="images\LED_yellow_on.png";
+	image_off="images\LED_yellow_off.png";
+	threshold = 5700;
+}
 
 slider {
 	channel = "Throttle";
@@ -154,16 +148,3 @@ textbox {
 	foreground = <255,0,0>;
 
 }
-
-// [LED.Rpm] -- INDICATORS TO BE IMPLEMENTED
-// #Position of led element; !!! center-position !!!
-// Position=314,124
-// Size=0,0
-// #Image file to display when led is on
-// FileOn=LED_yellow_on.png
-// #Image file to display when led is off
-// FileOff=LED_yellow_off.png
-// #value when LED turns on (at or above this value)
-// ValOn=6900
-// #value when LED turns off (at or below this value)
-// ValOff=6899
