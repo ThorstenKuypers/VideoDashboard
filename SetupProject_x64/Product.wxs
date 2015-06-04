@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
+     xmlns:netfx="http://schemas.microsoft.com/wix/NetFxExtension"
+     xmlns:ui="http://schemas.microsoft.com/wix/UIExtension">
+
+  <?define _ProductVersion="0.9.5" ?>
+  <Product Id="*" Name="VideoDashboard 64bit" Language="1033" Version="$(var._ProductVersion)" Manufacturer="Thorsten Kuypers" UpgradeCode="{47C193EB-19E4-43C7-B9B2-DE9F58C7D655}">
+    <Package InstallerVersion="405" Compressed="yes" InstallScope="perMachine" Platform="x64" InstallPrivileges="elevated"/>
+
+    <!--<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />-->
+    <MediaTemplate EmbedCab="yes" />
+
+    <Property Id="PREVIOUSVERSIONINSTALLED" Secure="yes" />
+    <Upgrade Id="{47C193EB-19E4-43C7-B9B2-DE9F58C7D655}">
+      <UpgradeVersion Minimum="0.0.1.0" Maximum="99.0.0.0"  Property="PREVIOUSVERSIONINSTALLED" IncludeMinimum="yes" IncludeMaximum="yes"/>
+    </Upgrade>
+
+    <Feature Id="ProductFeature" Title="Install" Level="1">
+      <ComponentGroupRef Id="ProductComponents" />
+      <ComponentGroupRef Id="images" />
+      <ComponentGroupRef Id="dashboards" />
+      <ComponentGroupRef Id="videoProfiles" />
+      <ComponentGroupRef Id="cmp39879087947598745" />
+
+      <ComponentRef Id="ApplicationShortcut" />
+      <ComponentRef Id="cmp_app_config" />
+    </Feature>
+
+    <Feature Id="VCRedist" Title="Visual C++ 12.0 Runtime" AllowAdvertise="no" Display="hidden" Level="1">
+      <MergeRef Id="VCRedist" />
+    </Feature>
+
+    <?ifdef __DEBUG?>
+    <Feature Id="VCRedistDbg" Title="Visual C++ 12.0 Runtime" AllowAdvertise="no" Display="hidden" Level="1">
+      <MergeRef Id="VCRedistDbg" />
+    </Feature>
+    <?endif?>
+
+    <WixVariable Id="WixUILicenseRtf" Value="$(var.SolutionDir)EULA.rtf"/>
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
+    <PropertyRef Id="NETFRAMEWORK40FULL"/>
+
+    <Condition Message="[ProductName] requires the installation of .NET Framework 4.0. Please install the .NET Framework and run this installer again.">
+      <![CDATA[Installed OR NETFRAMEWORK40FULL]]>
+    </Condition>
+
+    <UIRef Id="WixUI_InstallDir" />
+
+    <InstallExecuteSequence>
+      <RemoveExistingProducts Before="InstallInitialize" />
+      <Custom Action="RegisterFilter" Before="InstallFinalize">
+        NOT Installed
+      </Custom>
+      <Custom Action="UnregisterFilter" Before="RemoveFiles">
+        Installed AND NOT UPGRADEPRODUCTCODE
+      </Custom>
+
+    </InstallExecuteSequence>
+  </Product>
+
+  <!-- DirectShow filter registration/un-registration custom action -->
+  <Fragment>
+    <CustomAction Id="RegisterFilter" Execute="deferred" DllEntry="DllRegisterServer" Return="ignore" FileKey="f_TVOFilter_ax" Impersonate="no" />
+    <CustomAction Id="UnregisterFilter" Execute="deferred" DllEntry="DllUnregisterServer" Return="ignore" Impersonate="no" FileKey="f_TVOFilter_ax" />
+  </Fragment>
+
+  <!-- VC++ 12.0 redistributable package -->
+  <Fragment>
+    <DirectoryRef Id="TARGETDIR">
+      <Merge Id="VCRedist" SourceFile="C:\Program Files (x86)\Common Files\Merge Modules\Microsoft_VC120_CRT_x64.msm" DiskId="1" Language="0" />
+    </DirectoryRef>
+  </Fragment>
+
+  <?ifdef __DEBUG ?>
+  <Fragment>
+    <DirectoryRef Id="TARGETDIR">
+      <Merge Id="VCRedistDbg" SourceFile="C:\Program Files (x86)\Common Files\Merge Modules\Microsoft_VC120_DebugCRT_x64.msm" DiskId="1" Language="0" />
+    </DirectoryRef>
+  </Fragment>
+  <?endif?>
+
+  <Fragment>
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFiles64Folder">
+        <Directory Id="INSTALLFOLDER" Name="VideoDashboard" />
+      </Directory>
+      <Directory Id="AppDataFolder">
+        <Directory Id="VideoDashboardResourcesFolder" Name="$(var.VideoDashboard.TargetName)">
+          <Directory Id="dashboardsFolder" Name="dashboards" >
+            <Directory Id="imagesFolder" Name="images" />
+          </Directory>
+          <Directory Id="videoProfilesFolder" Name="VideoProfiles" />
+        </Directory>
+      </Directory>
+      <Directory Id="DesktopFolder" />
+      <Directory Id="ProgramMenuFolder">
+        <Directory Id="StartMenuDir" Name="$(var.VideoDashboard.TargetName)" />
+      </Directory>
+    </Directory>
+  </Fragment>
+
+  <!--Shortcuts on start menu-->
+  <Fragment>
+    <DirectoryRef Id="StartMenuDir">
+      <Component Id="ApplicationShortcut" Guid="{59EECA4E-B7F2-4A7D-BA41-B48B0BA11EA8}">
+        <Shortcut Id="StartMenuShortcut" Name="$(var.VideoDashboard.TargetName)" Description="Start VideoDashboard" Target="[#f_VideoDashboard_exe]" WorkingDirectory="INSTALLFOLDER" />
+        <Shortcut Id="UninstallProduct" Name="Uninstall" Description="Uninstall $(var.VideoDashboard.TargetName)" Target="[SystemFolder]msiexec.exe" Arguments="/x [ProductCode]" />
+        <RemoveFolder Id="StartMenuDir" On="uninstall" />
+        <RegistryValue Id="AppInstalledKey" Root="HKCU" Key="Software\Microsoft\[ProductName]" Name="installed" Type="integer" Value="1" KeyPath="yes" />
+        <RemoveRegistryValue Id="AppInstalledKey" Root="HKCU" Key="Software\Microsoft\[ProductName]" Name="installed" />
+      </Component>
+    </DirectoryRef>
+  </Fragment>
+
+  <!-- configuration file(s) -->
+  <Fragment>
+    <DirectoryRef Id="VideoDashboardResourcesFolder">
+      <Component Id="cmp_app_config" Guid="{3F343753-ABA1-46AE-9517-EA936A5555C9}">
+        <File Id="f_app_config" Source="$(var.SolutionDir)bin\$(var.VideoDashboard.Configuration)\$(var.VideoDashboard.Platform)\VideoDashboard.exe.Config" KeyPath="yes" Vital="yes" />
+        <RemoveFile Id="f_app_config" Name="*.*" Directory="VideoDashboardResourcesFolder" On="uninstall" />
+      </Component>
+    </DirectoryRef>
+  </Fragment>
+
+  <!--Core VideoDashboard components and files-->
+  <Fragment>
+    <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+      <Component Id="cmp_VideoDashboard_exe" Guid="{1E53841B-806D-44E8-A896-303DA48AD1D5}">
+        <File Id="f_VideoDashboard_exe" Source="$(var.SolutionDir)bin\$(var.VideoDashboard.Configuration)\$(var.VideoDashboard.Platform)\__deployment\VideoDashboard.exe" KeyPath="yes" Checksum="yes" Vital="yes">
+        </File>
+        <!--<Shortcut Id="VideoDashboardShortcut" Target="[#f_VideoDashboard_exe]" Name="$(var.VideoDashboard.TargetName)" Directory="DesktopFolder" WorkingDirectory="INSTALLFOLDER" Description="Start VideoDashboard" />-->
+        <RemoveFile Id="VideoDashboardShortcut" Name="$(var.VideoDashboard.TargetName)" Directory="DesktopFolder" On="uninstall" />
+      </Component>
+      <Component Id="cmp_libDataLogging_dll" Guid="{7DA48A45-5075-43F0-9BE9-6B3DE08658D4}">
+        <File Id="f_libDataLogging_dll" Source="$(var.SolutionDir)bin\$(var.VideoDashboard.Configuration)\$(var.VideoDashboard.Platform)\__deployment\libDataLogging.dll" KeyPath="yes" Checksum="yes" Vital="yes" />
+      </Component>
+      <Component Id="cmp_libLDF_dll" Guid="{FA1E38AE-FC6C-46B2-BDBB-82E9D4DDC734}">
+        <File Id="f_libLDF_dll" Source ="$(var.SolutionDir)bin\$(var.VideoDashboard.Configuration)\$(var.VideoDashboard.Platform)\__deployment\libLDF.dll" KeyPath="yes" Checksum="yes" Vital="yes" />
+      </Component>
+      <Component Id="cmp_libds_dll" Guid="{FA83767B-8CBE-4274-BAD0-770D47D52AFA}">
+        <File Id="f_libds_dll" Source ="$(var.SolutionDir)bin\$(var.VideoDashboard.Configuration)\$(var.VideoDashboard.Platform)\__deployment\libds.dll" KeyPath="yes" Checksum="yes" Vital="yes" />
+      </Component>
+      <Component Id="cmp_TVOFilter_ax" Guid="{22F9AC04-01A2-489B-A389-56E56D7D74BE}">
+        <File Id="f_TVOFilter_ax" Source ="$(var.SolutionDir)bin\$(var.VideoDashboard.Configuration)\$(var.VideoDashboard.Platform)\__deployment\TVOFilter.ax" KeyPath="yes" Checksum="yes" Vital="yes" />
+      </Component>
+      <!--<Component Id="cmp_register_filter_exe" Guid="{85375D72-AE21-4F9C-B5B4-6ED27F3FF744}">
+        <File Id="f_register_filter_exe" Source="$(var.SolutionDir)bin\$(var.VideoDashboard.Configuration)\$(var.VideoDashboard.Platform)\register_filter.exe" KeyPath="yes" Vital="yes" />
+      </Component>-->
+      <Component Id="cmp_log4net_dll" Guid="{B6E386E6-9DE6-47C0-B763-D19A763A256C}">
+        <File Id="f_rlog4net_dll" Source="$(var.SolutionDir)bin\$(var.VideoDashboard.Configuration)\$(var.VideoDashboard.Platform)\__deployment\log4net.dll" KeyPath="yes" Vital="yes" />
+      </Component>
+      <Component Id="cmp_log4net_xml" Guid="{BD649286-3E88-4445-9B91-339B4E62F5C9}">
+        <File Id="f_rlog4net_xml" Source="$(var.SolutionDir)bin\$(var.VideoDashboard.Configuration)\$(var.VideoDashboard.Platform)\__deployment\log4net.xml" KeyPath="yes" Vital="yes" />
+      </Component>
+      <Component Id="cmp_DashView_exe" Guid="{ED859582-4EEA-4CAF-9D9E-C00A84C1E8D4}">
+        <File Id="f_DashView_exe" Source="$(var.SolutionDir)bin\$(var.VideoDashboard.Configuration)\$(var.VideoDashboard.Platform)\DashView.exe" KeyPath="yes" Vital="yes" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+
+  <!--image resources-->
+  <Fragment>
+    <ComponentGroup Id="images" Directory="imagesFolder">
+      <!--<Component Id="cmp020DCE810EA9A732D42A2E1CDB48C424" Guid="{1DD9E94D-9189-4856-B42C-051B19B5C994}">
+        <File Id="filDB1965D5FD4224DAA0B09BD322152548" KeyPath="yes" Source="$(var.SolutionDir)bin\Resources\dashboards\images\BasicDash.png" />
+      </Component>-->
+      <Component Id="cmp0864C4096025F96EA1588F0830266B4B" Guid="{253BF120-EAE3-485C-8979-205EF86191D6}">
+        <File Id="filD3E5BDF24341C58AE99F2F2672923A3B" KeyPath="yes" Source="$(var.SolutionDir)bin\Resources\dashboards\images\GT-V8_Needle_Tach.png" />
+        <RemoveFolder Id="imagesFolder" On="uninstall" />
+      </Component>
+      <Component Id="cmp0A2FAA20F5286E0AE671B4071A40F90C" Guid="{C7668C5D-88C9-4030-8F99-659ED0ABB0CA}">
+        <File Id="fil5DF95579DE454CE1D25083A2CC30DE65" KeyPath="yes" Source="$(var.SolutionDir)bin\Resources\dashboards\images\GT-V8_Speed_kph.png" />
+      </Component>
+      <Component Id="cmp105374B7536C9AB4132B438E785591DA" Guid="{637CC621-D937-4FC9-ACA1-FA60132BC50E}">
+        <File Id="filAE6BE4B2EE972B25CB584878A6CD9945" KeyPath="yes" Source="$(var.SolutionDir)bin\Resources\dashboards\images\LED_yellow_on.png" />
+      </Component>
+      <!--<Component Id="cmp1132DCC732B274185D369E1BEDB6AB8D" Guid="{4403B2EC-AA07-44FD-8679-8FFFDD6D7F3F}">
+        <File Id="fil50A5BD8245DFF21B2A97F574C4E5B300" KeyPath="yes" Source="$(var.SolutionDir)bin\Resources\dashboards\images\MoTeC_ADL2.png" />
+      </Component>-->
+      <!--<Component Id="cmp23375FE1054DFF4B4CF97358FA0EB1B9" Guid="{4A16C9E0-5E82-4424-8A94-D8F964A16737}">
+        <File Id="filE3823BE99B7A5465D3DC7B4FBEAA423E" KeyPath="yes" Source="$(var.SolutionDir)bin\Resources\dashboards\images\SimpleSpeedKph.png" />
+      </Component>-->
+      <Component Id="cmp3B15012AEE2F44F22960B20C8F731581" Guid="{1ED71634-D4DB-4A2D-819C-BE85DE8C26D2}">
+        <File Id="filFB701F5C896EC0B65E833C7065E317FF" KeyPath="yes" Source="$(var.SolutionDir)bin\Resources\dashboards\images\GT-V8_Speed_mph.png" />
+      </Component>
+      <Component Id="cmp461BD9DF338ECEACCEBB04E105C8FD94" Guid="{211EE6BA-82B8-48EC-939F-3B039BDCE156}">
+        <File Id="filCFC3EB49CD1BDA77818395CC09F955B1" KeyPath="yes" Source="$(var.SolutionDir)bin\Resources\dashboards\images\GT-V8_Needle_Speed.png" />
+      </Component>
+      <Component Id="cmp51E12641B44AAB7A355B9F9233D86B61" Guid="{EE5D5113-01FD-448E-B500-BF518EB14B29}">
+        <File Id="filA5F169A2FE964F9AA04319EB036AD2BD" KeyPath="yes" Source="$(var.SolutionDir)bin\Resources\dashboards\images\RedCarbon_Needle_R.png" />
+      </Component>
+      <Component Id="cmp82E1A56D44E1DB1A05281229EC0372D7" Guid="{E01CA14F-932D-4987-A690-84F4BAFA1D7C}">
+        <File Id="filDF1B8685819A1F6761931E8D6DEDE2A5" KeyPath="yes" Source="$(var.SolutionDir)bin\Resources\dashboards\images\GT-V8.png" />
+      </Component>
+      <Component Id="cmp8C31D44A7609062769F0B550D8D495B4" Guid="{23D3EAEF-E497-496A-A446-36649AD209E9}">
+        <File Id="fil8F441A0565F163DC07E43A1C7E7AA123" KeyPath="yes" Source="$(var.SolutionDir)bin\Resources\dashboards\images\F1_2012.png" />
+      </Component>
+      <!--<Component Id="cmp9FF5BF2C861BA2B40477AE5444C123A8" Guid="{10CC548B-8EF5-463A-ACB4-57B1CB1DBE57}">
+        <File Id="fil749D9DF7D559512A8602818568D56D64" KeyPath="yes" Source="$(var.SolutionDir)bin\Resources\dashboards\images\BasicRPM.png" />
+      </Component>-->
+      <!--<Component Id="cmpA1304BB47AD553A9EDE75E1B921A076C" Guid="{0483BF5C-AB2A-4611-BE49-D2CB999BE9D8}">
+        <File Id="fil701080EFCA764C2AFEB9B1DF189F1A6D" KeyPath="yes" Source="$(var.SolutionDir)bin\Resources\dashboards\images\SimpleDash.png" />
+      </Component>-->
+      <Component Id="cmpA4CB49EE2A4C248801825A8BB4E02A06" Guid="{0D214B5C-700A-43E4-9884-08978AD91DFC}">
+        <File Id="filB6EFA009CE6DB3BCC668EBE71373A41E" KeyPath="yes" Source="$(var.SolutionDir)bin\Resources\dashboards\images\RedCarbon_RPM.png" />
+      </Component>
+      <Component Id="cmpA618027C5EBD9E35C4C4EBAB65AA49A0" Guid="{29B261A9-59FA-4016-8F7E-FF9036FFCE3A}">
+        <File Id="filE8545C112949A95EFC47FD0B00DCAE78" KeyPath="yes" Source="$(var.SolutionDir)bin\Resources\dashboards\images\RedCarbon.png" />
+      </Component>
+      <Component Id="cmpAAF03ADD20BF539625662E22AB716D02" Guid="{6B1D70DC-5647-4E43-BD7A-4FC01F1981BB}">
+        <File Id="fil61336BBF75A391B8C8224A36F06D6EC9" KeyPath="yes" Source="$(var.SolutionDir)bin\Resources\dashboards\images\RedCarbon_Needle_L.png" />
+      </Component>
+      <!--<Component Id="cmpB62F9B0DA5343787CC11AAE8886AAB09" Guid="{DF2907BA-ABF4-4BA6-B3F9-0E8C55D002CD}">
+        <File Id="filD472B4CE3871E414E1D3E33DF6B5C7F5" KeyPath="yes" Source="$(var.SolutionDir)bin\Resources\dashboards\images\SimpleRPM.png" />
+      </Component>-->
+      <Component Id="cmpC1B180F2E131B65D5033A0D6FA6A04A3" Guid="{8A757A67-CA3C-4E8B-95EB-E99B7EA9A787}">
+        <File Id="filA959DF91E3039A52506F779B5AE9C276" KeyPath="yes" Source="$(var.SolutionDir)bin\Resources\dashboards\images\RedCarbon_Speed_300KPH.png" />
+      </Component>
+      <Component Id="cmpCA5A3A11714229A690C5655F0762D97D" Guid="{163BED1D-EAC6-42CE-AAC3-D555B39B7DB5}">
+        <File Id="filB80AAE4206B97567CF2BE59C6BC168DC" KeyPath="yes" Source="$(var.SolutionDir)bin\Resources\dashboards\images\LED_yellow_off.png" />
+      </Component>
+      <!--<Component Id="cmpCA78E0B49DE9DD36A0E2E78575F32212" Guid="{633BAA5B-337E-460D-81F2-DC5D909AFA9A}">
+        <File Id="filBC3D5C159941A872C3CDDFBCBB659218" KeyPath="yes" Source="$(var.SolutionDir)bin\Resources\dashboards\images\BasicSpeedoKph.png" />
+      </Component>-->
+      <Component Id="cmpD2FF6ED3FD1CC6CECDA8319B5A6BAF12" Guid="{4439BEE8-4D29-4197-A063-9FA48095F196}">
+        <File Id="fil2CC56BACA6B9ADEF83EAD7F22DFECA0A" KeyPath="yes" Source="$(var.SolutionDir)bin\Resources\dashboards\images\RedCarbon_Speed_200MPH.png" />
+      </Component>
+      <!--<Component Id="cmpDC9E89A544640224CAADCE375557E882" Guid="{E45F61BA-C3C6-47C5-B19B-557E5AF4F0BB}">
+        <File Id="fil70B3CCA3954E6995BAB5475887592E4D" KeyPath="yes" Source="$(var.SolutionDir)bin\Resources\dashboards\images\SimpleSpeedMph.png" />
+      </Component>-->
+      <Component Id="cmpDCB57EC5C2202D213B3F2DB59243E693" Guid="{849021C2-3583-4D95-88BA-00D53798B925}">
+        <File Id="fil4B78679EEE5EF7A6764A0F908167060F" KeyPath="yes" Source="$(var.SolutionDir)bin\Resources\dashboards\images\SD1.png" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+
+  <!--overlay layout files (dashboards)-->
+  <Fragment>
+    <ComponentGroup Id="dashboards" Directory="dashboardsFolder">
+      <Component Id="cmp1D5B60795011298D0E88DAC5638C6B0F" Guid="{8E0C5676-D1AB-4890-B7A0-FFC7256C7D38}">
+        <File Id="filBFB8DEAEBE5AB0F692F99C85F0E04708" KeyPath="yes" Source="$(var.SolutionDir)bin\Resources\dashboards\GT-V8_KPH.layout" />
+        <RemoveFolder Id="dashboardsFolder" On="uninstall" />
+      </Component>
+      <Component Id="cmp4A5EFF5DDCED10B3224BB266E38729BC" Guid="{8B0B22A0-6660-4F8A-8096-5C55D4E16DAD}">
+        <File Id="fil8664DBB8C5B9D1E554697BC68A106A8B" KeyPath="yes" Source="$(var.SolutionDir)bin\Resources\dashboards\F1_Season2012.layout" />
+      </Component>
+      <Component Id="cmp59A144EF90954984BE785DBF28CB0B43" Guid="{DD3D854E-D450-461B-8C43-71546E76757A}">
+        <File Id="filA574E97FBA3A2262F367B022C6C2B689" KeyPath="yes" Source="$(var.SolutionDir)bin\Resources\dashboards\RedCarbon_200MPH.layout" />
+      </Component>
+      <Component Id="cmp5FB502D1286379BFB990018FF01A33BB" Guid="{A9175A45-EE15-4591-8F15-7B67E9B153A5}">
+        <File Id="fil1561896360013DD5E1C82A73A35D4D8D" KeyPath="yes" Source="$(var.SolutionDir)bin\Resources\dashboards\RedCarbon_300KPH.layout" />
+      </Component>
+      <Component Id="cmp5FBA61DD607EEC52B7F2ABAC2159935B" Guid="{2F286C84-A502-4D1C-961E-E1FB6A825A60}">
+        <File Id="filCADE220D5B50A26A77B2603637B240F4" KeyPath="yes" Source="$(var.SolutionDir)bin\Resources\dashboards\Simple_LCD.layout" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+
+  <!--VideoProfiles-->
+  <Fragment>
+    <ComponentGroup Id="videoProfiles" Directory="videoProfilesFolder">
+      <Component Id="cmp1B7E58998EE81839E1B36B3528BE310F" Guid="{C00DAE3D-CADD-4238-935E-1495D8A53BCA}">
+        <File Id="filFCC570CDC8440BB592D69F96AD29284F" KeyPath="yes" Source="$(var.SolutionDir)bin\Resources\VideoProfiles\Youtube_1080pHD.prx" />
+        <RemoveFolder Id="videoProfilesFolder" On="uninstall" />
+      </Component>
+      <Component Id="cmp251275229BC13BCD3D7B5A18CBCE683D" Guid="{9B84AEB4-392E-4A41-B46F-F84912017D8A}">
+        <File Id="fil95793C4C67F80107688599E4779A0571" KeyPath="yes" Source="$(var.SolutionDir)bin\Resources\VideoProfiles\test_HD.prx" />
+      </Component>
+      <Component Id="cmp9492D3C2C4DF0327B79B0E2B2AB37E2B" Guid="{3AB52173-EDCD-4FEF-B19D-3CD5F14FF1AD}">
+        <File Id="fil856E92C04DA64CFDD2E525CC5FE8455C" KeyPath="yes" Source="$(var.SolutionDir)bin\Resources\VideoProfiles\Youtube_1080pHD_adv.prx" />
+      </Component>
+      <Component Id="cmp9CD042604F395F9839660B76A5DC7D34" Guid="{CD7350B3-E1BC-4082-A608-C510CE971842}">
+        <File Id="fil9FDF3D05F35759A9AA257DB98FA19300" KeyPath="yes" Source="$(var.SolutionDir)bin\Resources\VideoProfiles\WM9_default.prx" />
+      </Component>
+      <Component Id="cmpBE1B3F791147B5D8AF1A3947D93059CF" Guid="{5FC5E736-025F-454A-B8BF-CD4B31FD3C13}">
+        <File Id="fil6817912B9179079F69AE045FC3214393" KeyPath="yes" Source="$(var.SolutionDir)bin\Resources\VideoProfiles\Youtube_720pHD.prx" />
+      </Component>
+      <Component Id="cmpDB2A700918C4E7FCDE336AF100AE94B9" Guid="{EDFD2545-D273-4814-BB05-5FB3D064D9F2}">
+        <File Id="fil5898A4B891AA398ADC29D461E7D60950" KeyPath="yes" Source="$(var.SolutionDir)bin\Resources\VideoProfiles\Youtube_480p.prx" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+
+  <Fragment>
+    <ComponentGroup Id="cmp39879087947598745" Directory="VideoDashboardResourcesFolder">
+      <Component Id="cmp83849398434" Guid="{702BBEE6-8B14-4073-99E8-9843721ABB8E}">
+        <RemoveFolder Id="VideoDashboardResourcesFolder" On="uninstall" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+</Wix>

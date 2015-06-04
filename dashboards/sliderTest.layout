@@ -1,0 +1,58 @@
+// Dashboard configuration file
+// Copyright (c) 2012 - 2014 Thorsten Kuypers.
+// V1.0
+
+dashboard {
+	ShortName="GaugesII MPH"; // The name in the dashboard selection list
+	PrettyName ="Gauges2"; // An optional descriptive name
+	//ImageFile= "D:\Development\Projects\VideoDashboard\bin\Debug\dashboards\images\RedCarbon.png";// The image file used by this dash
+	//targetwidth = 1024; // The dash is scaled for a 1024 wide frame
+	foreground = <255,255,255>; // default color for text and drawn elements
+	//fontname = “Eurostile”; // default font fontheight = 12; // default font size justify = center; // default text justification
+	width = 1024;
+	height = 300;	
+}
+
+slider {
+	id = "slider1";
+	variable = "LatG";
+	range = <-2,2>;
+	rectangle = <50,50,150,20>;
+	rgbpositive = <255,0,0>;
+	rgbnegative = <0,255,0>;
+	layer = 2;
+}
+ruler {
+	path = line;
+	using = "slider1";
+	draw_path = yes;
+	path_offset = 0;
+	path_position = below;
+	//path_width = 2;
+	
+	draw_major = yes;
+	//major_divisions = 6;
+	major_units = 1;
+	major_shape = line;
+	major_length = 10;
+	major_width = 2;
+	//major_radius = 10;
+	major_color = <0,0,0>;
+	
+	draw_minor = yes;
+	minor_units = 0.5;
+	//minor_divisions = 4;
+	minor_shape = line;
+	minor_color = <0,0,255>;
+	 minor_length = 6;
+	 minor_width = 1;
+	//minor_radius = 8;
+	
+	draw_label = yes;
+	label_margin = 0;
+	foreground = <0,0,0>;
+	fontheight = 10;
+	fontname = "Time New Roman";
+	//fontstyle = bold;
+	layer = 1;
+}

@@ -1,0 +1,137 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+This file is used by the publish/package process of your Web project. You can customize the behavior of this process
+by editing this MSBuild file. In order to learn more about this please visit http://go.microsoft.com/fwlink/?LinkID=208121. 
+-->
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <TimeStampOfAssociatedLegacyPublishXmlFile />
+    <EncryptedPassword />
+    <_PublishTargetUrl>ftp://video-dashboard.com/</_PublishTargetUrl>
+  </PropertyGroup>
+  <ItemGroup>
+    <File Include="BetaTest.aspx">
+      <publishTime>10/17/2014 21:21:31</publishTime>
+    </File>
+    <File Include="bin/Activatar.dll">
+      <publishTime>10/18/2014 01:33:29</publishTime>
+    </File>
+    <File Include="bin/Activatar.Server.dll">
+      <publishTime>10/18/2014 01:33:33</publishTime>
+    </File>
+    <File Include="bin/Base32.dll">
+      <publishTime>10/17/2014 23:26:00</publishTime>
+    </File>
+    <File Include="bin/Homepage.dll">
+      <publishTime>10/18/2014 21:22:13</publishTime>
+    </File>
+    <File Include="bin/LicensingServer.dll">
+      <publishTime>10/18/2014 19:09:58</publishTime>
+    </File>
+    <File Include="bin/LicensingService.dll">
+      <publishTime>10/18/2014 21:22:13</publishTime>
+    </File>
+    <File Include="bin/log4net.dll">
+      <publishTime>10/13/2014 17:09:25</publishTime>
+    </File>
+    <File Include="bin/Rhino.Licensing.dll">
+      <publishTime>09/07/2014 03:38:39</publishTime>
+    </File>
+    <File Include="Contact.aspx">
+      <publishTime>10/17/2014 21:01:09</publishTime>
+    </File>
+    <File Include="Content/bootstrap-theme.css">
+      <publishTime>10/06/2014 22:41:38</publishTime>
+    </File>
+    <File Include="Content/bootstrap-theme.css.map">
+      <publishTime>10/06/2014 22:41:38</publishTime>
+    </File>
+    <File Include="Content/bootstrap-theme.min.css">
+      <publishTime>10/06/2014 22:41:38</publishTime>
+    </File>
+    <File Include="Content/bootstrap.css">
+      <publishTime>10/06/2014 22:41:38</publishTime>
+    </File>
+    <File Include="Content/bootstrap.css.map">
+      <publishTime>10/06/2014 22:41:38</publishTime>
+    </File>
+    <File Include="Content/bootstrap.min.css">
+      <publishTime>10/06/2014 22:41:38</publishTime>
+    </File>
+    <File Include="Content/bs-theme-metal-gray.css">
+      <publishTime>10/07/2014 18:22:56</publishTime>
+    </File>
+    <File Include="Content/main.css">
+      <publishTime>10/17/2014 20:03:16</publishTime>
+    </File>
+    <File Include="DBservice.svc">
+      <publishTime>10/18/2014 02:40:18</publishTime>
+    </File>
+    <File Include="dbTest.aspx">
+      <publishTime>10/16/2014 22:02:07</publishTime>
+    </File>
+    <File Include="Default.aspx">
+      <publishTime>10/17/2014 17:19:47</publishTime>
+    </File>
+    <File Include="Downloads.aspx">
+      <publishTime>10/17/2014 18:24:06</publishTime>
+    </File>
+    <File Include="fonts/glyphicons-halflings-regular.eot">
+      <publishTime>10/06/2014 22:41:38</publishTime>
+    </File>
+    <File Include="fonts/glyphicons-halflings-regular.svg">
+      <publishTime>10/06/2014 22:41:38</publishTime>
+    </File>
+    <File Include="fonts/glyphicons-halflings-regular.ttf">
+      <publishTime>10/06/2014 22:41:38</publishTime>
+    </File>
+    <File Include="fonts/glyphicons-halflings-regular.woff">
+      <publishTime>10/06/2014 22:41:38</publishTime>
+    </File>
+    <File Include="Global.asax">
+      <publishTime>10/17/2014 20:33:10</publishTime>
+    </File>
+    <File Include="Home.aspx">
+      <publishTime>10/17/2014 21:04:17</publishTime>
+    </File>
+    <File Include="LegalDisclosure.aspx">
+      <publishTime>10/17/2014 20:41:40</publishTime>
+    </File>
+    <File Include="packages.config">
+      <publishTime>10/13/2014 20:06:47</publishTime>
+    </File>
+    <File Include="Privacy.aspx">
+      <publishTime>10/17/2014 20:37:28</publishTime>
+    </File>
+    <File Include="RegisterBeta.aspx">
+      <publishTime>10/17/2014 21:22:56</publishTime>
+    </File>
+    <File Include="Scripts/bootstrap.js">
+      <publishTime>10/06/2014 22:41:38</publishTime>
+    </File>
+    <File Include="Scripts/bootstrap.min.js">
+      <publishTime>10/06/2014 22:41:38</publishTime>
+    </File>
+    <File Include="Scripts/jquery-1.9.0.js">
+      <publishTime>10/06/2014 22:41:33</publishTime>
+    </File>
+    <File Include="Scripts/jquery-1.9.0.min.js">
+      <publishTime>10/06/2014 22:41:33</publishTime>
+    </File>
+    <File Include="Scripts/jquery-1.9.0.min.map">
+      <publishTime>10/06/2014 22:41:33</publishTime>
+    </File>
+    <File Include="Site.Master">
+      <publishTime>10/17/2014 21:10:51</publishTime>
+    </File>
+    <File Include="Web.1&amp;1.config">
+      <publishTime>10/18/2014 19:55:30</publishTime>
+    </File>
+    <File Include="Web.config">
+      <publishTime>10/18/2014 21:27:00</publishTime>
+    </File>
+    <File Include="Web.Release.config">
+      <publishTime>10/18/2014 20:07:17</publishTime>
+    </File>
+  </ItemGroup>
+</Project>

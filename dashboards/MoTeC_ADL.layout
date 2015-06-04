@@ -1,0 +1,165 @@
+// simple LCD display (MoTeC SDL look-alike)
+// (C) 2014 Thorsten Kuypers
+// VideoDashboard 
+
+
+dashboard {
+	ShortName = "Simple LCD";
+	PrettyName = "ADL look-alike";
+	ImageFile = "images\SD1.png";
+	foreground = <0,0,0>;
+}
+
+//-----------------------------------
+//   GCircle
+//-----------------------------------
+
+gcircle {
+	rectangle = <152,4,76,76>;
+	//rectangle = [152,4,76,76];
+	foreground = <160, 160, 160>;
+	pointer = < 255, 128, 64 >;
+	radius = 3;
+	pointer_width=2;
+	pointer_size=6;
+	divisions=3;
+}
+
+textbox {
+	label = "G";
+	rectangle = <177,29,22,22>;
+	format = text;
+	fontheight = 18;
+	justify = left;
+	layer = 1;
+}
+
+
+textbox {
+	channel = "LatG";
+	rectangle = <183,34,45,13>;
+	//rectangle = [183,34,45,13];
+	format = real;
+	precision = 1;
+	signed = no;
+	fontheight = 11;
+	fontstyle = bold;
+    justify = right;
+}
+
+textbox {
+	channel = "LongG";
+	rectangle = <169,60,40,15>;
+	//rectangle = [169,60,40,15];
+	format = real;
+	precision = 1;
+	signed = no;
+	fontheight = 11;
+	fontstyle = bold;
+    justify = center;
+}
+
+//----------------------------------
+//   Lap Timing
+//----------------------------------
+
+textbox {
+	label = "LAP";
+	format = integer;
+	rectangle = <6,123,40,15>;
+	//rectangle = [6,123,34,13];
+	fontheight = 11;
+	fontstyle = bold;
+    justify = right;
+}
+
+textbox {
+	channel = "lap";
+	format = integer;
+	rectangle = <42,123,25,15>;
+	//rectangle = [42,123,20,13];
+	fontheight = 11;
+	fontstyle = bold;
+    justify = right;
+}
+
+textbox {
+	label = "BEST";
+	format = integer;
+	rectangle = <6,135,42,148>;
+	//rectangle = [6,135,36,13];
+	fontheight = 11;
+	fontstyle = bold;
+    justify = right;
+	//fontname = "digital-7";
+}
+textbox {
+	channel = "best_lap";
+	format = integer;
+	rectangle = <42,135,62,148>;
+	//rectangle = [42,135,20,13];
+	fontheight = 11;
+	fontstyle = bold;
+    justify = right;
+}
+
+textbox {
+	channel = "best_laptime";
+	format = laptime;
+	rectangle = <60,135,112,148>;
+	//rectangle = [60,135,52,13];
+	fontheight = 11;
+	fontstyle = bold;
+    justify = right;
+}
+
+//----------------------------
+// MoTeC ADL Display elements
+//----------------------------
+
+sweeper {
+	id = "RPM";
+	channel = "RPM";
+	rectangle = <268, 58, 100, 65>; //<248, 35, 105, 55>; //test
+	extend = 20;
+	taper = 10;
+	thickness = 1;
+	//rgboff = transparent;
+	rgbon = <0, 0, 0 >;
+	range = <1000, 9000 >;
+	sweep = < 175, 55 >;
+	divisions = 90;
+	scale = 0.001;
+}
+
+ruler {
+  	layer = 1;
+  	using = "RPM";
+  	draw_path = yes;
+  	path_color = <0,0,0>;
+  	path_offset = 0;
+  	path_width = 1;
+	path_position = inside;
+	
+  	draw_major = yes;
+  	//major_divisions = 6;
+	major_units = 1000;
+  	major_shape = line;
+  	major_length = 3;
+  	major_width = 2;
+  	major_color = <0,0,0>;
+
+  	draw_label = yes;
+  	label_margin = 10;
+  	fontheight = 8;
+  	foreground = <0,0,0>;
+	fontname = "digital-7";
+	//scale = 0.001;
+}
+
+
+
+
+
+
+

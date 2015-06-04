@@ -1,0 +1,135 @@
+ // RedCarbon 300 kph version
+ // VideoDashboard overlay layout definition file
+ // v1.0
+ // Copyright (c) 2014 Thorsten Kuypers
+
+dashboard {
+	ShortName = "RedCarbon_300kph";
+	PrettyName = "RedCarbon - 300";
+	foreground = <255,255,255>;
+	fontname = "MS Sans Serif";
+	fontheight = 10;
+	fontstyle = regular;
+	justify = center;
+	imagefile = "images\RedCarbon.png";
+}
+
+// speed gauge
+gauge {
+	channel = "Speed_Kph";
+	position = <0,10>;
+	face_image = "images\RedCarbon_Speed_300KPH.png";
+	needle_image = "images\RedCarbon_Needle_L.png";
+	range = <0,300>;
+	sweep = <225,-45>;
+	needle_offset = <119,10>;
+	draw_face=true;
+}
+
+// rpm gauge
+gauge {
+	channel = "RPM";
+	position = <382,25>;
+	face_image = "images\RedCarbon_RPM.png";
+	needle_image = "images\RedCarbon_Needle_R.png";
+	range = <1000,10000>;
+	sweep = <220,20>;
+	needle_offset = <104,9>;
+	draw_face=true;
+}
+
+// throtle bar
+slider {
+	channel = "Throttle";
+	rectangle = <266,246,116,16>;
+	range = <0,100>;
+	rgbpositive = <0,255,0>;
+}
+
+textbox {
+	label="THROTTLE";
+	foreground=<0,0,0>;
+	rectangle=<266,246,116,16>;
+	fontstyle=regular;
+	fontname="Arial";
+}
+
+// brake bar
+slider {
+	channel = "Brake";
+	rectangle = <266,268,116,16>;
+	range = <0,100>;
+	rgbpositive = <255,0,0>;
+}
+
+textbox {
+	label="BRAKE";
+	foreground=<0,0,0>;
+	rectangle=<266,268,116,16>;
+	fontstyle=regular;
+	fontname="Arial";
+}
+
+// gear display
+textbox {
+	channel="Gear";
+	rectangle=<299,174,51,58>;
+	fontheight=40;
+	foreground=<255,0,0>;
+}
+
+// G force circle
+gcircle {
+	rectangle=<275,15,110,110>;
+	foreground=<244,244,244>;
+	radius=3;
+	line_width=2;
+	pointer=<255,0,0>;
+	pointer_width=3;
+	pointer_size=8;
+	divisions=3;
+}
+
+// --- laptimes ---
+// current lap
+textbox {
+	rectangle=<689,180,40,22>;
+	format=integer;
+	channel="lap";
+	foreground=<255,0,0>;
+	fontname=Arial;
+	fontstyle=bold;
+	fontheight=16;		
+}
+
+textbox {
+	rectangle=<635,205,100,22>;
+	format=laptime;
+	channel="laptime";
+	foreground=<255,255,255>;
+	fontname="Arial";
+	fontstyle=bold;
+	fontheight=16;		
+}
+
+// best lap
+textbox {
+	rectangle=<689,230,40,22>;
+	format=integer;
+	channel="best_lap";
+	foreground=<255,0,0>;
+	fontname=Arial;
+	fontstyle=bold;
+	fontheight=16;		
+}
+
+textbox {
+	rectangle=<635,255,100,22>;
+	format=laptime;
+	//channel="LapBestLapTime";
+	channel = "best_laptime";
+	foreground=<255,255,255>;
+	fontname="Arial";
+	fontstyle=bold;
+	fontheight=16;		
+}

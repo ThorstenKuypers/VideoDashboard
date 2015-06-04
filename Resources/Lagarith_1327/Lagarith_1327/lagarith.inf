@@ -1,0 +1,57 @@
+;
+; Lagarith lossless video codec
+;
+; Copyright (c) 2005 Ben Greenwood
+;
+;
+[version]
+signature="$CHICAGO$"
+
+[DefaultInstall]
+CopyFiles=LAG.Files.Inf,LAG.Files.Dll
+AddReg=LAG.Reg
+UpdateInis=LAG.INIs
+
+[DefaultUnInstall]
+DelFiles=LAG.Files.Dll,LAG.Files.Inf,LAG.Files.Ini
+DelReg=LAG.Reg
+UpdateInis=LAG.INIs.Del
+
+[SourceDisksNames]
+1="Lagarith lossless video codec","",1
+
+[SourceDisksFiles]
+LAGARITH.INF=1
+LAGARITH.DLL=1
+
+[DestinationDirs]
+LAG.Files.Inf=17
+LAG.Files.Dll=11
+LAG.Files.Ini=25
+
+[LAG.Files.Inf]
+LAGARITH.INF
+
+[LAG.Files.Dll]
+LAGARITH.DLL
+
+[LAG.Files.Ini] 
+LAGARITH.INI
+
+[LAG.Reg]
+HKLM,SYSTEM\CurrentControlSet\Control\MediaResources\icm\VIDC.LAGS,Description,,"Lagarith lossless codec [LAGS]"
+HKLM,SYSTEM\CurrentControlSet\Control\MediaResources\icm\VIDC.LAGS,Driver,,"lagarith.dll"
+HKLM,SYSTEM\CurrentControlSet\Control\MediaResources\icm\VIDC.LAGS,FriendlyName,,"Lagarith lossless codec [LAGS]"
+
+HKLM,"Software\Microsoft\Windows NT\CurrentVersion\drivers.desc",lagarith.dll,,"Lagarith lossless codec [LAGS]"
+HKLM,"Software\Microsoft\Windows NT\CurrentVersion\Drivers32",VIDC.LAGS,,"lagarith.dll"
+
+HKLM,Software\Microsoft\Windows\CurrentVersion\Uninstall\LAGARITH
+HKLM,Software\Microsoft\Windows\CurrentVersion\Uninstall\LAGARITH,DisplayName,,"Lagarith lossless video codec (Remove Only)"
+HKLM,Software\Microsoft\Windows\CurrentVersion\Uninstall\LAGARITH,UninstallString,,"rundll.exe setupx.dll,InstallHinfSection DefaultUninstall 132 %17%\LAGARITH.INF"
+
+[LAG.INIs]
+system.ini, drivers32,, "VIDC.LAGS=lagarith.dll"
+
+[LAG.INIs.Del]
+system.ini, drivers32, "VIDC.LAGS=lagarith.dll"

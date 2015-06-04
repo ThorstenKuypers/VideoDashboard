@@ -1,0 +1,139 @@
+// F1 style overlay layout file (Season 2012 - KPH)
+// Telemetry Video Overlay dashboard layout definition file
+// Copyright (c) 2013 Thorsten Kuypers
+
+dashboard 
+{
+	ShortName = "F1 Season2012";
+	PrettyName = "F1 2012";
+	ImageFile = "images\F1_2012.png";
+}
+
+ringgauge {
+	channel = "RPM";
+	rectangle = <10, 155, 260, 260>;
+	range = <4000, 16000>;
+	width = 16;
+	sweep = <140, 0>;
+	foreground = <0, 0, 255>;	
+}
+
+ringgauge {
+	channel = "RPM";
+	rectangle = <10, 155, 260, 260>;
+	range = <16000, 18000>;
+	width = 16;
+	sweep = <0, 40>;
+	foreground = <255, 5, 0>;	
+}
+
+ruler {
+	rectangle = <27, 172, 225, 225>;
+	range = <4000, 18000>;
+	draw_path = true;
+	path_position = outside;
+	path_color = #ffffff;
+	path_width = 2;
+	path_range = <4000, 18000>;
+	arc_sweep = <220, -40>;
+	
+	draw_major = yes;
+	major_width = 2;
+	major_length = 2;
+	major_margin = 0;
+	major_color = #ffffff;
+	major_units = 2000;
+	draw_minor = false;
+	
+	draw_label = true;
+	label_margin = 1;
+	fontheight = 9;
+	foreground = #ffffff;
+	scale = 0.001;
+}
+
+textbox {
+	channel ="Speed_Kph";
+	rectangle = <88,207, 100,50>;
+	format = integer;
+	foreground =#00ff00;
+	fontheight = 35;
+	justify = center;
+}
+
+textbox {
+	channel = "Gear";
+	rectangle = <115, 285, 50, 45>;
+	format = integer;
+	foreground = #ffffff;
+	fontheight = 34;
+	justify = center;
+}
+
+slider {
+	channel = "Throttle";
+	rectangle = <80, 344, 120, 15>;
+	rgbpositive = #00ff00;
+	range = <0, 100>;
+}
+
+indicator {
+	channel = "Brake";
+	rectangle = <80, 362, 120, 15>;
+	threshold = 1.0;	
+	shape = rectangle;
+	rgbon = <255, 0, 0>;
+	filled = true;
+}
+
+textbox {
+	label = "THROTTLE";
+	rectangle = <100, 344, 80, 15>;
+	foreground = #ffffff;
+	justify = center;
+	layer = 5;
+}
+
+textbox {
+	label = "BRAKE";
+	rectangle = <100, 362, 80, 15>;
+	foreground = #ffffff;
+	justify = center;
+	layer = 5;
+}
+
+//-----------------------------------
+//   GCircle
+//-----------------------------------
+
+gcircle {
+	rectangle = <76, 11, 128,128>;
+	foreground = <255, 255, 255>;
+	line_width = 1;
+	pointer = < 255, 128, 64 >;
+	radius = 4;
+	pointer_width=4;
+	pointer_size=12;
+	divisions=4;
+	layer = 1;
+}
+
+textbox {
+	channel ="LatG";
+	rectangle = <165, 50, 50, 50>;
+	foreground = #eeeeee;
+	fontheight = 12;
+	format = real;
+	precision = 1;
+	fontstyle = bold;
+}
+
+textbox {
+	channel ="LongG";
+	rectangle = <130, 105, 50, 50>;
+	foreground = #eeeeee;
+	fontheight = 12;
+	format = real;
+	precision = 1;
+	fontstyle = bold;
+}

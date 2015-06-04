@@ -1,0 +1,642 @@
+---
+WeekendInfo:
+ TrackName: interlagos gp
+ TrackID: 212
+ TrackLength: 4.22 km
+ TrackDisplayName: Autódromo José Carlos Pace
+ TrackDisplayShortName: Interlagos
+ TrackCity: São Paulo
+ TrackCountry: Brazil
+ TrackAltitude: 782.37 m
+ TrackLatitude: -23.704804 m
+ TrackLongitude: -46.699672 m
+ TrackNumTurns: 15
+ TrackPitSpeedLimit: 72.00 kph
+ TrackType: road course
+ TrackSurfaceTemp: 40.56 C
+ TrackAirTemp: 25.56 C
+ TrackAirPressure: 27.25 Hg
+ TrackWindVel: 0.89 m/s
+ TrackWindDir: 0.00 rad
+ SeriesID: 114
+ SeasonID: 924
+ SessionID: 37125772
+ SubSessionID: 8730250
+ LeagueID: 0
+ Official: 1
+ RaceWeek: 11
+ EventType: Practice
+ Category: Road
+ SimMode: full
+ WeekendOptions:
+  NumStarters: 45
+  StartingGrid: 2x2 inline pole on left
+  QualifyScoring: best lap
+  CourseCautions: off
+  StandingStart: 1
+  Restarts: single file
+  WindDirection: N
+  WindSpeed: 3.22 km/h
+  WeatherTemp: 25.56 C
+  RelativeHumidity: 55 %
+  Unofficial: 0
+  CommercialMode: consumer
+  NightMode: 0
+  IsFixedSetup: 0
+  StrictLapsChecking: default
+  HasOpenRegistration: 1
+  HardcoreLevel: 0
+
+SessionInfo:
+ Sessions:
+ - SessionNum: 0
+   SessionLaps: unlimited
+   SessionTime: 7200.00 sec
+   SessionNumLapsToAvg: 0
+   SessionType: Practice
+   ResultsPositions:
+   - Position: 1
+     ClassPosition: 0
+     CarIdx: 0
+     Lap: 31
+     Time: 88.755
+     FastestLap: 31
+     FastestTime: 88.755
+     LastTime: 88.930
+     LapsLed: 0
+     LapsComplete: 32
+     LapsDriven: 0.000
+     Incidents: 0
+     ReasonOutId: 0
+     ReasonOutStr: Running
+   - Position: 2
+     ClassPosition: 1
+     CarIdx: 1
+     Lap: 25
+     Time: 88.921
+     FastestLap: 25
+     FastestTime: 88.921
+     LastTime: 88.921
+     LapsLed: 0
+     LapsComplete: 25
+     LapsDriven: 0.000
+     Incidents: 0
+     ReasonOutId: 0
+     ReasonOutStr: Running
+   - Position: 3
+     ClassPosition: 2
+     CarIdx: 5
+     Lap: 1
+     Time: 89.033
+     FastestLap: 1
+     FastestTime: 89.033
+     LastTime: 112.166
+     LapsLed: 0
+     LapsComplete: 8
+     LapsDriven: 0.000
+     Incidents: 0
+     ReasonOutId: 0
+     ReasonOutStr: Running
+   - Position: 4
+     ClassPosition: 3
+     CarIdx: 8
+     Lap: 2
+     Time: 89.934
+     FastestLap: 2
+     FastestTime: 89.934
+     LastTime: 89.934
+     LapsLed: 0
+     LapsComplete: 2
+     LapsDriven: 0.000
+     Incidents: 0
+     ReasonOutId: 0
+     ReasonOutStr: Running
+   - Position: 5
+     ClassPosition: 4
+     CarIdx: 7
+     Lap: 1
+     Time: 90.418
+     FastestLap: 1
+     FastestTime: 90.418
+     LastTime: -1.000
+     LapsLed: 0
+     LapsComplete: 2
+     LapsDriven: 0.000
+     Incidents: 0
+     ReasonOutId: 0
+     ReasonOutStr: Running
+   - Position: 6
+     ClassPosition: 5
+     CarIdx: 2
+     Lap: 11
+     Time: 91.872
+     FastestLap: 11
+     FastestTime: 91.872
+     LastTime: 91.872
+     LapsLed: 0
+     LapsComplete: 11
+     LapsDriven: 0.000
+     Incidents: 0
+     ReasonOutId: 0
+     ReasonOutStr: Running
+   - Position: 7
+     ClassPosition: 0
+     CarIdx: 3
+     Lap: 1
+     Time: 94.519
+     FastestLap: 1
+     FastestTime: 94.519
+     LastTime: 96.699
+     LapsLed: 0
+     LapsComplete: 6
+     LapsDriven: 0.000
+     Incidents: 0
+     ReasonOutId: 0
+     ReasonOutStr: Running
+   - Position: 8
+     ClassPosition: 6
+     CarIdx: 4
+     Lap: 1
+     Time: 110.128
+     FastestLap: 1
+     FastestTime: 110.128
+     LastTime: 110.128
+     LapsLed: 0
+     LapsComplete: 1
+     LapsDriven: 0.000
+     Incidents: 0
+     ReasonOutId: 0
+     ReasonOutStr: Running
+   ResultsFastestLap:
+   - CarIdx: 0
+     FastestLap: 31
+     FastestTime: 88.755
+   ResultsAverageLapTime: -1.000
+   ResultsNumCautionFlags: 0
+   ResultsNumCautionLaps: 0
+   ResultsNumLeadChanges: 0
+   ResultsLapsComplete: -1
+   ResultsOfficial: 0
+
+CameraInfo:
+ Groups:
+ - GroupNum: 1
+   GroupName: Nose
+   Cameras:
+   - CameraNum: 1
+     CameraName: CamNose
+ - GroupNum: 2
+   GroupName: Gearbox
+   Cameras:
+   - CameraNum: 1
+     CameraName: CamGearbox
+ - GroupNum: 3
+   GroupName: Roll Bar
+   Cameras:
+   - CameraNum: 1
+     CameraName: CamRoll Bar
+ - GroupNum: 4
+   GroupName: F Susp
+   Cameras:
+   - CameraNum: 1
+     CameraName: CamF Susp
+ - GroupNum: 5
+   GroupName: R Susp
+   Cameras:
+   - CameraNum: 1
+     CameraName: CamR Susp
+ - GroupNum: 6
+   GroupName: Gyro
+   Cameras:
+   - CameraNum: 1
+     CameraName: CamGyro
+ - GroupNum: 7
+   GroupName: Cockpit
+   Cameras:
+   - CameraNum: 1
+     CameraName: CamCockpit
+ - GroupNum: 8
+   GroupName: Blimp
+   Cameras:
+   - CameraNum: 1
+     CameraName: CamBlimp_00
+   - CameraNum: 2
+     CameraName: CamBlimp_01
+ - GroupNum: 9
+   GroupName: Chopper
+   Cameras:
+   - CameraNum: 1
+     CameraName: CamChopper
+ - GroupNum: 10
+   GroupName: Chase
+   Cameras:
+   - CameraNum: 1
+     CameraName: CamChase
+ - GroupNum: 11
+   GroupName: Far Chase
+   Cameras:
+   - CameraNum: 1
+     CameraName: CamFar Chase
+ - GroupNum: 12
+   GroupName: Rear Chase
+   Cameras:
+   - CameraNum: 1
+     CameraName: CamRear Chase
+ - GroupNum: 13
+   GroupName: Pit Lane
+   Cameras:
+   - CameraNum: 1
+     CameraName: CamPit Lane
+ - GroupNum: 14
+   GroupName: Pit Lane 2
+   Cameras:
+   - CameraNum: 1
+     CameraName: CamPit Lane 2
+ - GroupNum: 15
+   GroupName: Scenic0
+   Cameras:
+   - CameraNum: 1
+     CameraName: Scenic_00
+   - CameraNum: 2
+     CameraName: Scenic_01
+   - CameraNum: 3
+     CameraName: Scenic_02
+   - CameraNum: 4
+     CameraName: Scenic_03
+   - CameraNum: 5
+     CameraName: Scenic_04
+   - CameraNum: 6
+     CameraName: Scenic_05
+   - CameraNum: 7
+     CameraName: Scenic_06
+   - CameraNum: 8
+     CameraName: Scenic_07
+   - CameraNum: 9
+     CameraName: Scenic_08
+   - CameraNum: 10
+     CameraName: Scenic_09
+   - CameraNum: 11
+     CameraName: Scenic_10
+ - GroupNum: 16
+   GroupName: Scenic
+   IsScenic: true
+   Cameras:
+   - CameraNum: 1
+     CameraName: CamScenic_00
+   - CameraNum: 2
+     CameraName: CamScenic_01
+   - CameraNum: 3
+     CameraName: CamScenic_02
+   - CameraNum: 4
+     CameraName: CamScenic_03
+   - CameraNum: 5
+     CameraName: CamScenic_04
+   - CameraNum: 6
+     CameraName: CamScenic_05
+   - CameraNum: 7
+     CameraName: CamScenic_06
+   - CameraNum: 8
+     CameraName: CamScenic_07
+   - CameraNum: 9
+     CameraName: CamScenic_08
+   - CameraNum: 10
+     CameraName: CamScenic_09
+ - GroupNum: 17
+   GroupName: TV1
+   Cameras:
+   - CameraNum: 1
+     CameraName: CamTV1_00
+   - CameraNum: 2
+     CameraName: CamTV1_01
+   - CameraNum: 3
+     CameraName: CamTV1_02
+   - CameraNum: 4
+     CameraName: CamTV1_03
+   - CameraNum: 5
+     CameraName: CamTV1_09
+   - CameraNum: 6
+     CameraName: CamTV1_04
+   - CameraNum: 7
+     CameraName: CamTV1_05
+   - CameraNum: 8
+     CameraName: CamTV1_06
+   - CameraNum: 9
+     CameraName: CamTV1_07
+   - CameraNum: 10
+     CameraName: CamTV1_08
+ - GroupNum: 18
+   GroupName: TV2
+   Cameras:
+   - CameraNum: 1
+     CameraName: CamTV2_00
+   - CameraNum: 2
+     CameraName: CamTV2_01
+   - CameraNum: 3
+     CameraName: CamTV2_02
+   - CameraNum: 4
+     CameraName: CamTV2_03
+   - CameraNum: 5
+     CameraName: CamTV2_04
+   - CameraNum: 6
+     CameraName: CamTV2_05
+   - CameraNum: 7
+     CameraName: CamTV2_06
+   - CameraNum: 8
+     CameraName: CamTV2_07
+   - CameraNum: 9
+     CameraName: CamTV2_08
+ - GroupNum: 19
+   GroupName: TV3
+   Cameras:
+   - CameraNum: 1
+     CameraName: CamTV3_00
+   - CameraNum: 2
+     CameraName: CamTV3_01
+   - CameraNum: 3
+     CameraName: CamTV3_02
+   - CameraNum: 4
+     CameraName: CamTV3_03
+   - CameraNum: 5
+     CameraName: CamTV3_04
+   - CameraNum: 6
+     CameraName: CamTV3_05
+   - CameraNum: 7
+     CameraName: CamTV3_06
+   - CameraNum: 8
+     CameraName: CamTV3_07
+   - CameraNum: 9
+     CameraName: CamTV3_09
+
+RadioInfo:
+ SelectedRadioNum: 0
+ Radios:
+ - RadioNum: 0
+   HopCount: 1
+   NumFrequencies: 5
+   TunedToFrequencyNum: 0
+   ScanningIsOn: 1
+   Frequencies:
+   - FrequencyNum: 0
+     FrequencyName: "@DRIVERS"
+     Priority: 15
+     CarIdx: -1
+     EntryIdx: -1
+     ClubID: 0
+     CanScan: 1
+     CanSquawk: 1
+     Muted: 0
+     IsMutable: 1
+     IsDeletable: 0
+   - FrequencyNum: 1
+     FrequencyName: "@TEAM"
+     Priority: 60
+     CarIdx: 2
+     EntryIdx: -1
+     ClubID: 0
+     CanScan: 1
+     CanSquawk: 1
+     Muted: 0
+     IsMutable: 0
+     IsDeletable: 0
+   - FrequencyNum: 2
+     FrequencyName: "@CLUB"
+     Priority: 20
+     CarIdx: -1
+     EntryIdx: -1
+     ClubID: 42
+     CanScan: 1
+     CanSquawk: 1
+     Muted: 0
+     IsMutable: 1
+     IsDeletable: 0
+   - FrequencyNum: 3
+     FrequencyName: "@RACECONTROL"
+     Priority: 80
+     CarIdx: -1
+     EntryIdx: -1
+     ClubID: 0
+     CanScan: 1
+     CanSquawk: 0
+     Muted: 0
+     IsMutable: 0
+     IsDeletable: 0
+   - FrequencyNum: 4
+     FrequencyName: "@PRIVATE"
+     Priority: 70
+     CarIdx: -1
+     EntryIdx: 2
+     ClubID: 0
+     CanScan: 1
+     CanSquawk: 1
+     Muted: 0
+     IsMutable: 0
+     IsDeletable: 0
+
+DriverInfo:
+ DriverCarIdx: 2
+ DriverHeadPosX: -0.611
+ DriverHeadPosY: 0.355
+ DriverHeadPosZ: 0.566
+ DriverCarRedLine: 6200.000
+ DriverCarFuelKgPerLtr: 0.750
+ DriverCarSLFirstRPM: 4700.000
+ DriverCarSLShiftRPM: 5700.000
+ DriverCarSLLastRPM: 6000.000
+ DriverCarSLBlinkRPM: 6200.000
+ DriverPitTrkPct: 0.065
+ Drivers:
+ - CarIdx: 0
+   UserName: Jari Lohtari
+   AbbrevName: Lohtari, J
+   Initials: JL
+   UserID: 99198
+   CarNumber: 42
+   CarPath: c6r
+   CarClassID: 23
+   CarID: 26
+   CarClassShortName: C6R GT1
+   CarClassRelSpeed: 85
+   CarClassLicenseLevel: 0
+   CarClassMaxFuel: 1.000000 %
+   CarClassWeightPenalty: 0.000000 kg
+   IRating: 4402
+   LicLevel: 19
+   LicSubLevel: 354
+   LicColor: 0x0153db
+   ClubName: Finland
+   DivisionName: Division 2
+ - CarIdx: 1
+   UserName: Mikko Niittymäki
+   AbbrevName: Niittymäki, M
+   Initials: MN
+   UserID: 99203
+   CarNumber: 89
+   CarPath: c6r
+   CarClassID: 23
+   CarID: 26
+   CarClassShortName: C6R GT1
+   CarClassRelSpeed: 85
+   CarClassLicenseLevel: 0
+   CarClassMaxFuel: 1.000000 %
+   CarClassWeightPenalty: 0.000000 kg
+   IRating: 2957
+   LicLevel: 18
+   LicSubLevel: 229
+   LicColor: 0x0153db
+   ClubName: Finland
+   DivisionName: Division 2
+ - CarIdx: 2
+   UserName: Thorsten Kuypers
+   AbbrevName: Kuypers, T
+   Initials: TK
+   UserID: 49567
+   CarNumber: 82
+   CarPath: c6r
+   CarClassID: 23
+   CarID: 26
+   CarClassShortName: C6R GT1
+   CarClassRelSpeed: 85
+   CarClassLicenseLevel: 0
+   CarClassMaxFuel: 1.000000 %
+   CarClassWeightPenalty: 0.000000 kg
+   IRating: 2011
+   LicLevel: 20
+   LicSubLevel: 409
+   LicColor: 0x0153db
+   ClubName: DE-AT-CH
+   DivisionName: Division 3
+ - CarIdx: 3
+   UserName: Mack Bakkum
+   AbbrevName: Bakkum, M
+   Initials: MB
+   UserID: 116848
+   CarNumber: 1
+   CarPath: fordgt
+   CarClassID: 41
+   CarID: 40
+   CarClassShortName: Ford GT
+   CarClassRelSpeed: 51
+   CarClassLicenseLevel: 0
+   CarClassMaxFuel: 1.000000 %
+   CarClassWeightPenalty: 0.000000 kg
+   IRating: 4381
+   LicLevel: 18
+   LicSubLevel: 266
+   LicColor: 0x0153db
+   ClubName: Benelux
+   DivisionName: Division 2
+ - CarIdx: 4
+   UserName: Ed Nash
+   AbbrevName: Nash, E
+   Initials: EN
+   UserID: 43109
+   CarNumber: 94
+   CarPath: c6r
+   CarClassID: 23
+   CarID: 26
+   CarClassShortName: C6R GT1
+   CarClassRelSpeed: 85
+   CarClassLicenseLevel: 0
+   CarClassMaxFuel: 1.000000 %
+   CarClassWeightPenalty: 0.000000 kg
+   IRating: 1479
+   LicLevel: 10
+   LicSubLevel: 295
+   LicColor: 0xfeec04
+   ClubName: Canada
+   DivisionName: Division 4
+ - CarIdx: 5
+   UserName: Patrick Bieri
+   AbbrevName: Bieri, P
+   Initials: PB
+   UserID: 99518
+   CarNumber: 86
+   CarPath: c6r
+   CarClassID: 23
+   CarID: 26
+   CarClassShortName: C6R GT1
+   CarClassRelSpeed: 85
+   CarClassLicenseLevel: 0
+   CarClassMaxFuel: 1.000000 %
+   CarClassWeightPenalty: 0.000000 kg
+   IRating: 4521
+   LicLevel: 20
+   LicSubLevel: 434
+   LicColor: 0x0153db
+   ClubName: DE-AT-CH
+   DivisionName: Division 1
+ - CarIdx: 6
+   UserName: Mike Ruder
+   AbbrevName: Ruder, M
+   Initials: MR
+   UserID: 48770
+   CarNumber: 7
+   CarPath: hpdarx01c
+   CarClassID: 40
+   CarID: 39
+   CarClassShortName: HPD ARX-01c
+   CarClassRelSpeed: 160
+   CarClassLicenseLevel: 0
+   CarClassMaxFuel: 1.000000 %
+   CarClassWeightPenalty: 0.000000 kg
+   IRating: 893
+   LicLevel: 15
+   LicSubLevel: 327
+   LicColor: 0x00c702
+   ClubName: Indiana
+   DivisionName: Division 7
+ - CarIdx: 7
+   UserName: Petri J Lempinen
+   AbbrevName: Lempinen, P
+   Initials: PL
+   UserID: 89545
+   CarNumber: 68
+   CarPath: c6r
+   CarClassID: 23
+   CarID: 26
+   CarClassShortName: C6R GT1
+   CarClassRelSpeed: 85
+   CarClassLicenseLevel: 0
+   CarClassMaxFuel: 1.000000 %
+   CarClassWeightPenalty: 0.000000 kg
+   IRating: 3999
+   LicLevel: 19
+   LicSubLevel: 301
+   LicColor: 0x0153db
+   ClubName: Finland
+   DivisionName: Division 2
+ - CarIdx: 8
+   UserName: Evgen Zagar
+   AbbrevName: Zagar, E
+   Initials: EZ
+   UserID: 61425
+   CarNumber: 9
+   CarPath: c6r
+   CarClassID: 23
+   CarID: 26
+   CarClassShortName: C6R GT1
+   CarClassRelSpeed: 85
+   CarClassLicenseLevel: 0
+   CarClassMaxFuel: 1.000000 %
+   CarClassWeightPenalty: 0.000000 kg
+   IRating: 1747
+   LicLevel: 17
+   LicSubLevel: 125
+   LicColor: 0x0153db
+   ClubName: Central-Eastern Europe
+   DivisionName: Division 3
+
+SplitTimeInfo:
+ Sectors:
+ - SectorNum: 0
+   SectorStartPct: 0.000
+ - SectorNum: 1
+   SectorStartPct: 0.278
+ - SectorNum: 2
+   SectorStartPct: 0.432
+ - SectorNum: 3
+   SectorStartPct: 0.609
+ - SectorNum: 4
+   SectorStartPct: 0.725
+
+...

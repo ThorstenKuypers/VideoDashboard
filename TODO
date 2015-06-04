@@ -1,0 +1,43 @@
+
+	TODO List - TelemetryVideoOverlay
+	
+	to v1.0:
+	--------
+	
+	GUI:
+
+	Filter:
+	
+	libLDF:
+	- implement error and exception handling
+	- add simple layout format check prior to parsing (check for missing ';' at end of line, empty key values, 
+	  missing '}', missing '<>' at tuples, ...)
+	- add layering levels
+	- add transparency for colors (ex rgboff = transparent for sweeper indicators)
+	
+	libDataLogging:
+	- add lap timing information to new system
+	
+	
+	
+	-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	Filter:
+	  
+	GUI:
+	- implement new graph class for capture graph; use preview render graph as base for capture graph
+	[- implement AutoSync tool]
+	
+	
+	  
+	  abgeschlossesn:
+	  ---
+	  - Einheitskreis um 90 Grad im UZS drehen( 0° -> 90° ); dadurch 0° pos von Kreis und Ellipse gleich!
+	  - Bei Kreisberechnung sinus und cosinus tauschen
+	  - neue vars einfügen für render start angle und sweep angle
+	  - alle Berechnungen mit absolut angaben der winkel durchführen (wie in der layout file angegeben)
+	  - end winkel wird nur zur berechnung des sweep benötigt!
+	  - -> berechnung sweep: ende - start
+							bsp.: (-45) - 225 = -270  --> steps werden immer aufaddiert
+								  55 - 175 = -120
+	  - bei sweep < 0 -> im UZS
+			  "   > 0 -> gegen UZS

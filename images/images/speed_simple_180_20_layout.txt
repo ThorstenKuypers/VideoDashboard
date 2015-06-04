@@ -1,0 +1,6 @@
+StartValue=0
+EndValue=180
+StartAngle=240
+SweepAngle=240
+ValueStep=20
+SmallStep=10

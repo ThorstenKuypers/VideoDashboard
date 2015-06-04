@@ -1,0 +1,266 @@
+// simple LCD display (MoTeC SDL look-alike)
+// (C) 2014 Thorsten Kuypers
+// VideoDashboard 
+
+
+dashboard {
+	ShortName = "Simple LCD";
+	PrettyName = "ADL look-alike";
+	ImageFile = "images\SD1.png";
+	foreground = <0,0,0>;
+	fontname = "Arial";
+}
+
+//-----------------------------------
+//   GCircle
+//-----------------------------------
+
+gcircle {
+	rectangle = <605,32,130,130>;	
+	foreground = <255, 255, 255>;
+	line_width = 2;
+	pointer = < 255, 128, 64 >;
+	radius = 3;
+	pointer_width=4;
+	pointer_size=12;
+	divisions=3;
+	layer = 1;
+}
+
+textbox {
+	label = "G";
+	rectangle = <655,82,30,32>;
+	format = text;
+	fontheight = 22;
+	justify = center;
+	layer = 0;
+}
+
+textbox {
+	channel = "LatG";
+	rectangle = <675,60,45,16>;
+	foreground = #dddddd;
+	format = real;
+	precision = 1;
+	signed = yes;
+	fontheight = 12;
+	fontstyle = bold;
+    justify = right;
+}
+
+textbox {
+	channel = "LongG";
+	rectangle = <648,138,40,17>;
+	foreground = #dddddd;
+	format = real;
+	precision = 1;
+	signed = yes;
+	fontheight = 12;
+	fontstyle = bold;
+    justify = center;
+}
+
+//----------------------------------
+//   Lap Timing
+//----------------------------------
+textbox {
+	label = "LAP TIME";
+	format = integer;
+	rectangle = <358,160,80,16>;
+	fontheight = 10;
+    justify = left;
+}
+
+textbox {
+	channel = "laptime";
+	format = laptime;
+	rectangle = <351,175,200,60>;
+	fontname = "Digital-7";
+	fontheight = 40;
+	fontstyle = regular;
+    justify = left;
+}
+
+textbox {
+	label = "BEST:";
+	format = integer;
+	rectangle = <358,225,50,16>;
+	fontheight = 10;
+	fontstyle = regular;
+    justify = center;
+}
+textbox {
+	channel = "best_lap";
+	format = integer;
+	rectangle = <408,225,25,16>;	
+	fontheight = 10;
+	fontstyle = regular;
+    justify = center;
+}
+
+textbox {
+	channel = "best_laptime";
+	format = laptime;
+	rectangle = <352,243,200,60>;
+	fontname = "Digital-7";
+	fontheight = 38;
+	fontstyle = regular;
+    justify = left;
+}
+
+//----------------------------------
+//   Gear
+//----------------------------------
+textbox {
+	channel = "Gear";
+	rectangle = <285,135, 80, 100>;
+	fontname = "Digital-7";
+	fontheight = 80;
+	justify = center;
+}
+
+//----------------------------------
+//   Speed
+//----------------------------------
+textbox {
+	label = "SPEED";
+	rectangle = <215,165,75,20>;
+	fontname = "Arial";
+	fontheight = 10;
+	justify = right;
+}
+
+textbox {
+	channel = "Speed_Kph";
+	rectangle = <162,172,150,70>;
+	fontname = "Digital-7";
+	fontheight = 60;
+	justify = center;
+}
+
+//----------------------------------
+//   Fuel
+//----------------------------------
+textbox {
+	label = "FUEL";
+	rectangle = <510, 140, 50, 18>;
+	fontheight = "10";
+	justify = left;
+}
+
+textbox {
+	channel = "FuelLevel";	
+	format = real;
+	precision = 1;
+	rectangle = <402, 106, 115, 48>;
+	fontname = "Digital-7";
+	fontstyle = regular;
+	fontheight = "40";
+	justify = left;
+}
+
+//----------------------------------
+//   Oil Temp
+//----------------------------------
+textbox {
+	label = "OT";
+	rectangle = <95, 245, 80, 48>;
+	fontname = "Digital-7";
+	fontstyle = regular;
+	fontheight = "40";
+	justify = left;
+}
+
+textbox {
+	channel = "OilTemp";	
+	format = real;
+	precision = 1;
+	rectangle = <155, 245, 115, 48>;
+	fontname = "Digital-7";
+	fontstyle = regular;
+	fontheight = "40";
+	justify = left;
+}
+
+//----------------------------
+// Throttle & Brake
+//----------------------------
+// slider {
+	// channel = "Throttle";
+	// rectangle = <630, 200, 30, 100>;
+	// rgbpositive = <0, 255, 0>;
+	// range = <0,100>;
+// }
+
+// textbox {
+	// label = "T";
+	// rectangle = <630, 300, 30, 28>;
+	// foreground = <0,255,0>;
+	// fontstyle = regular;
+	// fontheight = "20";
+	// justify = center;
+// }
+
+// slider {
+	// channel = "Brake";
+	// rectangle = <670, 200, 30, 100>;
+	// rgbpositive = <255, 0, 0>;
+	// range = <0,100>;
+// }
+
+// textbox {
+	// label = "B";
+	// rectangle = <670, 300, 30, 28>;
+	// foreground = <255,0,0>;
+	// fontstyle = regular;
+	// fontheight = "20";
+	// justify = center;
+// }
+
+//----------------------------
+// Display elements
+//----------------------------
+sweeper {
+	id = "RPM";
+	channel = "RPM";
+	rectangle = <83, 98, 225, 160>;
+	extend = 42;
+	taper = 13;
+	thickness = 3;
+	rgbon = <0, 0, 0 >;
+	range = <1000, 9000 >;
+	sweep = < 175, 55 >;
+	divisions = 90;
+	scale = 0.001;
+}
+
+ruler {
+  	layer = 1;
+  	using = "RPM";
+  	draw_path = yes;
+  	path_color = <0,0,0>;
+  	path_offset = 4;
+  	path_width = 2;
+	path_position = inside;
+	
+  	draw_major = yes;
+	major_units = 1000;
+  	major_shape = line;
+  	major_length = 5;
+  	major_width = 3;
+	major_margin = 0;
+  	major_color = <0,0,0>;
+
+  	draw_label = yes;
+  	label_margin = 12;
+  	fontheight = 14;
+  	foreground = <0,0,0>;
+	fontname = "digital-7";
+}
+
+
+
+
+
+
+

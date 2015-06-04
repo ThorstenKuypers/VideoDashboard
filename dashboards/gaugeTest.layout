@@ -1,0 +1,62 @@
+// Dashboard configuration file
+// Copyright (c) 2012 - 2014 Thorsten Kuypers.
+//V1.0
+
+dashboard {
+	ShortName="GaugesII MPH"; // The name in the dashboard selection list
+	PrettyName ="Gauges2"; // An optional descriptive name
+	//ImageFile= "D:\Development\Projects\VideoDashboard\bin\Debug\x86\dashboards\images\RedCarbon.png";// The image file used by this dash
+	foreground = <255,255,255>; // default color for text and drawn elements
+	width = 1024;
+	height = 300;
+}
+
+
+gauge {
+	id = "Speed";
+	variable = "Speed_Kph"; // variable name
+	range = <0, 300>; // range of gauge
+	rectangle = <10,10, 300,300>; // size & position on the dash
+	sweep = <225,-45>;
+	foreground = <255, 100, 100>;
+	radius = 125;
+}
+
+
+textbox {
+	channel = "RPM";
+	format = integer;
+	precision = 2;
+	rectangle = <245,5,50,17>;
+	foreground = <0,0,0>;
+	justify = center;
+}
+
+ruler {
+	using = "Speed";
+	path = arc;
+	draw_path = yes;
+	path_color = <0,0,255>;
+	path_width = 2;
+	path_offset = 10;
+	path_position = inside;
+	draw_label = yes;
+	label_margin = 5;
+	foreground = <0,0,0>;
+	fontheight = 12;
+	fontname = "Time New Roman";
+	fontstyle = bold;
+	draw_major = yes;
+	major_units = 20;
+	major_shape = line;
+	major_length = 10;
+	major_width = 3;
+	major_color = <255,0,0>;
+	draw_minor = yes;
+	minor_units = 10;
+	minor_color = <255,0,0>;
+	minor_shape = line;
+	minor_length = 5;
+	minor_width = 2;
+	layer = 1;
+}

@@ -1,0 +1,62 @@
+# SimpleDash layout file
+# Telemetry Video Overlay dashboard layout definition file
+# v0.1
+# Copyright (c) 2011 Thorsten Kuypers
+# - lines starting with # are coments
+
+[Dashboard]
+Name=SimpleDashKPH
+File=SimpleDash.png
+
+[Gauge.Speedo]
+File=SimpleSpeedKph.png
+# x,y
+Position=0,0
+# width,heigth
+Size=220,155
+# min,max
+ValueRange=0,300
+# StartAngle,SweepAngle
+Angles=260,200
+#
+NeedleCenter=110,110
+# radius from needle center to scale
+Radius=89
+Units=kph
+
+[Gauge.Rpm]
+File=
+Position=290,0
+Size=220,155
+ValueRange=0,10000
+Angles=260,200
+NeedleCenter=400,110
+Radius=89
+Units=rpm
+
+[Slider.LatG]
+# 0 = min -> max; 1 = min <- 0 -> max; 2 = max -> min
+Type=0
+Position=110,155
+Size=290,15
+ValueRange=-3,3
+Color=255,255,255
+
+[Label.Unit]
+Position=231,86
+Size=45,17
+Font=Arial
+FontSize=15
+# styles: 0 = regular; 1 = bold; 2 = italic
+FontStyle=0
+Color=255,255,255
+
+[TextBox.Speed]
+Position=231,61
+Size=45,25
+Font=Arial
+FontSize=15
+# styles: 0 = regular; 1 = bold; 2 = italic
+FontStyle=1
+Color=255,255,255
+

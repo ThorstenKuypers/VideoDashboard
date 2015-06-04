@@ -1,0 +1,62 @@
+// Dashboard configuration file
+// Copyright (c) 2012 - 2014 Thorsten Kuypers.
+# V1.0
+
+dashboard {
+	ShortName="GaugesII MPH"; // The name in the dashboard selection list
+	PrettyName ="Gauges2"; // An optional descriptive name
+	//ImageFile= "D//\Development\Projects\VideoDashboard\bin\Debug\dashboards\images\RedCarbon.png";// The image file used by this dash
+	//targetwidth = 1024; // The dash is scaled for a 1024 wide frame
+	foreground = <255,255,255>; // default color for text and drawn elements
+	fontname = “Arial”; // default font fontheight = 12; // default font size justify = center; // default text justification
+	width = 1024;
+	height = 300;	
+}
+
+ringgauge {
+	id = "rpm";
+	variable = "RPM";
+	marker_hold_time = 4;
+	marker_width = 2;
+	marker_color = <255,0,0>;
+	rectangle = < 50, 50, 175, 175>;
+	width = 25;
+	foreground = #ad2925;
+	//scale = 0.001;
+	range = < 1000, 7000 >;
+	sweep = < 120, 60 >;
+	shaded = yes;
+	rotation = ccw;
+	layer = 1;
+}
+
+ruler {
+  	layer = 0;
+  	using = "rpm";
+  	draw_path = yes;
+	path_width = 2;
+	path_offset = -4;
+	path_position = outside;
+	path_color = <0,0,0>;
+	
+	draw_label = yes;
+	label_margin = 5;
+	foreground = <0,0,0>;
+	fontheight = 12;
+	fontstyle = bold;
+	
+	draw_major = yes;
+	major_units = 1000;
+	major_length = 15;
+	major_color = <0,0,0>;
+	major_width = 2;
+	//major_margin = 1;
+	
+	draw_minor = yes;
+	minor_units = 250;
+	minor_shape = line;
+	minor_length = 10;
+	minor_width = 1;
+	minor_color = <0,0,0>;
+	scale = 0.001;
+}

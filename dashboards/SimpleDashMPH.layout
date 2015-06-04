@@ -1,0 +1,66 @@
+# SimpleDash layout file
+# Telemetry Video Overlay dashboard layout definition file
+# v0.1
+# Copyright (c) 2011 Thorsten Kuypers
+# - lines starting with # are coments
+
+[Dashboard]
+Name=SimpleDashMPH
+File=SimpleDash.png
+
+# elements are defined by elementType.channelName
+[Gauge.Speed]
+File=SimpleSpeedMph.png
+# x,y
+Position=0,10
+# width,heigth
+Size=220,155
+# min,max
+ValueRange=0,200
+# StartAngle,SweepAngle
+Angles=260,200
+#
+NeedleCenter=110,110
+# radius from needle center to scale
+Radius=89
+Units=mph
+
+[Gauge.Rpm]
+File=
+Position=300,0
+Size=220,155
+ValueRange=0,10000
+Angles=260,200
+NeedleCenter=410,110
+Radius=89
+Units=rpm
+
+[Slider.LatG]
+# 0 = min -> max; 1 = min <- 0 -> max; 2 = max -> min
+Type=1
+# h = horizontal; v = vertical
+BarType=h
+Position=120,160
+Size=290,15
+ValueRange=-3,3
+Color=255,255,255
+
+[Label.Speed]
+Position=242,30
+Size=45,22
+Font=Arial
+FontSize=20
+# styles: 0 = regular; 1 = bold; 2 = italic; 3 = bold-italic
+FontStyle=1
+Color=255,255,255
+Units=mph
+
+[TextBox]
+Position=242,52
+Size=45,20
+Font=Arial
+FontSize=17
+# styles: 0 = regular; 1 = bold; 2 = italic; 3 = bold-italic
+FontStyle=2
+Color=255,255,255
+Text=mph

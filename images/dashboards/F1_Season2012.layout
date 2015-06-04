@@ -1,0 +1,86 @@
+# F1 style overlay layout file (Season 2012 - KPH)
+# Telemetry Video Overlay dashboard layout definition file
+# v0.3
+# Copyright (c) 2013 Thorsten Kuypers
+# - lines starting with # are coments
+
+[Dashboard]
+Name=F1 Season 2012
+File=F1_2012.png
+
+[Slider.Throttle]
+# 0 = min -> max; 1 = min <- 0 -> max; 2 = max -> min
+Type=0
+# h = horizontal; v = vertical
+BarType=h
+Position=80,344
+Size=120,16
+ValueRange=0,100
+Color=2,166,17
+
+[Slider.Brake]
+# 0 = min -> max; 1 = min <- 0 -> max; 2 = max -> min
+Type=0
+# h = horizontal; v = vertical
+BarType=h
+Position=80,362
+Size=120,16
+ValueRange=0,100
+Color=204,0,0
+
+[Label.Speed]
+Position=95,202
+Size=90,45
+Font=Arial
+FontSize=45
+# styles: 0 = regular; 1 = bold; 2 = italic; 3 = bold-italic
+FontStyle=0
+Color=0,255,18
+Units=kph
+
+[Label.Gear]
+Position=115,285
+Size=50,50
+Font=Arial
+FontSize=44
+# styles: 0 = regular; 1 = bold; 2 = italic; 3 = bold-italic
+FontStyle=1
+Color=255,255,255
+Units=
+
+# !!! new in v0.3 of layout definition format (LDF) !!!
+# Sweeper Element:
+# Sweeper Elements are curved bars. Currently only circular shape is supported. Will be extended for elliptical shapes in the future!
+[Sweeper.Rpm]
+# Display Type: 0 - Circular
+#(DisplayType=0)
+# Position (X,Y) of the bounding rectangle of the sweeper element
+Position=26,171
+# Width/Height of bounding rectangle
+Size=228,228
+# min,max
+ValueRange=4000,18000
+# StartAngle,SweepAngle
+Angles=230,260
+# value above which color changes 
+ThresholdValue=16000
+# Width of the bar itself
+Width=16
+# Color to which the bar changes if above ThresholdValue
+ThresholdColor=255,45,45
+Color=155,35,244
+
+# GCircle is a seperate element, defined by the following element items
+[GCircle]
+Position=76,11
+Center=140,75
+Radius=64
+Size=128,128
+LatRange=-4,4
+LongRange=-4,4
+GridColor=255,255,255
+# BallType: 0 - free (free floating - dot only) / 1 - connected (with center)
+BallType=0
+BallSize=6
+BallColor=255,0,0
+

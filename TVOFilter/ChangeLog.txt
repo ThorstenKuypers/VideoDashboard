@@ -1,0 +1,10 @@
+
+CHANGELOG:
+-----------
+
+	0.2.2	- added video scaling (beginning) and prepared for dashboard element
+			  implementation
+			- added data buffer interface
+			- added config interface
+	0.2		- rewrite of v0.1 as DirectShow TransformFilter
+	0.1		- initial implementation of DirectShow TransInPlaceFilter

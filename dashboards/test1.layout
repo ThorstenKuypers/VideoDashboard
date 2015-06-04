@@ -1,0 +1,29 @@
+:: Dashboard configuration file
+:: Copyright (c) 2012 - 2014 Thorsten Kuypers.
+# V1.0
+
+dashboard {
+	ShortName="GaugesII MPH"; :: The name in the dashboard selection list
+	PrettyName ="Gauges2"; :: An optional descriptive name
+	::ImageFile= "D:\Development\Projects\VideoDashboard\bin\Debug\dashboards\images\RedCarbon.png";:: The image file used by this dash
+	::targetwidth = 1024; :: The dash is scaled for a 1024 wide frame
+	foreground = <255,255,255>; :: default color for text and drawn elements
+	::fontname = “Eurostile”; :: default font fontheight = 12; :: default font size justify = center; :: default text justification
+	width = 1024;
+	height = 300;	
+}
+
+textbox
+{
+	variable = best_laptime; :: Display only if brake channel is present
+	format = laptime;
+	::scale =100.0;
+	::precision = 0;
+	label = "Laptime"; :: The text string
+	rectangle = <20,20,100,30>; :: size & position
+	fontheight = 15; :: Override default font
+	fontstyle = normal; :: Override default style
+	justify = center; :: Override default justification
+	foreground = <0,0,0>;
+}
+

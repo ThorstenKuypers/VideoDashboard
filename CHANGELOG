@@ -1,0 +1,17 @@
+
+	VideoDashboard Change Log
+	---------------------------------
+	
+    v0.8.2 - *ADDED: new dahboards (separate download package)
+		   - *FIXED: problem with scaling of the final dashboard image when video is rendered
+		   - *FIXED: error where wrong settings from a project file were loaded, which made sharing of project files impossible
+		   - *FIXED: calculation for synchronizing data and video. Now source videos with virtually any framerate
+					 can be used. (does no longer have to be a multiple of the telemetry sample rate)
+		   - *FIXED: bug in GUI where in some cases video and data gets out of synch when scrolling through the video with enabled latch
+					 or during playback.
+		   
+	v0.8.1 - fixed crash at startup due to missing projects folder
+		   - fixed bug with the last lap in the telemetry file
+		   - fixed flickering of the Lat and Long G bars in the GUI
+		   - fixed bug where the in- or out-lap was displayed as fastest lap
+		   - now the project logfile gets deleted if project is not saved to file

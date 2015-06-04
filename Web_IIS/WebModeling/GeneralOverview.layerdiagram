@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<layerModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/SimpleShapesModel" dslVersion="1.0.0.0" Id="b9870bbc-11e6-44db-bc3e-f8075979fd9d" xmlns="http://schemas.microsoft.com/VisualStudio/TeamArchitect/LayerDesigner">
+  <layers>
+    <layer Id="2dd02503-1be1-4613-8b7c-6344a8fdb1f2" name="Homepage">
+      <dependencyToLayers>
+        <dependencyFromLayerToLayer Id="fcb55b81-7b7e-4f36-9cef-f96615c9d67d" direction="Forward">
+          <layerMoniker Id="7113364d-15d8-46f2-b5cb-9a07e393df02" />
+        </dependencyFromLayerToLayer>
+      </dependencyToLayers>
+    </layer>
+    <layer Id="7113364d-15d8-46f2-b5cb-9a07e393df02" name="LicensingService">
+      <dependencyToLayers>
+        <dependencyFromLayerToLayer Id="1685bbd6-3440-4881-83c1-4d0a58fe7c3a" direction="Bidirectional">
+          <layerMoniker Id="b6c06cfc-f007-4cd1-8d3d-994d8baa42b7" />
+        </dependencyFromLayerToLayer>
+        <dependencyFromLayerToLayer Id="176c3273-f559-43a8-a361-192b57e9e4a9" direction="Bidirectional">
+          <layerMoniker Id="327d5d24-789a-46bc-a0b0-61d3b3028ccb" />
+        </dependencyFromLayerToLayer>
+      </dependencyToLayers>
+    </layer>
+    <layer Id="b6c06cfc-f007-4cd1-8d3d-994d8baa42b7" name="LicensingServer">
+      <dependencyToLayers>
+        <dependencyFromLayerToLayer Id="e1db4863-b278-4306-b7fe-75357ff9a7a7" direction="Bidirectional">
+          <layerMoniker Id="9f2d42cc-d4e1-4d7e-8c02-2c6139cad45e" />
+        </dependencyFromLayerToLayer>
+      </dependencyToLayers>
+    </layer>
+    <layer Id="327d5d24-789a-46bc-a0b0-61d3b3028ccb" name="PaymentProcessor" />
+    <layer Id="96662fce-d8e5-4ffb-af1d-7eaf571d39dc" name="Rhino.Licensing">
+      <dependencyToLayers>
+        <dependencyFromLayerToLayer Id="9dae8366-6d03-4aa1-abc4-9ddd65b30abd" direction="Bidirectional">
+          <layerMoniker Id="b6c06cfc-f007-4cd1-8d3d-994d8baa42b7" />
+        </dependencyFromLayerToLayer>
+      </dependencyToLayers>
+    </layer>
+    <layer Id="9f2d42cc-d4e1-4d7e-8c02-2c6139cad45e" name="Activatar" />
+    <layer Id="374c81ff-6314-4233-bb15-bb22faf02abc" name="Database">
+      <dependencyToLayers>
+        <dependencyFromLayerToLayer Id="1e8f061c-996f-4486-85f4-d21598a9ad84" direction="Bidirectional">
+          <layerMoniker Id="7113364d-15d8-46f2-b5cb-9a07e393df02" />
+        </dependencyFromLayerToLayer>
+      </dependencyToLayers>
+    </layer>
+  </layers>
+</layerModel>

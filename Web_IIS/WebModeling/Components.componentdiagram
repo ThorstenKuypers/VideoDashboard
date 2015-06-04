@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<componentModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm4="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm5="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/ModelStore" dslVersion="1.0.0.0" Id="6cb2d0dc-e3ad-4392-a8e7-5c55d919ab51" name="UMLComponentDiagram1" linkedPackageId="ea8a2496-3242-4cdd-b5fa-4b4050dd8f28" xmlns="http://schemas.microsoft.com/VisualStudio/TeamArchitect/ComponentDesigner">
+  <profileInstances>
+    <packageHasProfileInstances Id="0a1f44ac-9972-4621-a824-d2cf678c93c6">
+      <profileInstance Id="3bfc879c-fae7-48fb-b67f-c8d787ea6deb" name="StandardProfileL2">
+        <elementDefinition Id="e34d544e-0fea-4ed6-ac5e-1b74119ac791" />
+      </profileInstance>
+      <elementDefinition Id="0caec977-1f8c-4ba3-a7db-8cc9ad9cc73b" />
+    </packageHasProfileInstances>
+    <packageHasProfileInstances Id="4e9ec245-6356-4b98-821c-4060e40b37f5">
+      <profileInstance Id="9f2f018e-b53b-445f-9ec1-61b98f3e40e4" name="StandardProfileL3">
+        <elementDefinition Id="532ea607-fb19-44b8-8502-3351b05452be" />
+      </profileInstance>
+      <elementDefinition Id="29349502-908c-4fda-9054-c48619c59ed0" />
+    </packageHasProfileInstances>
+  </profileInstances>
+  <packagedElements>
+    <componentModelHasComponents>
+      <component Id="9d2ee67e-71ad-4293-9ed3-8ddf0a6d38fc" name="Homepage" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="4f1381df-7fed-454a-8879-0ed126e334ce" />
+        <ownedAttributesInternal>
+          <part Id="11f56490-bb1e-424f-9f0c-c1c75ca1b518" name="LicensingService" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="Composite" isComposite="true">
+            <elementDefinition Id="ffd359d2-2f14-42c5-9417-6fdb6f6974c2" />
+            <type_NamedElement>
+              <componentMoniker Id="7ac7e2f1-da9a-462c-a3f2-2ed368bd64ff" LastKnownName="Component1" />
+            </type_NamedElement>
+          </part>
+        </ownedAttributesInternal>
+      </component>
+    </componentModelHasComponents>
+    <componentModelHasComponents>
+      <component Id="7ac7e2f1-da9a-462c-a3f2-2ed368bd64ff" name="Component1" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="f01ff090-d83b-46d1-b5d6-8233711c6030" />
+        <ownedAttributesInternal>
+          <providedInterface Id="f31de37a-7f27-4809-afb4-c4ac24bf3946" name="Port1" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isService="false" isBehavior="false">
+            <elementDefinition Id="a5e494a1-bb21-4b9c-98d9-fa85ad8aa292" />
+            <type_NamedElement>
+              <interfaceMoniker Id="abd03670-229d-42f6-b255-5e6aeb24b8a8" LastKnownName="ILicensingService" />
+            </type_NamedElement>
+          </providedInterface>
+        </ownedAttributesInternal>
+      </component>
+    </componentModelHasComponents>
+    <modelContainsNamedElements>
+      <Interface Id="abd03670-229d-42f6-b255-5e6aeb24b8a8" name="ILicensingService" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="dddba748-e983-4e84-b53b-a7eef61f1dd6" />
+      </Interface>
+    </modelContainsNamedElements>
+  </packagedElements>
+  <package Id="ea8a2496-3242-4cdd-b5fa-4b4050dd8f28" name="WebModeling">
+    <elementDefinition Id="6feabeaa-94b5-46ad-9d0a-a5a4037e766c" />
+  </package>
+</componentModel>

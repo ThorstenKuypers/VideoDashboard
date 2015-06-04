@@ -1,0 +1,51 @@
+:: Dashboard configuration file
+:: Copyright (c) 2012 - 2014 Thorsten Kuypers.
+# V1.0
+
+dashboard {
+	ShortName="GaugesII MPH"; :: The name in the dashboard selection list
+	PrettyName ="Gauges2"; :: An optional descriptive name
+	ImageFile= "C:\projects\VideoDashboard\bin\Debug\dashboards\images\RedCarbon.png";:: The image file used by this dash
+	targetwidth = 1024; :: The dash is scaled for a 1024 wide frame
+	foreground = <255,255,255>; :: default color for text and drawn elements
+	::fontname = “Eurostile”; :: default font fontheight = 12; :: default font size justify = center; :: default text justification
+}
+
+sweeper {
+	id = "RPM";
+	variable = RPM;
+	rectangle = < 10, 10, 250, 250>; :test
+	extend = 10;
+	taper = 1;
+	thickness = 1;
+	rgboff = transparent;
+	rgbon = <0, 0, 0 >;
+	range = <1000, 9000 >;
+	sweep = < 180, 0 >;
+	divisions = 90;
+	path = arc;
+}
+
+ruler {
+  	layer = 1;
+  	using = "RPM";
+  	draw_path = yes;
+  	path_color = <0,0,0>;
+  	path_offset = 4;
+  	path_width = 1;
+
+  	draw_major = yes;
+  	major_divisions = 8;
+  	major_shape = line;
+  	major_length = 4;
+  	major_width = 2;
+  	major_color = <0,0,0>;
+
+  	draw_label = yes;
+  	label_margin = 10;
+  	scale = 0.001;
+  	:fontstyle =bold;
+  	fontheight = 10;
+  	foreground = <0,0,0>;
+	path = arc;
+}

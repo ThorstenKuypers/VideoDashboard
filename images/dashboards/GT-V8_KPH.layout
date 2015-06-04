@@ -1,0 +1,170 @@
+// GT-V8 layout file (KPH)
+// VideoDashboard overlay layout definition file
+// v1.0
+// Copyright (c) 2014 Thorsten Kuypers
+
+dashboard {
+	ShortName = "GT-V8_KPH";
+	PrettyName = "GT-V8 kph version";
+	ImageFile = "images\GT-V8.png"; 
+	TargetWidth = 1024;
+}
+
+gauge {
+	channel = "Speed_Kph";
+	range = <0,300>;
+	position = <362,0>;
+	sweep = <225,-45>;
+	face_image = "images\GT-V8_Speed_kph.png";
+	needle_image = "images\GT-V8_Needle_Speed.png";
+	needle_offset = <120,14>;
+	draw_face = true;
+}
+
+gauge {
+	channel = "RPM";
+	range = <0,8000>;
+	scale = 0.001;
+	rectangle = <199,49, 230,230>;
+	sweep = <270,60>;
+	needle_image = "images\GT-V8_Needle_Tach.png";
+	needle_offset = <98,12>;
+	draw_face = true;
+}
+textbox {
+	channel="RPM";
+	format=real;
+	rectangle=<0,0,50,20>;
+	foreground=<0,0,0>;
+}
+
+// indicator {
+	// channel = "RPM";
+	// position = <302, 115>;
+	// image_on="images\LED_yellow_on.png";
+	// image_off="images\LED_yellow_off.png";
+	// threshold = 6500;
+// }
+
+slider {
+	channel = "Throttle";
+	rectangle = <169,139,25,100>;
+	range = <0,100>;
+	rgbPositive = <0,255,37>;
+	
+}
+
+slider {
+	channel = "Brake";
+	rectangle = <127,139,25,100>;
+	range = <0,100>;
+	rgbPositive = <255,0,0>;
+}
+
+textbox {
+	channel = "lap";
+	rectangle = <60,127,50,30>;
+	fontname = "Trebuchet MS Bold";
+	fontheight = 20;
+	foreground = <255,255,37>;
+}
+
+textbox {
+	channel = "laptime";
+	format = laptime;
+	rectangle = <16,157,98,24>;
+	fontname = "Trebuchet MS Bold";
+	fontheight = 18;
+	foreground = <255,255,37>;
+	
+}
+
+textbox {
+	channel = "best_lap";
+	rectangle = <60,186,50,30>;
+	fontname = "Trebuchet MS Bold";
+	fontheight = 20;
+	foreground = <255,255,37>;
+
+}
+
+textbox {
+	channel = "best_laptime";
+	format = laptime;
+	rectangle = <16,215,98,24>;
+	fontname = "Trebuchet MS Bold";
+	fontheight = 18;
+	foreground = <255,255,37>;
+
+}
+
+slider {
+	channel = "LongG";
+	rectangle = <801,39,18,90>;
+	range = <0,-3>;
+	rgbNegative = <0,0,255>;
+}
+
+slider {
+	channel = "LongG";
+	rectangle = <801,149,18,90>;
+	range = <2,0>;
+	rgbPositive = <0,0,255>;
+}
+
+slider {
+	channel = "LatG";
+	rectangle = <820,130,90,18>;
+	range = <0,3>;
+	rgbPositive = <0,0,255>;
+}
+
+slider {
+	channel = "LatG";
+	rectangle = <710,130,90,18>;
+	range = <-3,0>;
+	rgbNegative = <0,0,255>;
+}
+
+textbox {
+	channel = "LongG";
+	format = real;
+	precision = 2;
+	rectangle = <785,8,98,24>;
+	fontname = "Trebuchet MS Bold";
+	fontheight = 14;
+	foreground = <255,255,37>;
+}
+
+textbox {
+	channel = "LatG";
+	rectangle = <653,124,98,24>;
+	format = real;
+	precision = 2;
+	fontname = "Trebuchet MS Bold";
+	fontheight = 14;
+	foreground = <255,255,37>;
+
+}
+
+textbox {
+	channel = "Gear";
+	rectangle = <331,198,40,55>;
+	fontname = "Trebuchet MS Bold";
+	fontheight = 26;
+	foreground = <255,0,0>;
+
+}
+
+// [LED.Rpm] -- INDICATORS TO BE IMPLEMENTED
+// #Position of led element; !!! center-position !!!
+// Position=314,124
+// Size=0,0
+// #Image file to display when led is on
+// FileOn=LED_yellow_on.png
+// #Image file to display when led is off
+// FileOff=LED_yellow_off.png
+// #value when LED turns on (at or above this value)
+// ValOn=6900
+// #value when LED turns off (at or below this value)
+// ValOff=6899
