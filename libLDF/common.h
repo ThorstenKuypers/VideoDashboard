@@ -15,12 +15,14 @@
 #include "libDataLogging.h"
 #include "errex.h"
 
-using namespace libDataLogging::DataLogger;
 
 namespace libLDF
 {
 	using namespace std;
 	using namespace Gdiplus;
+	using namespace iR_sdk;
+	using namespace libDataLogging;
+	using namespace libDataLogging::DataLogger;
 
 #define PI 3.141592653f
 #define RAD(x) ((PI / 180.0f) * x)
@@ -108,7 +110,7 @@ namespace libLDF
 
 	enum _slider_orientation
 	{
-		vertical =0,
+		vertical = 0,
 		horizontal
 	};
 	typedef libLDF::_slider_orientation SliderOrientation;

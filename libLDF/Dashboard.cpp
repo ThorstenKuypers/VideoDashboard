@@ -240,7 +240,7 @@ void CDashboard::SetTextJustification(string& s)
 	}
 }
 
-void CDashboard::SetDataLogger(IDataLogging* logger)
+void CDashboard::SetDataLogger(IDataLogger* logger)
 {
 	_dataLoggerInst = logger;
 

@@ -7,7 +7,7 @@
 #include "irsdk_defines.h"
 
 namespace libDataLogging{
-	namespace LiveLogging {
+	namespace LiveDataLogger {
 
 
 #pragma region "CLiveChannel"

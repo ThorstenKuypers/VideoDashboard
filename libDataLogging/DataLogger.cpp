@@ -29,11 +29,12 @@
 #include "DataLogger.h"
 
 
+using namespace libDataLogging;
 using namespace libDataLogging::DataLogger;
 
 
 #pragma region // class CDataLogger implementation
-CDataLogger::CDataLogger(wchar_t* logfile) : IDataLogging()
+CDataLogger::CDataLogger(wchar_t* logfile) : IDataLogger()
 {
 	wchar_t* ext = NULL;
 
@@ -89,7 +90,7 @@ PLAPINFO CDataLogger::GetLapInfo(int lap)
 	return this->m_dataLogger->GetLapInfo(lap);
 }
 
-PFAST_LAP_INFO CDataLogger::GetFastLapInfo()
+PFASTEST_LAP_INFO CDataLogger::GetFastLapInfo()
 {
 	return this->m_dataLogger->GetFastLapInfo();
 }

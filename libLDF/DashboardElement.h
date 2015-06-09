@@ -79,7 +79,7 @@ namespace libLDF
 		bool UseGlobalFontStyle() { return _useGlobalFontstyle; }
 		bool UseGlobalTextJustify() { return _useGlobalJustify; }
 
-		void SetDataLoggerInstance(libDataLogging::DataLogger::IDataLogging* inst) { _dataLoggerInst = inst; }
+		void SetDataLoggerInstance(libDataLogging::DataLogger::IDataLogger* inst) { _dataLoggerInst = inst; }
 
 	protected:
 
@@ -135,7 +135,7 @@ namespace libLDF
 		// eg when an image is used and the size is taken from that image
 		Gdiplus::Point _position;
 
-		libDataLogging::DataLogger::IDataLogging* _dataLoggerInst;
+		libDataLogging::DataLogger::IDataLogger* _dataLoggerInst;
 	};
 
 }

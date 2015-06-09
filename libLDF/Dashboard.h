@@ -1,6 +1,8 @@
 #pragma once
 
 #include <fstream>
+#include <Windows.h>
+#include <gdiplus.h>
 
 #include "common.h"
 #include "libLDF.h"
@@ -78,7 +80,7 @@ namespace libLDF
 		void SetFontHeight(int h) { _fontHeight = h; }
 		int GetFontHeight() { return _fontHeight; }
 
-		void SetDataLogger(IDataLogging* logger);
+		void SetDataLogger(IDataLogger* logger);
 
 		void AddDashboardElement(CDashboardElement* element) { _elements.push_back(element); }
 
@@ -94,7 +96,7 @@ namespace libLDF
 		bool _showBoundingBoxes;
 
 		// the DataLogger instance
-		IDataLogging* _dataLoggerInst;
+		IDataLogger* _dataLoggerInst;
 
 		std::string _dashFilePath;
 

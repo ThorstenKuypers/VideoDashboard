@@ -1,3 +1,3 @@
 #include "LiveChannels.h"
 
-using namespace libDataLogging::LiveLogging;
+using namespace libDataLogging::LiveDataLogger;

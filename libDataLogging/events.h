@@ -8,7 +8,7 @@
 #include "LiveChannels.h"
 
 namespace libDataLogging {
-	namespace LiveLogging {
+	namespace LiveDataLogger {
 
 #pragma region "Event base implementations"
 		// base object for event specific arguments

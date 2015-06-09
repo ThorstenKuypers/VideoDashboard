@@ -11,47 +11,38 @@
 
 using namespace libDataLogging;
 using namespace libDataLogging::DataLogger;
-using namespace libDataLogging::LiveLogging;
+using namespace libDataLogging::LiveDataLogger;
 
-LIBDATALOGGING_API struct IDataLogging* init_instance(wchar_t* logfile)
+LIBDATALOGGING_API bool make_instance(LIBDATALOGGING_ID iid, void** inst, void* param)
 {
-	try {
-		struct IDataLogging* p =new CDataLogger(logfile);
-		if (p) {
-			return p;
+	if (IsEqualGUID(iid, IID_DATALOGGER)) {
+
+		if (param != nullptr) {
+
+			IDataLogger* p = new CDataLogger(static_cast<wchar_t*>(param));
+			if (p != nullptr) {
+
+				*inst = nullptr;
+				*inst = p;
+				return true;
+			}
 		}
 	}
-	catch (...)
-	{
-		return NULL;
+
+	if (IsEqualGUID(iid, IID_LIVELOGGER)) {
+
+		ILiveLogger* p = new CLiveDataLogger();
+		if (p != nullptr) {
+
+			*inst = nullptr;
+			*inst = p;
+			return true;
+		}
 	}
-
-	return NULL;
+	return false;
 }
 
-LIBDATALOGGING_API void release_instance(struct IDataLogging* inst)
+LIBDATALOGGING_API void release_instance(void* inst)
 {
-	if (inst) {
-		CDataLogger* p =(CDataLogger*)inst;
 
-		delete p;
-		p =NULL;
-		inst =NULL;
-	}
 }
-
-LIBDATALOGGING_API ILiveLogger* make_liveLogger()
-{
-	return new CLiveDataLogger();
-}
-
-LIBDATALOGGING_API void release_live(libDataLogging::LiveLogging::ILiveLogger* inst)
-{
-	if (inst != nullptr)
-	{
-		CLiveDataLogger* l = static_cast<CLiveDataLogger*>(inst);
-		delete l;
-		l = nullptr;
-	}
-}
-

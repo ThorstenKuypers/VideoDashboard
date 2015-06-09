@@ -19,7 +19,10 @@ using namespace std;
 
 
 namespace libDataLogging {
-	namespace LiveLogging {
+	namespace LiveDataLogger {
+
+		using namespace iR_sdk;
+		using namespace libDataLogging;
 
 #pragma region "CLiveDataLogger"
 		// This is the "Core" class of the live data acquisition system. It hosts and encapsulates the data loop thread

@@ -49,7 +49,7 @@ namespace libDataLogging {
 
 			int GetSessionLapCount();
 			PLAPINFO GetLapInfo(int lap);
-			PFAST_LAP_INFO GetFastLapInfo();
+			PFASTEST_LAP_INFO GetFastLapInfo();
 
 			virtual int GetSampleTickRate() = 0;
 
@@ -65,7 +65,7 @@ namespace libDataLogging {
 			int m_curLapIdx;	// current active lap
 
 			PLAPINFO* m_lapInfo;			// lap-info array
-			PFAST_LAP_INFO m_fastLapInfo;	// fastest lap info
+			PFASTEST_LAP_INFO m_fastLapInfo;	// fastest lap info
 
 			// NEW implementation
 			std::vector<LAPINFO> _lapsInfo;

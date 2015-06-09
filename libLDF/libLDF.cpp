@@ -5,21 +5,21 @@
 
 using namespace libLDF;
 
-extern "C" LIBLDF_API IDashboardLayout* libLDF::init_instance()
+extern "C" LIBLDF_API IDashboardLayout* get_LDF()
 {
-	try {
+	//try {
 		IDashboardLayout* p = (IDashboardLayout*)new CDashboardLayout();
 		return p;
-	}
-	catch (...)
-	{
-		throw;
-		return nullptr;
-	}
+	//}
+	//catch (...)
+	//{
+	//	throw;
+	//	return nullptr;
+	//}
 }
 
 
-extern "C" LIBLDF_API void libLDF::release_instance(IDashboardLayout* inst)
+extern "C" LIBLDF_API void release_LDF(IDashboardLayout* inst)
 {
 	if (inst != nullptr)
 		delete inst;

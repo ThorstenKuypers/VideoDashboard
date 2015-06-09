@@ -70,9 +70,9 @@ namespace libLDF
 
 		void ShowBoundingBoxes(bool show);
 
-		Bitmap* RenderDashboard(string& name, int sampleIndex);
+		/*Bitmap**/ _GDI_BMP RenderDashboard(string& name, int sampleIndex);
 
-		void SetDataLogger(IDataLogging* logger);
+		void SetDataLogger(IDataLogger* logger);
 
 	private:
 		//std::vector<CDashboard*> _dashboards;
@@ -101,7 +101,7 @@ namespace libLDF
 
 		void checkElementLocalSettingsOverwrite(CDashboardElement* e, CDashboard* d);
 
-		IDataLogging* _dataLogger;
+		IDataLogger* _dataLogger;
 
 		ULONG_PTR _gdiplus_tok;
 

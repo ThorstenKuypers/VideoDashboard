@@ -70,7 +70,7 @@ CDashboard* CDashboardLayout::GetDashboard(string& name)
 	return ptr;
 }
 
-Bitmap* CDashboardLayout::RenderDashboard(string& name, int sampleIndex)
+/*Bitmap**/ _GDI_BMP CDashboardLayout::RenderDashboard(string& name, int sampleIndex)
 {
 	// NEW
 	CDashboard* dash = nullptr;
@@ -83,7 +83,7 @@ Bitmap* CDashboardLayout::RenderDashboard(string& name, int sampleIndex)
 
 		Gdiplus::Bitmap* bmp = dash->RenderToImage(sampleIndex);
 
-		return bmp;
+		return (_GDI_BMP)bmp;
 	}
 
 	return nullptr;
@@ -107,7 +107,7 @@ std::string CDashboardLayout::GetDashboardShortName(std::string& filename)
 	return string("");
 }
 
-void CDashboardLayout::SetDataLogger(IDataLogging* logger)
+void CDashboardLayout::SetDataLogger(IDataLogger* logger)
 {
 	_dataLogger = logger;
 
@@ -182,7 +182,7 @@ void CDashboardLayout::ParseLayoutFile(std::string filename)
 		lines.push_back(line);
 
 	} while (!fs.eof());
-
+	fs.close();
 
 	// 2. step -> iterate through all lines and find elements and positions for 
 	// start and end of elements
@@ -362,7 +362,7 @@ void CDashboardLayout::ParseLayoutFile(std::string filename)
 	}
 	_curDashboard = dash;
 
-	fs.close();
+	//fs.close();
 }
 
 void CDashboardLayout::parseSections(elementSection& sec)

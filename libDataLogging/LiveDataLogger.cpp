@@ -2,7 +2,7 @@
 #include <memory>
 #include <sstream>
 
-using namespace libDataLogging::LiveLogging;
+using namespace libDataLogging::LiveDataLogger;
 
 
 CLiveDataLogger::CLiveDataLogger() :

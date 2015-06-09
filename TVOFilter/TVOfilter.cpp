@@ -384,7 +384,7 @@ HRESULT CTVOFilter::Transform(IMediaSample* pIn, IMediaSample* pOut)
 
 	if (m_dashOverlay != NULL)
 	{
-		Bitmap* dash = m_dashOverlay->RenderDashboard(std::string(""), m_sampleBufIdx);
+		Bitmap* dash = static_cast<Gdiplus::Bitmap*>(m_dashOverlay->RenderDashboard(std::string(""), m_sampleBufIdx));
 		if (dash != nullptr) {
 
 			ColorMatrix m = {

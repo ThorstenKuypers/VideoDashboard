@@ -180,7 +180,7 @@ void CibtDataLogger::ParseSessionInfo(const char* sessionInfoStr)
 
 			//float t = stof(s.str().c_str());
 			//t = roundf((t * 1000) / 1000);
-			float t = roundf((atof(val) * 1000.0f));
+			float t = roundf(((float)atof(val) * 1000.0f));
 			t /= 1000.0f;
 
 			//t = (t * 1000) / 1000;

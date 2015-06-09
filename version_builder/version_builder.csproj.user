@@ -3,4 +3,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <StartArguments>version libds .\ .\libds\libds.rc .\libds</StartArguments>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Static_Test|x86'">
+    <StartArguments>version libds .\ .\libds\libds.rc .\libds</StartArguments>
+  </PropertyGroup>
 </Project>

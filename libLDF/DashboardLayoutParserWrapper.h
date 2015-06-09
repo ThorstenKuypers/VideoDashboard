@@ -2,10 +2,10 @@
 
 #include "DashboardLayout.h"
 
-#pragma managed
 
 namespace libLDFWrapper {
 
+#pragma managed
 
 	using namespace System;
 	using namespace System::Runtime::InteropServices;
@@ -121,7 +121,7 @@ namespace libLDFWrapper {
 				std::string str = string(ptr);
 
 				try {
-					dashImg = _ldf->RenderDashboard(str, sampleIndex);
+					dashImg = reinterpret_cast<Gdiplus::Bitmap*>(_ldf->RenderDashboard(str, sampleIndex));
 					if (dashImg != nullptr) {
 
 						Gdiplus::BitmapData bd = { 0 };
@@ -175,7 +175,7 @@ namespace libLDFWrapper {
 		{
 			if (logger != IntPtr(0)) {
 
-				IDataLogging* dl = (IDataLogging*)logger.ToPointer();
+				IDataLogger* dl = (IDataLogger*)logger.ToPointer();
 
 				_ldf->SetDataLogger(dl);
 			}

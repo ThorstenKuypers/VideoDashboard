@@ -41,6 +41,8 @@ namespace libDataLogging {
 		using namespace System::Runtime::InteropServices;
 		using namespace System::Collections::Generic;
 
+		using namespace std;
+		using namespace libDataLogging;
 		using namespace libDataLogging::DataLogger;
 
 		[StructLayout(LayoutKind::Sequential)]
@@ -120,7 +122,7 @@ namespace libDataLogging {
 			int m_sampleListStartIdx;
 			int m_sampleListStopIdx;
 
-			IDataLogging* m_dataLogger;
+			IDataLogger* m_dataLogger;
 
 			void InitSampleList()
 			{
@@ -206,16 +208,17 @@ namespace libDataLogging {
 			CDataLog(String^ fileName)
 			{
 				IntPtr p = Marshal::StringToHGlobalUni(fileName);
+				void* _p = nullptr;
 
 				try
 				{
 					wchar_t* t = (wchar_t*)p.ToPointer();
-					this->m_dataLogger = init_instance(t);
-					if (!this->m_dataLogger) {
+					if (!make_instance(IID_DATALOGGER, (void**)&_p, static_cast<void*>(t))) {
 
-						String^ msg = gcnew String("Error in libdl_init_instance()");
+						String^ msg = gcnew String("Error in libDataLogging class factory");
 						throw msg;
 					}
+					m_dataLogger = static_cast<IDataLogger*>(_p);
 					InitSampleList();
 					InitLapTimigInfo();
 				}
@@ -235,7 +238,7 @@ namespace libDataLogging {
 
 			~CDataLog(void)
 			{
-				release_instance(m_dataLogger);
+				release_instance(static_cast<void*>(m_dataLogger));
 				m_dataLogger = 0;
 				this->!CDataLog();
 			}
@@ -353,7 +356,7 @@ namespace libDataLogging {
 				}
 				catch (Exception^ ex)
 				{
-					throw; // ex;
+					throw ex;
 				}
 
 				return nullptr;

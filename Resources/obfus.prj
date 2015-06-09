@@ -1,0 +1,11 @@
+<?xml version='1.0'?>
+<Obfuscator>
+  <Var name="InPath" value="D:\Development\Projects\VideoDashboard\bin\Debug\x86\merge" />
+  <Var name="OutPath" value="D:\Development\Projects\VideoDashboard\bin\Debug\x86\obfus" />
+
+  <Module file="$(InPath)\VideoDashboard.exe" />
+  
+  <Var name="KeepPublicApi" value="false" />
+  <Var name="HidePrivateApi" value="true" />
+
+</Obfuscator>

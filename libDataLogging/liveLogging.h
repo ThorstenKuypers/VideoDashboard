@@ -6,7 +6,7 @@
 #pragma region "Live data aquisition interface"
 
 namespace libDataLogging {
-	namespace LiveLogging {
+	namespace LiveDataLogger {
 
 		using namespace libDataLogging::DataLogger;
 
@@ -33,6 +33,3 @@ namespace libDataLogging {
 }
 
 #pragma endregion
-
-extern "C" LIBDATALOGGING_API libDataLogging::LiveLogging::ILiveLogger* make_liveLogger();
-extern "C" LIBDATALOGGING_API void release_live(libDataLogging::LiveLogging::ILiveLogger*);

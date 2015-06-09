@@ -50,12 +50,12 @@ namespace libDataLogging {
 		typedef std::map<std::string, std::string> specials_map;
 
 #pragma region "CDataLogger - new implementation"
-
 	
 		// * CDataLogger - implementation of general DataLogger interface. Handles differentiation between the different
 		// *			   file formats and instanciates the correct DataLogger object.
-		class CDataLogger : public IDataLogging
+		class CDataLogger : public IDataLogger
 		{
+
 			public:	
 				CDataLogger(wchar_t* logfile);
 				~CDataLogger();
@@ -65,7 +65,7 @@ namespace libDataLogging {
 
 				int GetSessionLapCount();
 				PLAPINFO GetLapInfo(int lap);
-				PFAST_LAP_INFO GetFastLapInfo();
+				PFASTEST_LAP_INFO GetFastLapInfo();
 
 				virtual void GetChannelData(string channelName, int sampleIndex, double* val);
 				virtual void GetChannelData(string channelName, int sampleIndex, int* val);
@@ -93,7 +93,7 @@ namespace libDataLogging {
 				int m_curLapIdx;	// current active lap
 
 				PLAPINFO* m_lapInfo;			// lap-info array
-				PFAST_LAP_INFO m_fastLapInfo;	// fastest lap info
+				PFASTEST_LAP_INFO m_fastLapInfo;	// fastest lap info
 				
 				int m_LoggerType;
 

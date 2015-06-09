@@ -2,12 +2,13 @@
 #include "BaseDataLogger.h"
 #include "ErrEx.h"
 
+using namespace libDataLogging;
 using namespace libDataLogging::DataLogger;
 
 CBaseDataLogger::CBaseDataLogger(wchar_t* logfile)
 {
-	this->m_fastLapInfo =new FAST_LAP_INFO;
-	memset(this->m_fastLapInfo, 0, sizeof(FAST_LAP_INFO));
+	this->m_fastLapInfo =new FASTEST_LAP_INFO;
+	memset(this->m_fastLapInfo, 0, sizeof(FASTEST_LAP_INFO));
 	m_lapInfo = NULL;
 
 	m_file =CreateFileW(logfile, GENERIC_READ, FILE_SHARE_READ, NULL,
@@ -69,7 +70,7 @@ int CBaseDataLogger::GetSessionLapCount()
 	return this->m_lapCnt;
 }
 
-PFAST_LAP_INFO CBaseDataLogger::GetFastLapInfo()
+PFASTEST_LAP_INFO CBaseDataLogger::GetFastLapInfo()
 {
 	return this->m_fastLapInfo;
 }
