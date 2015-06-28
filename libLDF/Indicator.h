@@ -1,7 +1,20 @@
 #pragma once
+#ifndef _INDICATOR_H_
+#define _INDICATOR_H_
+///////////////////////////////////////////////////////////////////////////////
+//
+//	VideoDashboard
+//	----------------------
+//	Project: libLDF - layout definition format library
+//
+//	Copyright 2014-2015 Thorsten Kuypers
+//  All Rights Reserved
+//
+///////////////////////////////////////////////////////////////////////////////
 
 #include "common.h"
 #include "DashboardElement.h"
+#include "Ruler.h"
 
 namespace libLDF
 {
@@ -29,7 +42,7 @@ namespace libLDF
 
 		// Renders the element into a bitmap with the data set by elements channel name
 		// and sample buffer index
-		virtual Gdiplus::Bitmap* Render(int sampleIndex);
+		virtual Gdiplus::Bitmap* Render(DataSample& sample, IGenericLogger& logger, bool renderBlank);
 
 
 		void SetColorON(string& s);
@@ -97,6 +110,9 @@ namespace libLDF
 		Gdiplus::Bitmap* drawEllipseShape(float val);
 		Gdiplus::Bitmap* drawRectangleShape(float val);
 		Gdiplus::Bitmap* drawLineShape(float val);
+
 	};
 
 }
+
+#endif // _INDICATOR_H_

@@ -1,49 +1,34 @@
 #pragma once
+#ifndef _DASHBOARD_LAYOUT_H_
+#define _DASHBOARD_LAYOUT_H_
+
 ///////////////////////////////////////////////////////////////////////////////
 //
-//	TelemetryVideoOverlay
+//	VideoDashboard
 //	----------------------
-//	Project: TVO -- Main GUI implementation
+//	Project: libLDF - layout definition format library
 //
-//	Copyright 2011 Thorsten Kuypers
-//
-//	Licensed under the Apache License, Version 2.0 (the "License");
-//	you may not use this file except in compliance with the License.
-//	You should have obtained a copy of the License with this Software. If not,
-//	you may obtain a copy of the License at
-//
-//				http://www.apache.org/licenses/LICENSE-2.0
-//
-//	Unless required by applicable law or agreed to in writing, software
-//	distributed under the License is distributed on an "AS IS" BASIS,
-//	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//	See the License for the specific language governing permissions and
-//	limitations under the License.
-//
-// * version history:
-//   -----------------
-//
-//	0.4 - first public release
+//	Copyright 2014-2015 Thorsten Kuypers
+//  All Rights Reserved
 //
 ///////////////////////////////////////////////////////////////////////////////
 
 
 
 #include <map>
+#include <memory>
+#include <tuple>
+#include <algorithm>
 
-#include "common.h"
 #include "libLDF.h"
+#include "common.h"
 #include "Dashboard.h"
 #include "errex.h"
-
-//#include "ldf.h"
 
 namespace libLDF
 {
 #pragma unmanaged
 
-	//typedef std::tuple<std::string, int, int> section;
-	typedef std::map<string, CDashboard*> dashboard_map;
 	typedef std::pair<int, std::string> ldf_line;
 	typedef std::pair<std::string, std::string> ldf_pair;
 
@@ -62,48 +47,44 @@ namespace libLDF
 		CDashboardLayout();
 		~CDashboardLayout();
 
-		void ParseLayoutFile(std::string filename);
+		void SetActiveDashboard(const std::string& filename);
 
-		CDashboard* GetDashboard(string& name);
-		std::string GetDashboardPrettyName(std::string& filename);
-		std::string GetDashboardShortName(std::string& filename);
+		std::string& GetDashboardPrettyName(std::string& filename);
+		std::string& GetDashboardShortName(std::string& filename);
 
 		void ShowBoundingBoxes(bool show);
 
-		/*Bitmap**/ _GDI_BMP RenderDashboard(string& name, int sampleIndex);
-
-		void SetDataLogger(IDataLogger* logger);
+		virtual Gdiplus::Bitmap* RenderDashboard(libOGA::DataSample& sample, IGenericLogger& logger, bool renderBlank);
+		virtual Gdiplus::Bitmap* RenderDashboard(IGenericLogger& logger, int sampleIndex, bool renderBlank);
 
 	private:
-		//std::vector<CDashboard*> _dashboards;
-		//std::map<string, CDashboard*> _dashboards;
+
+		void parseLayoutFile(const std::string& filename);
+		void extractDashboardFilePath();
+		void parseSections(elementSection& sec);
+		void parseCommonKeys(CDashboardElement& e, elementSection& sect);
+
+		void parseDashboardSection(elementSection& section);
+		void parseTextBoxSection(elementSection& section);
+		void parseGaugeSection(elementSection& sect);
+		void parseIndicatorSection(elementSection& sect);
+		void parseSliderSection(elementSection& sect);
+		void parseGCircleSection(elementSection& sect);
+		void parseSweeperElement(elementSection& sect);
+		void parseRulerElement(elementSection& sect);
+		void parseRingGaugeElement(elementSection& sect);
+
+		void checkElementLocalSettingsOverwrite(CDashboardElement& e);
 
 		std::string _curDashboardFileName;
 		std::string _curDashboardFilePath;
-
-		CDashboard* _curDashboard; // current opened and parsed dashboard (single instance)
-
-		void extractDashboardFilePath();
-
-		//void readSection(std::vector<std::string>& lines, elementSection& section);
-		void parseSections(elementSection& sec);
-		void parseCommonKeys(CDashboardElement* e, elementSection& sect);
-
-		CDashboard* parseDashboardSection(elementSection& section);
-		CTextBox* parseTextBoxSection(elementSection& section);
-		CGauge* parseGaugeSection(elementSection& sect);
-		CIndicator* parseIndicatorSection(elementSection& sect);
-		CSlider* parseSliderSection(elementSection& sect);
-		CGCircle* parseGCircleSection(elementSection& sect);
-		CSweeper* parseSweeperElement(elementSection& sect);
-		CRuler* parseRulerElement(elementSection& sect);
-		CRingGauge* parseRingGaugeElement(elementSection& sect);
-
-		void checkElementLocalSettingsOverwrite(CDashboardElement* e, CDashboard* d);
-
-		IDataLogger* _dataLogger;
-
+		CDashboard _curDashboard; // current active dashboard (single instance)
 		ULONG_PTR _gdiplus_tok;
+
+		std::shared_ptr<Gdiplus::Bitmap> _lastDashboardImg; // last rendered dashboard image
+
+		// ruler lookup table
+		std::map<std::string, CRuler> rulerTable;
 
 		//bool _useLocalForeColor;
 		//bool _useLocalBackColor;
@@ -114,27 +95,6 @@ namespace libLDF
 	};
 
 }
-
-//using namespace libDataLogging::DataLogWrapper;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 #pragma region // LayoutDefinitionFormat namespace
 
@@ -1185,3 +1145,5 @@ namespace libLDF
 
 //} //libLDF
 #pragma endregion
+
+#endif // _DASHBOARD_LAYOUT_H_

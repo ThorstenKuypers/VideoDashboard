@@ -34,27 +34,29 @@ namespace libDataLogging {
 
 		using namespace std;
 
-		class CDataLogger;
+		//class CDataLogger;
 
-		class CBaseDataLogger
+		class CBaseTelemetryFile : public CBaseChannel
 		{
-			friend class CDataLogger;
+			//friend class CDataLogger;
 
 		public:
-			CBaseDataLogger(wchar_t* logfile);
-			CBaseDataLogger();
-			virtual ~CBaseDataLogger();
+			CBaseTelemetryFile(const std::wstring& logfile);
+			virtual ~CBaseTelemetryFile();
 
 			int GetSampleCount();
 
 			int GetSessionLapCount();
-			PLAPINFO GetLapInfo(int lap);
-			PFASTEST_LAP_INFO GetFastLapInfo();
+			LAPINFO& GetLapInfo(int lap);
+			FASTEST_LAP_INFO& GetFastLapInfo();
 
 			virtual int GetSampleTickRate() = 0;
 
 			int ShiftRpm();
 			int RedlineRpm();
+
+			virtual bool GetSample(DataSample&);
+			virtual SampleValue GetSampleData(DataSample& s, CDataChannel& c);
 
 		protected:
 			virtual void processDataFile() = 0;
@@ -64,8 +66,8 @@ namespace libDataLogging {
 			int m_lastLap;		// previous lap
 			int m_curLapIdx;	// current active lap
 
-			PLAPINFO* m_lapInfo;			// lap-info array
-			PFASTEST_LAP_INFO m_fastLapInfo;	// fastest lap info
+			std::vector<LAPINFO> m_lapInfo;			// lap-info array
+			FASTEST_LAP_INFO m_fastLapInfo;	// fastest lap info
 
 			// NEW implementation
 			std::vector<LAPINFO> _lapsInfo;
@@ -73,21 +75,26 @@ namespace libDataLogging {
 
 			int m_sampleCnt;			// number of data samples per channel
 
-			// array of all channel names in currently open logfile
-			std::vector<string> exportedChannelNames;
+			//// array of all channel names in currently open logfile
+			//std::vector<string> exportedChannelNames;
 
-			// array of actual channels
-			std::vector<CBaseChannel*> exportedChannels;
+			//std::vector<CBaseChannel&> exportedChannels;
 
-			// mapping of channel name to channel index (in exported channels vector)
-			std::map<string, int> channelsMap;
+			//// mapping of channel name to channel index (in exported channels vector)
+			//std::map<string, int> channelsMap;
+
+			//// array of actual channels
+			ChannelsMap channels;
+
+			// special buffer containing all calculated "math" values aaranged similar to the original sample buffer
+			/*std::vector*/
 
 			// mapping of special channel names to internal channel names
-			std::map<std::string, std::string>  specialChannelsMap;
+			std::map<std::string, std::string>  mathChannelsMap;
 
 			// special channels not directly exported by the logfile (but calculated from data)
 			// => math channels
-			std::vector<CBaseChannel*> specialChannels;
+			std::vector<CDataChannel> mathChannels;
 
 			// information about sectors (from sessionInfoString)
 			std::vector<SECTOR_INFO> sectors;
@@ -97,10 +104,14 @@ namespace libDataLogging {
 
 			CAR_DATA_INFO m_carDataInfo;
 
+			// THE sample buffer; contains RAW sample data as read from telemetry file;
+			// the data is the mapped to according channels on request
+			std::shared_ptr<BYTE> sampleBuffer;
+
 		private:
 			void CloseFile();
 
-		}; // class CBaseDataLogger
+		}; // class CBaseTelemetryFile
 
 	}
 }

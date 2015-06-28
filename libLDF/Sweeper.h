@@ -1,4 +1,16 @@
 #pragma once
+#ifndef _SWEEPER_H_
+#define _SWEEPER_H_
+///////////////////////////////////////////////////////////////////////////////
+//
+//	VideoDashboard
+//	----------------------
+//	Project: libLDF - layout definition format library
+//
+//	Copyright 2014-2015 Thorsten Kuypers
+//  All Rights Reserved
+//
+///////////////////////////////////////////////////////////////////////////////
 
 #include "common.h"
 #include "DashboardElement.h"
@@ -69,7 +81,7 @@ namespace libLDF
 
 		// Renders the element into a bitmap with the data set by elements channel name
 		// and sample buffer index
-		virtual Gdiplus::Bitmap* Render(int sampleIndex);
+		virtual Gdiplus::Bitmap* Render(DataSample& sample, IGenericLogger& logger, bool renderBlank);
 
 		void SetPathType(string& s);
 
@@ -101,7 +113,7 @@ namespace libLDF
 
 		void SetThresholdColors(string& s);
 
-		virtual void SetRuler(void* r);
+		virtual void SetRuler(CRuler& r);
 
 		virtual Gdiplus::Rect GetRectangle(); // { return Rect(_rect.X - _extend, _rect.Y - _extend, _rect.Width, _rect.Height); }
 
@@ -169,3 +181,5 @@ namespace libLDF
 	};
 
 }
+
+#endif // _SWEEPER_H_

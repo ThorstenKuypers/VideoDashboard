@@ -4,15 +4,14 @@
 using namespace libLDF;
 
 
-CTextBox::CTextBox()
+CTextBox::CTextBox() : CDashboardElement(),
+_format(LabelFormatType_integer),
+_label(string("")),
+_drawZero(false),
+_signed(false),
+_precision(1)
 {
 	type = DashboardElementType::textbox;
-
-	_format = LabelFormatType_integer;
-	_label = string("");
-	_drawZero = false;
-	_signed = false;
-	_precision = 1;
 }
 
 
@@ -20,7 +19,7 @@ CTextBox::~CTextBox()
 {
 }
 
-Gdiplus::Bitmap* CTextBox::Render(int sampleIndex)
+Gdiplus::Bitmap* CTextBox::Render(DataSample& sample, IGenericLogger& logger, bool renderBlank)
 {
 	Bitmap* bmp = new Bitmap(_rectangle.Width, _rectangle.Height, PixelFormat32bppARGB);
 	if (bmp == nullptr)
@@ -60,16 +59,18 @@ Gdiplus::Bitmap* CTextBox::Render(int sampleIndex)
 	if (!_channel.empty()) {
 
 		try {
-			int ct = 0;
-			if (_dataLoggerInst != NULL)
-				ct = _dataLoggerInst->GetChannelDataType(_channel);
-
 			double d = 0;
 			float f = 0;
 			int i = 0;
 
 			double time = 0, s = 0;
 			int h = 0, m = 0, sec = 0, t = 0;
+			SampleValue sv;
+
+			if (!renderBlank) {
+				CDataChannel& ch = std::move(logger.GetChannel(_channel));
+				sv = CDataChannel::GetSampleData(sample, ch);
+			}
 
 			switch (_format) {
 
@@ -77,26 +78,29 @@ Gdiplus::Bitmap* CTextBox::Render(int sampleIndex)
 				ss.setf(ios::fixed);
 				ss.precision(_precision);
 
-				if (ct == ChannelType::irsdk_double) {
-					if (_dataLoggerInst != NULL)
-						_dataLoggerInst->GetChannelData(_channel, sampleIndex, &d);
-					if (_scale != 0)
-						d *= _scale;
+				if (sv.type() == irsdk_double) {
+					if (!renderBlank) {
+						d = sv.get_value<double>();
+						if (_scale != 0)
+							d *= _scale;
+					}
 					ss << d;
 				}
-				else if (ct == ChannelType::irsdk_float) {
-					if (_dataLoggerInst != NULL)
-						_dataLoggerInst->GetChannelData(_channel, sampleIndex, &f);
-					if (_scale != 0)
-						f *= (float)_scale;
+				else if (sv.type() == irsdk_float) {
+					if (!renderBlank) {
+						f = sv.get_value<float>();
+						if (_scale != 0)
+							f *= (float)_scale;
+					}
 					ss << f;
 				}
-				else {
-					if (_dataLoggerInst != NULL)
-						_dataLoggerInst->GetChannelData(_channel, sampleIndex, (void*)&i);
-					f = (float)i;
-					if (_scale != 0)
-						f *= (float)_scale;
+				else if (sv.type() == irsdk_int) {
+					if (!renderBlank) {
+						i = sv.get_value<int>();
+						f = (float)i;
+						if (_scale != 0)
+							f *= (float)_scale;
+					}
 					ss << f;
 				}
 
@@ -105,27 +109,31 @@ Gdiplus::Bitmap* CTextBox::Render(int sampleIndex)
 			case LabelFormatType::LabelFormatType_integer:
 				ss.setf(ios::boolalpha);
 
-				if (ct == ChannelType::irsdk_double) {
-					if (_dataLoggerInst != NULL)
-						_dataLoggerInst->GetChannelData(_channel, sampleIndex, &d);
-					i = (int)round(d);
-					if (_scale != 0)
-						i *= (int)round(_scale);
+				if (sv.type() == irsdk_double) {
+					if (!renderBlank) {
+						d = sv.get_value<double>();
+						i = (int)round(d);
+						if (_scale != 0)
+							i *= static_cast<int>(round(_scale));
+					}
 					ss << i;
 				}
-				else if (ct == ChannelType::irsdk_float) {
-					if (_dataLoggerInst != NULL)
-						_dataLoggerInst->GetChannelData(_channel, sampleIndex, &f);
-					i = (int)round(f);
-					if (_scale != 0)
-						i *= (int)round(_scale);
+				else if (sv.type() == irsdk_float) {
+					if (!renderBlank) {
+						f = sv.get_value<float>();
+						i = (int)round(f);
+						if (_scale != 0)
+							i *= static_cast<int>(round(_scale));
+					}
 					ss << i;
 				}
-				else {
-					if (_dataLoggerInst != NULL)
-						_dataLoggerInst->GetChannelData(_channel, sampleIndex, (void*)&i);
-					if (_scale != 0)
-						i = (int)round(((float)i * (float)_scale));
+				else if (sv.type() == irsdk_int) {
+					if (!renderBlank) {
+						i = sv.get_value<int>();
+						f = (float)i;
+						if (_scale != 0)
+							i = (int)round(((float)i * (float)_scale));
+					}
 					ss << i;
 				}
 
@@ -134,14 +142,15 @@ Gdiplus::Bitmap* CTextBox::Render(int sampleIndex)
 			case LabelFormatType::LabelFormatType_time:
 				ss.setf(ios::fixed);
 
-				if (ct == ChannelType::irsdk_double) {
-					if (_dataLoggerInst != NULL)
-						_dataLoggerInst->GetChannelData(_channel, sampleIndex, &time);
-				}
-				if (ct == ChannelType::irsdk_float) {
-					if (_dataLoggerInst != NULL)
-						_dataLoggerInst->GetChannelData(_channel, sampleIndex, &f);
-					time = (double)f;
+				if (!renderBlank) {
+
+					if (sv.type() == irsdk_double) {
+						time = sv.get_value<double>();
+					}
+					else if (sv.type() == irsdk_float) {
+						f = sv.get_value<float>();
+						time = static_cast<double>(f);
+					}
 				}
 
 				ss.precision(0);
@@ -161,29 +170,22 @@ Gdiplus::Bitmap* CTextBox::Render(int sampleIndex)
 					_precision = 1;
 				ss.precision(_precision);
 
-				//int lap = 0;
-				//_dataLoggerInst->GetChannelData(string("Lap"), sampleIndex, &lap);
-				//PLAPINFO li = _dataLoggerInst->GetLapInfo(lap);
-				//_dataLoggerInst->GetChannelData(string("SessionTime"), sampleIndex, &time);
-
-				if (ct == irsdk_float) {
+				if (sv.type() == irsdk_float) {
 					float laptime = 0;
 
-					if (_dataLoggerInst != NULL)
-						_dataLoggerInst->GetChannelData(_channel, sampleIndex, &laptime);
-					s = fmod(laptime, (double)60.0f);
-					m = (int)((laptime - s) / (double)60.0f);
+					if (!renderBlank) {
+
+						laptime = sv.get_value<float>();
+						s = fmod(laptime, (double)60.0f);
+						m = static_cast<int>(((laptime - s) / (double)60.0f));
+					}
 					ss << m << ":" << s;
 				}
 				break;
 			}
 		}
-		catch (libDataLogging::ChannelDataTypeMismatchException* ex)
+		catch (libOGA::ChannelDataTypeMismatchException)
 		{
-			// channel not available so display the label text
-			delete ex;
-			ex = NULL;
-
 			ss << _label;
 
 		}

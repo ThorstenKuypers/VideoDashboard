@@ -17,7 +17,9 @@ namespace libLDFWrapper {
 	public ref class DashboardLayout {
 
 	public:
-		DashboardLayout()
+		DashboardLayout() :
+			_logger(nullptr),
+			_ldf(nullptr)
 		{
 			_ldf = new CDashboardLayout();
 		}
@@ -46,7 +48,7 @@ namespace libLDFWrapper {
 						char* ptr = (char*)Marshal::StringToHGlobalAnsi(file).ToPointer();
 						string fname = string(ptr);
 
-						_ldf->ParseLayoutFile(fname);
+						_ldf->SetActiveDashboard(fname);
 
 						Marshal::FreeHGlobal(IntPtr(ptr));
 					}
@@ -54,14 +56,7 @@ namespace libLDFWrapper {
 			}
 			catch (ParsingException& e)
 			{
-				//Exception^ ex = gcnew Exception(gcnew String("syntax error"), gcnew Exception(gcnew String(e.what())));
 				Exception^ ex = gcnew Exception(gcnew String(e.what()));
-
-				//if (_ldf != nullptr)
-				//{
-				//	delete _ldf;
-				//	_ldf = nullptr;
-				//}
 				throw ex;
 			}
 		}
@@ -110,8 +105,6 @@ namespace libLDFWrapper {
 
 		System::Drawing::Bitmap^ RenderDashboard(String^ name, int sampleIndex)
 		{
-			//BYTE* pix = nullptr;
-			//int stride = 0;
 			System::Drawing::Bitmap^ bmp = nullptr;
 			Gdiplus::Bitmap* dashImg = nullptr;
 
@@ -119,19 +112,14 @@ namespace libLDFWrapper {
 
 				char *ptr = (char*)Marshal::StringToHGlobalAnsi(name).ToPointer();
 				std::string str = string(ptr);
-
+				
 				try {
-					dashImg = reinterpret_cast<Gdiplus::Bitmap*>(_ldf->RenderDashboard(str, sampleIndex));
+					dashImg = reinterpret_cast<Gdiplus::Bitmap*>(_ldf->RenderDashboard(*_logger, sampleIndex, true));
 					if (dashImg != nullptr) {
 
 						Gdiplus::BitmapData bd = { 0 };
 						Gdiplus::Rect rc(0, 0, dashImg->GetWidth(), dashImg->GetHeight());
 						if (dashImg->LockBits(&rc, ImageLockModeRead, dashImg->GetPixelFormat(), &bd) == Gdiplus::Status::Ok) {
-
-							//stride = bd.Stride;
-							//int buflen = bd.Stride * dashImg->GetHeight();
-							//pix = new BYTE[buflen];
-							//memcpy(pix, bd.Scan0, buflen);
 
 							cli::array<Byte>^ pixbuf = gcnew cli::array<Byte>(bd.Stride * bd.Height);
 							Marshal::Copy(IntPtr(bd.Scan0), pixbuf, 0, pixbuf->Length);
@@ -175,14 +163,13 @@ namespace libLDFWrapper {
 		{
 			if (logger != IntPtr(0)) {
 
-				IDataLogger* dl = (IDataLogger*)logger.ToPointer();
-
-				_ldf->SetDataLogger(dl);
+				_logger = (IGenericLogger*)logger.ToPointer();
 			}
 		}
 
 	private:
 
+		libOGA::IGenericLogger* _logger;
 		CDashboardLayout* _ldf;
 	};
 }

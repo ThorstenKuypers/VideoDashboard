@@ -1,4 +1,16 @@
 #pragma once
+#ifndef _RINGGAUGE_H_
+#define _RINGGAUGE_H_
+///////////////////////////////////////////////////////////////////////////////
+//
+//	VideoDashboard
+//	----------------------
+//	Project: libLDF - layout definition format library
+//
+//	Copyright 2014-2015 Thorsten Kuypers
+//  All Rights Reserved
+//
+///////////////////////////////////////////////////////////////////////////////
 
 #include "common.h"
 #include "DashboardElement.h"
@@ -13,9 +25,9 @@ namespace libLDF
 		CRingGauge();
 		~CRingGauge();
 
-		virtual Gdiplus::Bitmap* Render(int sampleIndex);
+		virtual Gdiplus::Bitmap* Render(DataSample& sample, IGenericLogger& logger, bool renderBlank);
 		virtual void Init();
-		virtual void SetRuler(void* r);
+		virtual void SetRuler(CRuler& r);
 
 		void SetID(std::string& id) { _id = id; }
 		std::string GetID() { return _id; }
@@ -82,7 +94,8 @@ namespace libLDF
 		// Higher values produce higher decay rate
 		int _markerDecay;
 
-
 	};
 
 }
+
+#endif // _RINGGAUGE_H_

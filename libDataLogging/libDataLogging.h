@@ -30,6 +30,7 @@
 #include "errex.h"
 
 typedef GUID LIBDATALOGGING_ID;
+typedef std::vector<BYTE> DataSample;
 
 namespace libDataLogging {
 
@@ -90,28 +91,6 @@ namespace libDataLogging {
 
 	namespace DataLogger {
 
-		// generic "alias" for template classes
-		class CBaseChannel
-		{
-		public:
-			CBaseChannel();
-			~CBaseChannel();
-			std::string& GetName();
-			std::string& GetDescription();
-			std::string& GetUnit();
-			int& GetType();
-
-			int type;
-
-		protected:
-			std::string _name;
-			std::string _description;
-			std::string _unit;
-
-			int idx;	// sample buffer index
-			int sampleCount; // number of samples
-
-		};
 
 #pragma region // IDataLogging interface
 		// This defines the interface DataLogger interface

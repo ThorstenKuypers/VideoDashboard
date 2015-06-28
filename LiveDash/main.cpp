@@ -32,6 +32,7 @@ bool LoadPlugin()
 	logger->Disconnected += MAKE_DELEGATE_FN(LoggerDisconnect);
 	logger->DataUpdate += MAKE_DELEGATE_FN(LoggerUpdate);
 
+	OBSRegisterImageSourceClass(TEXT("LiveDashSource"), TEXT("Live Dash Source"), (OBSCREATEPROC)CreateLDImage, (OBSCONFIGPROC)NULL);
 	return true;
 }
 

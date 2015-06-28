@@ -1,4 +1,4 @@
-﻿namespace VideoDashboard
+﻿namespace DashboardViewer
 {
     partial class frmChannelsList
     {

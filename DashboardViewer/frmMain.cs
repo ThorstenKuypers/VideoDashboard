@@ -8,9 +8,9 @@ using System.Text;
 using System.Windows.Forms;
 using System.IO;
 
-using libDataLogging.DataLogWrapper;
+using libOGA.NetWrapper;
 using libLDFWrapper;
-using VideoDashboard;
+using DashboardViewer;
 
 namespace DashboardViewer
 {

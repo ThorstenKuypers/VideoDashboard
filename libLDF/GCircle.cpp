@@ -4,19 +4,18 @@
 using namespace libLDF;
 
 
-CGCircle::CGCircle()
+CGCircle::CGCircle() : CDashboardElement(),
+_divisions(0),
+_radius(0),
+_lineWidth(0),
+_pointerColor(Color::Black),
+_pointerWidth(0),
+_pointerSize(0),
+_scaleLat(0),
+_scaleLong(0),
+_connectToCenter(true)
 {
 	type = DashboardElementType::gcircle;
-
-	_divisions = 0;
-	_radius = 0;
-	_lineWidth = 0;
-	_pointerColor = Color::Black;
-	_pointerWidth = 0;
-	_pointerSize = 0;
-	_scaleLat = 0;
-	_scaleLong = 0;
-	_connectToCenter = true;
 }
 
 
@@ -24,7 +23,7 @@ CGCircle::~CGCircle()
 {
 }
 
-Gdiplus::Bitmap* CGCircle::Render(int sampleIndex)
+Gdiplus::Bitmap* CGCircle::Render(DataSample& sample, IGenericLogger& logger, bool renderBlank)
 {
 	Bitmap* bmp = nullptr;
 	bmp = new Bitmap(_rectangle.Width, _rectangle.Height, PixelFormat32bppARGB);
@@ -36,22 +35,39 @@ Gdiplus::Bitmap* CGCircle::Render(int sampleIndex)
 			float longG = 0;
 			float latG = 0;
 
-			if (_dataLoggerInst != NULL) {
-				_dataLoggerInst->GetChannelData(string("LatAccel"), sampleIndex, &latG);
-				_dataLoggerInst->GetChannelData(string("LongAccel"), sampleIndex, &longG);
-			}
-			longG /= 9.81f;
-			latG /= 9.81f;
+			if (!renderBlank) {
+				try {
+					CDataChannel& chLat = std::move(logger.GetChannel(string("LatAccel")));
+					CDataChannel& chLong = std::move(logger.GetChannel(string("LongAccel")));
 
-			if (_scale != 0) {
-				longG *= (float)_scale;
-				latG *= (float)_scale;
-			}
+					SampleValue val = CDataChannel::GetSampleData(sample, chLat);
+					latG = val.get_value<float>();
+					val = CDataChannel::GetSampleData(sample, chLong);
+					longG = val.get_value<float>();
+				}
+				catch (std::exception)
+				{
+					throw;
+				}
 
-			if (_scaleLat != 0)
-				latG *= _scaleLat;
-			if (_scaleLong != 0)
-				longG *= _scaleLong;
+				longG /= 9.81f;
+				latG /= 9.81f;
+
+				if (_scale != 0) {
+					longG *= (float)_scale;
+					latG *= (float)_scale;
+				}
+
+				if (_scaleLat != 0)
+					latG *= _scaleLat;
+				if (_scaleLong != 0)
+					longG *= _scaleLong;
+			}
+			else
+			{
+				latG = 0;
+				longG = 0;
+			}
 
 			PointF cp = PointF((REAL)_rectangle.Width / 2, (REAL)_rectangle.Height / 2);
 			float step = (float)((float)_rectangle.Width / 2) / (float)_radius;

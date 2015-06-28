@@ -1,4 +1,16 @@
 #pragma once
+#ifndef _GAUGE_H_
+#define _GAUGE_H_
+///////////////////////////////////////////////////////////////////////////////
+//
+//	VideoDashboard
+//	----------------------
+//	Project: libLDF - layout definition format library
+//
+//	Copyright 2014-2015 Thorsten Kuypers
+//  All Rights Reserved
+//
+///////////////////////////////////////////////////////////////////////////////
 
 #include "common.h"
 #include "DashboardElement.h"
@@ -22,8 +34,8 @@ namespace libLDF
 
 		// Renders the element into a bitmap with the data set by elements channel name
 		// and sample buffer index
-		virtual Gdiplus::Bitmap* Render(int sampleIndex);
-		virtual void SetRuler(void* r);
+		virtual Gdiplus::Bitmap* Render(libOGA::DataSample& sample, IGenericLogger& logger, bool renderBlank);
+		virtual void SetRuler(CRuler& ruler);
 
 		void SetRange(string& s);
 		std::tuple<int, int>& GetRange() { return _range; }
@@ -60,8 +72,6 @@ namespace libLDF
 
 		void SetID(string& s) { _id = s; }
 		string& GetID() { return _id; }
-
-		//CRuler* GetRulerElement() { return _ruler; }
 
 	private:
 
@@ -110,6 +120,9 @@ namespace libLDF
 		bool _useImg;
 		// Number of decimal places displayed in division labels. Default is 0
 		int _precision;
+
 	};
 
 }
+
+#endif // _GAUGE_H_

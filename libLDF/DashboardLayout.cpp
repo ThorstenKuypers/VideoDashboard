@@ -1,28 +1,11 @@
 ///////////////////////////////////////////////////////////////////////////////
 //
-//	TelemetryVideoOverlay
+//	VideoDashboard
 //	----------------------
-//	Project: TVO -- Main GUI implementation
+//	Project: libLDF - layout definition format library
 //
-//	Copyright 2011 Thorsten Kuypers
-//
-//	Licensed under the Apache License, Version 2.0 (the "License");
-//	you may not use this file except in compliance with the License.
-//	You should have obtained a copy of the License with this Software. If not,
-//	you may obtain a copy of the License at
-//
-//				http://www.apache.org/licenses/LICENSE-2.0
-//
-//	Unless required by applicable law or agreed to in writing, software
-//	distributed under the License is distributed on an "AS IS" BASIS,
-//	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//	See the License for the specific language governing permissions and
-//	limitations under the License.
-//
-// * version history:
-//   -----------------
-//
-//	0.4 - first public release
+//	Copyright 2014-2015 Thorsten Kuypers
+//  All Rights Reserved
 //
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -30,90 +13,53 @@
 
 
 using namespace libLDF;
+using namespace Gdiplus;
 
-CDashboardLayout::CDashboardLayout()
+CDashboardLayout::CDashboardLayout() :
+_curDashboard(),
+_curDashboardFileName(),
+_curDashboardFilePath(),
+_gdiplus_tok(0)
 {
 	GdiplusStartupInput gdiStartup;
 
 	GdiplusStartup(&_gdiplus_tok, &gdiStartup, NULL);
-	//_dashboards = std::map<string, CDashboard*>();
-	_curDashboard = nullptr;
-	_dataLogger = nullptr;
 }
 
 
 CDashboardLayout::~CDashboardLayout()
 {
-	if (_curDashboard != nullptr) {
-
-		delete _curDashboard;
-		_curDashboard = nullptr;
-	}
-
 	GdiplusShutdown(_gdiplus_tok);
 }
 
 void CDashboardLayout::ShowBoundingBoxes(bool show)
 {
-	if (_curDashboard != nullptr)
-		_curDashboard->ShowBoundingBoxes(show);
+	_curDashboard.ShowBoundingBoxes(show);
 }
 
-CDashboard* CDashboardLayout::GetDashboard(string& name)
+Gdiplus::Bitmap* CDashboardLayout::RenderDashboard(libOGA::DataSample& sample, IGenericLogger& logger, bool renderBlank)
 {
-	// OLD
-	CDashboard* ptr = nullptr;
-
-	if (_curDashboard != nullptr)
-		ptr = _curDashboard;
-
-	return ptr;
+	return _curDashboard.RenderToImage(sample, logger, renderBlank);
 }
 
-/*Bitmap**/ _GDI_BMP CDashboardLayout::RenderDashboard(string& name, int sampleIndex)
+Gdiplus::Bitmap* CDashboardLayout::RenderDashboard(IGenericLogger& logger, int sampleIndex, bool renderBlank)
 {
-	// NEW
-	CDashboard* dash = nullptr;
-	if (_curDashboard != nullptr)
-		dash = _curDashboard;
-
-	if (dash != nullptr) {
-
-		dash->SetDataLogger(_dataLogger);
-
-		Gdiplus::Bitmap* bmp = dash->RenderToImage(sampleIndex);
-
-		return (_GDI_BMP)bmp;
+	DataSample s;
+	if (!renderBlank) {
+		logger.GetSample(s, sampleIndex);
 	}
 
-	return nullptr;
+	return _curDashboard.RenderToImage(s, logger, renderBlank);
 }
 
-std::string CDashboardLayout::GetDashboardPrettyName(std::string& filename)
+std::string& CDashboardLayout::GetDashboardPrettyName(std::string& filename)
 {
-	// NEW
-	if (_curDashboard != nullptr)
-		return _curDashboard->GetPrettyName();
-
-	return string("");
+	return _curDashboard.GetPrettyName();
 }
 
-std::string CDashboardLayout::GetDashboardShortName(std::string& filename)
+std::string& CDashboardLayout::GetDashboardShortName(std::string& filename)
 {
-	//NEW
-	if (_curDashboard != nullptr)
-		return _curDashboard->GetShortName();
-
-	return string("");
-}
-
-void CDashboardLayout::SetDataLogger(IDataLogger* logger)
-{
-	_dataLogger = logger;
-
-	//NEW 
-	if (_curDashboard != nullptr)
-		_curDashboard->SetDataLogger(_dataLogger);
+	return _curDashboard.GetShortName();
 }
 
 void CDashboardLayout::extractDashboardFilePath()
@@ -128,13 +74,11 @@ void CDashboardLayout::extractDashboardFilePath()
 		{
 			_curDashboardFilePath = _curDashboardFileName.substr(0, pos + 1);
 		}
-
 	}
 }
 
-void CDashboardLayout::ParseLayoutFile(std::string filename)
+void CDashboardLayout::SetActiveDashboard(const std::string& filename)
 {
-	CDashboard* dash = nullptr;
 	std::ifstream fs(filename, ios_base::in);
 	std::vector<std::string> lines;
 	std::vector<ldf_line> _lines;
@@ -254,7 +198,8 @@ void CDashboardLayout::ParseLayoutFile(std::string filename)
 		}
 	}
 
-	string str;
+	// clear previous dashboard element
+	_curDashboard.clear();
 
 	// 3. step -> split sections and extract raw information from it
 	//for (unsigned int i = 0; i < sections.size(); i++) {
@@ -262,107 +207,66 @@ void CDashboardLayout::ParseLayoutFile(std::string filename)
 		//readSection(lines, sections[i]);
 		parseSections(sec);
 
-		CDashboardElement* ptr = nullptr;
-
 		// 4. step -> parse section information and create actual element objects 
 		if (sec.name == std::string("dashboard")) {
 
-			dash = parseDashboardSection(sec);
+			parseDashboardSection(sec);
 		}
 		else if (sec.name == string("textbox")) {
 
-			ptr = (CDashboardElement*)parseTextBoxSection(sec);
-			//			ptr->SetDashboardFilePath(_curDashboardFilePath);
-			checkElementLocalSettingsOverwrite(ptr, dash);
+			parseTextBoxSection(sec);
 		}
 		else if (sec.name == string("gauge")) {
 
-			ptr = (CDashboardElement*)parseGaugeSection(sec);
-			//			((CGauge*)ptr)->SetDashboardFilePath(_curDashboardFilePath);
-			checkElementLocalSettingsOverwrite(ptr, dash);
-
-			ptr->Init();
+			parseGaugeSection(sec);
 		}
 		else if (sec.name == string("indicator")) {
 
-			ptr = (CDashboardElement*)parseIndicatorSection(sec);
-			//			ptr->SetDashboardFilePath(_curDashboardFilePath);
-			checkElementLocalSettingsOverwrite(ptr, dash);
-
-			ptr->Init();
+			parseIndicatorSection(sec);
 		}
 		else if (sec.name == string("slider")) {
 
-			ptr = (CDashboardElement*)parseSliderSection(sec);
-			//			ptr->SetDashboardFilePath(_curDashboardFilePath);
-			checkElementLocalSettingsOverwrite(ptr, dash);
-
-			ptr->Init();
+			parseSliderSection(sec);
 		}
 		else if (sec.name == string("gcircle")) {
 
-			ptr = (CDashboardElement*)parseGCircleSection(sec);
-			//			ptr->SetDashboardFilePath(_curDashboardFilePath);
-			checkElementLocalSettingsOverwrite(ptr, dash);
+			parseGCircleSection(sec);
 		}
 		else if (sec.name == string("ringgauge")) {
 
-			ptr = (CDashboardElement*)parseRingGaugeElement(sec);
-			//			ptr->SetDashboardFilePath(_curDashboardFilePath);
-			//checkElementLocalSettingsOverwrite(ptr, dash);			
+			parseRingGaugeElement(sec);
 		}
 		else if (sec.name == string("sweeper")) {
 
-			ptr = (CDashboardElement*)parseSweeperElement(sec);
-			//			ptr->SetDashboardFilePath(_curDashboardFilePath);
-			checkElementLocalSettingsOverwrite(ptr, dash);
-
-			((CSweeper*)ptr)->Precalculate();
+			parseSweeperElement(sec);
 		}
 		else if (sec.name == string("ruler")) {
 
-			CRuler* p = parseRulerElement(sec);
+			parseRulerElement(sec);
 
-			// check if this ruler element belongs to another element (by using property) or not
-			if (p->GetUsingElement() == string(""))
-			{
-				// this ruler element is a standalone element just like all the other elements
-				// so initialize it and add it to the elements list
-				p->Init();
-
-				// add this ruler element to the elements list here 
-				dash->AddDashboardElement((CDashboardElement*)p);
-			}
-			else {
-				// iterate through all elements and find the ID to which this ruler element is assigned to
-				std::vector<CDashboardElement*> elements = dash->GetDashboardElements();
-
-				for (size_t j = 0; j < elements.size(); j++) {
-
-					if (elements[j]->GetID() == p->GetUsingElement()) {
-
-						elements[j]->SetRuler(p);
-						//Rect rc = elements[j]->GetRectangle();
-						//p->SetRectangle(rc);
-						p->Init();
-
-					}
-				}
-			}
 		}
-		if (sec.name != string("dashboard") && sec.name != string("ruler"))
-			dash->AddDashboardElement(ptr);
 	}
 
-	// NEW (test)
-	if (_curDashboard != nullptr) {
+	// iterate through all elements and find the elements that have a ruler element assigned
+	std::vector<CDashboardElement> elements = _curDashboard.GetDashboardElements();
 
-		delete _curDashboard;
-		_curDashboard = nullptr;
+	for (size_t i = 0; i < elements.size(); i++) {
+		CDashboardElement* e = &elements[i];
+
+		// iterate through the ruler lookup table
+		for (auto r : rulerTable) {
+			if (e->GetID() == r.second.GetUsingElement()) {
+
+				// initialize ruler element
+				e->SetRuler(r.second);
+			}
+			r.second.Init();
+		}
 	}
-	_curDashboard = dash;
 
-	//fs.close();
+#ifdef _DEBUG
+	int x = 0;
+#endif
 }
 
 void CDashboardLayout::parseSections(elementSection& sec)
@@ -413,18 +317,18 @@ void CDashboardLayout::parseSections(elementSection& sec)
 	}
 }
 
-void CDashboardLayout::checkElementLocalSettingsOverwrite(CDashboardElement* e, CDashboard* d)
+void CDashboardLayout::checkElementLocalSettingsOverwrite(CDashboardElement& e)
 {
-	if (e->UseGlobalBackgroundColor())
-		e->SetBackgroundColor(d->GetBackgroundColor());
-	if (e->UseGlobalFontName())
-		e->SetFontName(d->GetFontName());
-	if (e->UseGlobalFontStyle())
-		e->SetFontStyle(d->GetFontStyle());
-	if (e->UseGlobalForegroundColor())
-		e->SetForegroundColor(d->GetForegroundColor());
-	if (e->UseGlobalTextJustify())
-		e->SetTextJustification(d->GetTextJustification());
+	if (e.UseGlobalBackgroundColor())
+		e.SetBackgroundColor(_curDashboard.GetBackgroundColor());
+	if (e.UseGlobalFontName())
+		e.SetFontName(_curDashboard.GetFontName());
+	if (e.UseGlobalFontStyle())
+		e.SetFontStyle(_curDashboard.GetFontStyle());
+	if (e.UseGlobalForegroundColor())
+		e.SetForegroundColor(_curDashboard.GetForegroundColor());
+	if (e.UseGlobalTextJustify())
+		e.SetTextJustification(_curDashboard.GetTextJustification());
 
 }
 
@@ -462,10 +366,9 @@ void CDashboardLayout::checkElementLocalSettingsOverwrite(CDashboardElement* e, 
 //}
 
 
-CDashboard* CDashboardLayout::parseDashboardSection(elementSection& section)
+void CDashboardLayout::parseDashboardSection(elementSection& section)
 {
-	CDashboard* dash = new CDashboard();
-	dash->SetDashboardFilePath(_curDashboardFilePath);
+	_curDashboard.SetDashboardFilePath(_curDashboardFilePath);
 	int _line = 0;
 
 	try
@@ -483,53 +386,49 @@ CDashboard* CDashboardLayout::parseDashboardSection(elementSection& section)
 
 			if (key == string("shortname")) {
 
-				dash->SetShortName(lp.second);
+				_curDashboard.SetShortName(lp.second);
 			}
 			else if (lp.first == std::string("prettyname")) {
 
-				dash->SetPrettyName(lp.second);
+				_curDashboard.SetPrettyName(lp.second);
 			}
 			else if (lp.first == std::string("imagefile")) {
 
-				dash->SetImageFile(lp.second);
+				_curDashboard.SetImageFile(lp.second);
 			}
 			else if (lp.first == std::string("targetwidth")) {
 
-				dash->SetTargetWidth(std::stoi(lp.second));
+				_curDashboard.SetTargetWidth(std::stoi(lp.second));
 			}
 			else if (lp.first == std::string("width")) {
 
-				dash->SetWidth(std::stoi(lp.second));
+				_curDashboard.SetWidth(std::stoi(lp.second));
 			}
 			else if (lp.first == std::string("height")) {
 
-				dash->SetHeight(std::stoi(lp.second));
+				_curDashboard.SetHeight(std::stoi(lp.second));
 			}
 			else if (lp.first == std::string("foreground")) {
-				if (dash != nullptr) {
-					dash->SetForegroundColor(lp.second);
-				}
+				_curDashboard.SetForegroundColor(lp.second);
 			}
 			else if (lp.first == std::string("background")) {
-				if (dash != nullptr) {
-					dash->SetBackgroundColor(lp.second);
-				}
+				_curDashboard.SetBackgroundColor(lp.second);
 			}
 			else if (lp.first == std::string("fontname")) {
 
-				dash->SetFontName(lp.second);
+				_curDashboard.SetFontName(lp.second);
 			}
 			else if (lp.first == std::string("fontstyle")) {
 
-				dash->SetFontStyle(lp.second);
+				_curDashboard.SetFontStyle(lp.second);
 			}
 			else if (lp.first == string("fontheight")) {
 
-				dash->SetFontHeight(std::stoi(lp.second));
+				_curDashboard.SetFontHeight(std::stoi(lp.second));
 			}
 			else if (lp.first == std::string("justify")) {
 
-				dash->SetTextJustification(lp.second);
+				_curDashboard.SetTextJustification(lp.second);
 			}
 		}
 	}
@@ -537,10 +436,9 @@ CDashboard* CDashboardLayout::parseDashboardSection(elementSection& section)
 	{
 		throw ParsingException(ec, _line, section.name.c_str(), _curDashboardFileName.c_str());
 	}
-	return dash;
 }
 
-void CDashboardLayout::parseCommonKeys(CDashboardElement* e, elementSection& sect)
+void CDashboardLayout::parseCommonKeys(CDashboardElement& e, elementSection& sect)
 {
 	int _line = 0;
 	ldf_pair lp;
@@ -555,52 +453,52 @@ void CDashboardLayout::parseCommonKeys(CDashboardElement* e, elementSection& sec
 
 			if (lp.first == string("background")) {
 
-				e->SetBackgroundColor(lp.second);
+				e.SetBackgroundColor(lp.second);
 			}
 			else if (lp.first == string("foreground")) {
 
-				e->SetForegroundColor(lp.second);
+				e.SetForegroundColor(lp.second);
 			}
 			else if (lp.first == string("fontname")) {
 
-				e->SetFontName(lp.second);
+				e.SetFontName(lp.second);
 			}
 			else if (lp.first == string("fontstyle")) {
 
-				e->SetFontStyle(lp.second);
+				e.SetFontStyle(lp.second);
 			}
 			else if (lp.first == string("fontheight")) {
 
-				e->SetFontHeight(stoi(lp.second));
+				e.SetFontHeight(stoi(lp.second));
 			}
 			else if (lp.first == string("justify")) {
 
-				e->SetTextJustification(lp.second);
+				e.SetTextJustification(lp.second);
 			}
 			else if (lp.first == string("scale")) {
 
 				double f = stod(lp.second);
-				e->SetScale(f);
+				e.SetScale(f);
 			}
 			else if (lp.first == string("channel") || lp.first == string("variable")) {
 
-				e->SetChannel(lp.second);
+				e.SetChannel(lp.second);
 			}
 			else if (lp.first == string("layer")) {
 
-				e->SetLayer(stoi(lp.second));
+				e.SetLayer(stoi(lp.second));
 			}
 			else if (lp.first == string("rectangle")) {
 
-				e->SetRectangle(lp.second);
+				e.SetRectangle(lp.second);
 			}
 			else if (lp.first == string("id")) {
 
-				e->SetID(lp.second);
+				e.SetID(lp.second);
 			}
 			else if (lp.first == string("position")) {
 
-				e->SetPosition(lp.second);
+				e.SetPosition(lp.second);
 			}
 			//else if (lp.first == string("using")) {
 
@@ -613,9 +511,9 @@ void CDashboardLayout::parseCommonKeys(CDashboardElement* e, elementSection& sec
 	}
 }
 
-CTextBox* CDashboardLayout::parseTextBoxSection(elementSection& section)
+void CDashboardLayout::parseTextBoxSection(elementSection& section)
 {
-	CTextBox* tb = new CTextBox();
+	CTextBox tb;
 	int _line = 0;
 	ldf_pair lp;
 
@@ -631,23 +529,23 @@ CTextBox* CDashboardLayout::parseTextBoxSection(elementSection& section)
 
 			if (lp.first == string("format")) {
 
-				tb->SetFormatType(lp.second);
+				tb.SetFormatType(lp.second);
 			}
 			else if (lp.first == string("label")) {
 
-				tb->SetLabel(lp.second);
+				tb.SetLabel(lp.second);
 			}
 			else if (lp.first == string("draw_zero")) {
 
-				tb->SetDrawZero(lp.second);
+				tb.SetDrawZero(lp.second);
 			}
 			else if (lp.first == string("signed")) {
 
-				tb->SetSigned(lp.second);
+				tb.SetSigned(lp.second);
 			}
 			else if (lp.first == string("precision")) {
 
-				tb->SetPrecision(stoi(lp.second));
+				tb.SetPrecision(stoi(lp.second));
 			}
 		}
 	}
@@ -659,17 +557,20 @@ CTextBox* CDashboardLayout::parseTextBoxSection(elementSection& section)
 	{
 		throw ParsingException(ec, _line, section.name.c_str(), _curDashboardFileName.c_str());
 	}
-	return tb;
+
+	checkElementLocalSettingsOverwrite(tb);
+	tb.Init();
+	_curDashboard.AddDashboardElement(tb);
 }
 
-CGauge* CDashboardLayout::parseGaugeSection(elementSection& sect)
+void CDashboardLayout::parseGaugeSection(elementSection& sect)
 {
-	CGauge* g = new CGauge();
+	CGauge g;
 	int _line = 0;
 	ldf_pair lp;
 
 	try {
-		g->SetDashboardFilePath(_curDashboardFilePath);
+		g.SetDashboardFilePath(_curDashboardFilePath);
 		parseCommonKeys(g, sect);
 		for (auto kp : sect.keyPairs) {
 
@@ -680,27 +581,27 @@ CGauge* CDashboardLayout::parseGaugeSection(elementSection& sect)
 
 			if (lp.first == string("range")) {
 
-				g->SetRange(lp.second);
+				g.SetRange(lp.second);
 			}
 			else if (lp.first == string("divisions")) {
 
-				g->SetDivisions(stoi(lp.second));
+				g.SetDivisions(stoi(lp.second));
 			}
 			else if (lp.first == string("radius")) {
 
-				g->SetRadius(stoi(lp.second));
+				g.SetRadius(stoi(lp.second));
 			}
 			else if (lp.first == string("face_image")) {
 
-				g->SetImageFile(lp.second);
+				g.SetImageFile(lp.second);
 			}
 			else if (lp.first == string("needle_image")) {
 
-				g->SetNeedleImageFile(lp.second);
+				g.SetNeedleImageFile(lp.second);
 			}
 			else if (lp.first == string("sweep")) {
 
-				g->SetSweepAngle(lp.second);
+				g.SetSweepAngle(lp.second);
 			}
 			//else if (lp.first == string("rotation")) {
 
@@ -708,28 +609,28 @@ CGauge* CDashboardLayout::parseGaugeSection(elementSection& sect)
 			//}
 			else if (lp.first == string("position")) {
 
-				g->SetPosition(lp.second);
+				g.SetPosition(lp.second);
 			}
 			else if (lp.first == string("needle_center")) {
 
-				g->SetNeedleCenter(lp.second);
+				g.SetNeedleCenter(lp.second);
 			}
 			else if (lp.first == string("needle_offset")) {
 
-				g->SetNeedleOffset(lp.second);
+				g.SetNeedleOffset(lp.second);
 			}
 			else if (lp.first == string("draw_face")) {
 
 				if (lp.second == string("yes") || lp.second == string("true")) {
-					g->SetUseImage(true);
+					g.SetUseImage(true);
 				}
 				else{
-					g->SetUseImage(false);
+					g.SetUseImage(false);
 				}
 			}
 			else if (lp.first == string("precision")) {
 
-				g->SetPrecision(stoi(lp.second));
+				g.SetPrecision(stoi(lp.second));
 			}
 		}
 	}
@@ -742,17 +643,19 @@ CGauge* CDashboardLayout::parseGaugeSection(elementSection& sect)
 		throw ParsingException(ec, _line, sect.name.c_str(), _curDashboardFileName.c_str());
 	}
 
-	return g;
+	checkElementLocalSettingsOverwrite(g);
+	g.Init();
+	_curDashboard.AddDashboardElement(g);
 }
 
-CIndicator* CDashboardLayout::parseIndicatorSection(elementSection& sect)
+void CDashboardLayout::parseIndicatorSection(elementSection& sect)
 {
-	CIndicator* p = new CIndicator();
+	CIndicator p;
 	int _line = 0;
 	ldf_pair lp;
 
 	try {
-		p->SetDashboardFilePath(_curDashboardFilePath);
+		p.SetDashboardFilePath(_curDashboardFilePath);
 
 		parseCommonKeys(p, sect);
 
@@ -765,56 +668,56 @@ CIndicator* CDashboardLayout::parseIndicatorSection(elementSection& sect)
 
 			if (lp.first == string("rgbon")) {
 
-				p->SetColorON(lp.second);
+				p.SetColorON(lp.second);
 			}
 			else if (lp.first == string("rgboff")) {
 
-				p->SetColorOff(lp.second);
+				p.SetColorOff(lp.second);
 			}
 			else if (lp.first == string("threshold")) {
 
-				p->SetThresholdValue(stof(lp.second));
+				p.SetThresholdValue(stof(lp.second));
 			}
 			else if (lp.first == string("shape")) {
 
-				p->SetShape(lp.second);
+				p.SetShape(lp.second);
 			}
 			else if (lp.first == string("image_on")) {
 
-				p->SetOnImage(lp.second);
+				p.SetOnImage(lp.second);
 			}
 			else if (lp.first == string("image_off")) {
 
-				p->SetOffImage(lp.second);
+				p.SetOffImage(lp.second);
 			}
 			else if (lp.first == string("thickness")) {
 
-				p->SetThickness(stoi(lp.second));
+				p.SetThickness(stoi(lp.second));
 			}
 			else if (lp.first == string("filled")) {
 
 				if (lp.second == string("true") || lp.second == string("yes"))
-					p->SetFilled(true);
+					p.SetFilled(true);
 				else
-					p->SetFilled(false);
+					p.SetFilled(false);
 			}
 			else if (lp.first == string("outlined")) {
 
 				if (lp.second == string("true") || lp.second == string("yes"))
-					p->SetOutlined(true);
+					p.SetOutlined(true);
 				else
-					p->SetOutlined(false);
+					p.SetOutlined(false);
 			}
 			else if (lp.first == string("shaded")) {
 
 				if (lp.second == string("true") || lp.second == string("yes"))
-					p->SetShaded(true);
+					p.SetShaded(true);
 				else
-					p->SetShaded(false);
+					p.SetShaded(false);
 			}
 			else if (lp.first == string("unshaded")) {
 
-				p->SetUnshadedValue(stof(lp.second));
+				p.SetUnshadedValue(stof(lp.second));
 			}
 		}
 	}
@@ -827,17 +730,19 @@ CIndicator* CDashboardLayout::parseIndicatorSection(elementSection& sect)
 		throw ParsingException(ec, _line, sect.name.c_str(), _curDashboardFileName.c_str());
 	}
 
-	return p;
+	checkElementLocalSettingsOverwrite(p);
+	p.Init();
+	_curDashboard.AddDashboardElement(p);
 }
 
-CSlider* CDashboardLayout::parseSliderSection(elementSection& sect)
+void CDashboardLayout::parseSliderSection(elementSection& sect)
 {
-	CSlider* ptr = new CSlider();
+	CSlider s;
 	int _line = 0;
 	ldf_pair lp;
 
 	try {
-		parseCommonKeys(ptr, sect);
+		parseCommonKeys(s, sect);
 
 		for (auto kp : sect.keyPairs) {
 
@@ -848,15 +753,15 @@ CSlider* CDashboardLayout::parseSliderSection(elementSection& sect)
 
 			if (lp.first == string("range")) {
 
-				ptr->SetRange(lp.second);
+				s.SetRange(lp.second);
 			}
 			else if (lp.first == string("rgbpositive")) {
 
-				ptr->SetColorPositive(lp.second);
+				s.SetColorPositive(lp.second);
 			}
 			else if (lp.first == string("rgbnegative")) {
 
-				ptr->SetColorNegative(lp.second);
+				s.SetColorNegative(lp.second);
 			}
 		}
 	}
@@ -869,18 +774,20 @@ CSlider* CDashboardLayout::parseSliderSection(elementSection& sect)
 		throw ParsingException(ec, _line, sect.name.c_str(), _curDashboardFileName.c_str());
 	}
 
-	return ptr;
+	checkElementLocalSettingsOverwrite(s);
+	s.Init();
+	_curDashboard.AddDashboardElement(s);
 }
 
-CGCircle* CDashboardLayout::parseGCircleSection(elementSection& sect)
+void CDashboardLayout::parseGCircleSection(elementSection& sect)
 {
-	CGCircle* ptr = new CGCircle();
+	CGCircle g;
 	int _line = 0;
 	ldf_pair lp;
 
 	try {
 
-		parseCommonKeys(ptr, sect);
+		parseCommonKeys(g, sect);
 
 		for (auto kp : sect.keyPairs) {
 
@@ -891,35 +798,35 @@ CGCircle* CDashboardLayout::parseGCircleSection(elementSection& sect)
 
 			if (lp.first == string("divisions")) {
 
-				ptr->SetDivisions(stoi(lp.second));
+				g.SetDivisions(stoi(lp.second));
 			}
 			else if (lp.first == string("radius")) {
 
-				ptr->SetRadius(stoi(lp.second));
+				g.SetRadius(stoi(lp.second));
 			}
 			else if (lp.first == string("line_width")) {
 
-				ptr->SetLineWidth(stoi(lp.second));
+				g.SetLineWidth(stoi(lp.second));
 			}
 			else if (lp.first == string("pointer")) {
 
-				ptr->SetPointerColor(lp.second);
+				g.SetPointerColor(lp.second);
 			}
 			else if (lp.first == string("pointer_width")) {
 
-				ptr->SetPointerWidth(stoi(lp.second));
+				g.SetPointerWidth(stoi(lp.second));
 			}
 			else if (lp.first == string("pointer_size")) {
 
-				ptr->SetPointerSize(stoi(lp.second));
+				g.SetPointerSize(stoi(lp.second));
 			}
 			else if (lp.first == string("scale_lat_accel")) {
 
-				ptr->SetLateralScaleFactor(stof(lp.second));
+				g.SetLateralScaleFactor(stof(lp.second));
 			}
 			else if (lp.first == string("scale_lon_accel")) {
 
-				ptr->SetLongitudinalScaleFactor(stof(lp.second));
+				g.SetLongitudinalScaleFactor(stof(lp.second));
 			}
 		}
 	}
@@ -932,17 +839,19 @@ CGCircle* CDashboardLayout::parseGCircleSection(elementSection& sect)
 		throw ParsingException(ec, _line, sect.name.c_str(), _curDashboardFileName.c_str());
 	}
 
-	return ptr;
+	checkElementLocalSettingsOverwrite(g);
+	g.Init();
+	_curDashboard.AddDashboardElement(g);
 }
 
-CSweeper* CDashboardLayout::parseSweeperElement(elementSection& sect)
+void CDashboardLayout::parseSweeperElement(elementSection& sect)
 {
-	CSweeper* ptr = new CSweeper;
+	CSweeper s;
 	int _line = 0;
 	ldf_pair lp;
 
 	try {
-		parseCommonKeys(ptr, sect);
+		parseCommonKeys(s, sect);
 
 		for (auto kp : sect.keyPairs) {
 
@@ -953,63 +862,63 @@ CSweeper* CDashboardLayout::parseSweeperElement(elementSection& sect)
 
 			if (lp.first == string("path")) {
 
-				ptr->SetPathType(lp.second);
+				s.SetPathType(lp.second);
 			}
 			else if (lp.first == string("range")) {
 
-				ptr->SetRange(lp.second);
+				s.SetRange(lp.second);
 			}
 			else if (lp.first == string("sweep")) {
 
-				ptr->SetSweepAngle(lp.second);
+				s.SetSweepAngle(lp.second);
 			}
 			else if (lp.first == string("rectangle")) {
 
-				ptr->SetRectangle(lp.second);
+				s.SetRectangle(lp.second);
 			}
 			else if (lp.first == string("line_start")) {
 
-				ptr->SetLineStart(lp.second);
+				s.SetLineStart(lp.second);
 			}
 			else if (lp.first == string("line_end")) {
 
-				ptr->SetLineEnd(lp.second);
+				s.SetLineEnd(lp.second);
 			}
 			else if (lp.first == string("shape")) {
 
-				ptr->SetShapeType(lp.second);
+				s.SetShapeType(lp.second);
 			}
 			else if (lp.first == string("extend")) {
 
-				ptr->SetExtend(stoi(lp.second));
+				s.SetExtend(stoi(lp.second));
 			}
 			else if (lp.first == string("thickness")) {
 
-				ptr->SetThickness(stoi(lp.second));
+				s.SetThickness(stoi(lp.second));
 			}
 			else if (lp.first == string("taper")) {
 
-				ptr->SetTaper(stoi(lp.second));
+				s.SetTaper(stoi(lp.second));
 			}
 			else if (lp.first == string("divisions")) {
 
-				ptr->SetDivisions(stoi(lp.second));
+				s.SetDivisions(stoi(lp.second));
 			}
 			else if (lp.first == string("rgboff")) {
 
-				ptr->SetColorOFF(lp.second);
+				s.SetColorOFF(lp.second);
 			}
 			else if (lp.first == string("rgbon")) {
 
 				removeChar(lp.second, ' ');
 				if (lp.second[0] == '<' && lp.second[1] == '<')
-					ptr->SetThresholdColors(lp.second);
+					s.SetThresholdColors(lp.second);
 				else
-					ptr->SetColorON(lp.second);
+					s.SetColorON(lp.second);
 			}
 			else if (lp.first == string("threshold")) {
 
-				ptr->SetThreshold(lp.second);
+				s.SetThreshold(lp.second);
 			}
 		}
 	}
@@ -1022,17 +931,20 @@ CSweeper* CDashboardLayout::parseSweeperElement(elementSection& sect)
 		throw ParsingException(ec, _line, sect.name.c_str(), _curDashboardFileName.c_str());
 	}
 
-	return ptr;
+	checkElementLocalSettingsOverwrite(s);
+	s.Init();
+	s.Precalculate();
+	_curDashboard.AddDashboardElement(s);
 }
 
-CRuler* CDashboardLayout::parseRulerElement(elementSection& sect)
+void CDashboardLayout::parseRulerElement(elementSection& sect)
 {
-	CRuler* p = new CRuler();
+	CRuler p;
 	int _line = 0;
 	ldf_pair lp;
 
 	try {
-		parseCommonKeys(p, sect);
+		//parseCommonKeys(p, sect);
 
 		for (auto kp : sect.keyPairs) {
 
@@ -1043,11 +955,11 @@ CRuler* CDashboardLayout::parseRulerElement(elementSection& sect)
 
 			if (lp.first == string("using")) {
 
-				p->SetUsingElement(lp.second);
+				p.SetUsingElement(lp.second);
 			}
 			else if (lp.first == string("path")) {
 
-				p->SetPathType(lp.second);
+				p.SetPathType(lp.second);
 			}
 			else if (lp.first == string("draw_path")) {
 
@@ -1056,27 +968,27 @@ CRuler* CDashboardLayout::parseRulerElement(elementSection& sect)
 				if (lp.second == string("yes") || lp.second == string("true"))
 					b = true;
 
-				p->SetDrawPath(b);
+				p.SetDrawPath(b);
 			}
 			else if (lp.first == string("path_color")) {
 
-				p->SetPathColor(lp.second);
+				p.SetPathColor(lp.second);
 			}
 			else if (lp.first == string("path_offset")) {
 
-				p->SetPathOffset(stoi(lp.second));
+				p.SetPathOffset(stoi(lp.second));
 			}
 			else if (lp.first == string("path_width")) {
 
-				p->SetPathWidth(stoi(lp.second));
+				p.SetPathWidth(stoi(lp.second));
 			}
 			else if (lp.first == string("path_range")) {
 
-				p->SetPathRange(lp.second);
+				p.SetPathRange(lp.second);
 			}
 			else if (lp.first == string("path_position")) {
 
-				p->SetPathPosition(lp.second);
+				p.SetPathPosition(lp.second);
 			}
 			else if (lp.first == string("draw_label")) {
 
@@ -1085,11 +997,11 @@ CRuler* CDashboardLayout::parseRulerElement(elementSection& sect)
 				if (lp.second == string("yes") || lp.second == string("true"))
 					b = true;
 
-				p->SetDrawLabel(b);
+				p.SetDrawLabel(b);
 			}
 			else if (lp.first == string("label_margin")) {
 
-				p->SetLabelMargin(stoi(lp.second));
+				p.SetLabelMargin(stoi(lp.second));
 			}
 			else if (lp.first == string("label_format")) {
 
@@ -1097,11 +1009,11 @@ CRuler* CDashboardLayout::parseRulerElement(elementSection& sect)
 			}
 			else if (lp.first == string("line_start")) {
 
-				p->SetLineStart(lp.second);
+				p.SetLineStart(lp.second);
 			}
 			else if (lp.first == string("line_end")) {
 
-				p->SetLineEnd(lp.second);
+				p.SetLineEnd(lp.second);
 			}
 			//else if (lp.first == string("arc_start")) {
 
@@ -1112,7 +1024,7 @@ CRuler* CDashboardLayout::parseRulerElement(elementSection& sect)
 			//}
 			else if (lp.first == string("arc_sweep")) {
 
-				p->SetArcSweep(lp.second);
+				p.SetArcSweep(lp.second);
 			}
 			else if (lp.first == string("draw_major")) {
 
@@ -1121,39 +1033,39 @@ CRuler* CDashboardLayout::parseRulerElement(elementSection& sect)
 				if (lp.second == string("yes") || lp.second == string("true"))
 					b = true;
 
-				p->SetDrawMajor(b);
+				p.SetDrawMajor(b);
 			}
 			else if (lp.first == string("major_divisions")) {
 
-				p->SetMajorDivisions(stoi(lp.second));
+				p.SetMajorDivisions(stoi(lp.second));
 			}
 			else if (lp.first == string("major_units")) {
 
-				p->SetMajorUnits(stof(lp.second));
+				p.SetMajorUnits(stof(lp.second));
 			}
 			else if (lp.first == string("major_margin")) {
 
-				p->SetMajorMargin(stoi(lp.second));
+				p.SetMajorMargin(stoi(lp.second));
 			}
 			else if (lp.first == string("major_color")) {
 
-				p->SetMajorColor(lp.second);
+				p.SetMajorColor(lp.second);
 			}
 			else if (lp.first == string("major_shape")) {
 
-				p->SetMajorShape(lp.second);
+				p.SetMajorShape(lp.second);
 			}
 			else if (lp.first == string("major_length")) {
 
-				p->SetMajorLength(stoi(lp.second));
+				p.SetMajorLength(stoi(lp.second));
 			}
 			else if (lp.first == string("major_width")) {
 
-				p->SetMajorWidth(stoi(lp.second));
+				p.SetMajorWidth(stoi(lp.second));
 			}
 			else if (lp.first == string("major_radius")) {
 
-				p->SetMajorRadius(stoi(lp.second));
+				p.SetMajorRadius(stoi(lp.second));
 			}
 			else if (lp.first == string("draw_minor")) {
 
@@ -1162,71 +1074,71 @@ CRuler* CDashboardLayout::parseRulerElement(elementSection& sect)
 				if (lp.second == string("yes") || lp.second == string("true"))
 					b = true;
 
-				p->SetDrawMinor(b);
+				p.SetDrawMinor(b);
 			}
 			else if (lp.first == string("minor_divisions")) {
 
-				p->SetMinorDivisions(stoi(lp.second));
+				p.SetMinorDivisions(stoi(lp.second));
 			}
 			else if (lp.first == string("minor_units")) {
 
-				p->SetMinorUnits(stof(lp.second));
+				p.SetMinorUnits(stof(lp.second));
 			}
 			else if (lp.first == string("minor_margin")) {
 
-				p->SetMinorMargin(stoi(lp.second));
+				p.SetMinorMargin(stoi(lp.second));
 			}
 			else if (lp.first == string("minor_color")) {
 
-				p->SetMinorColor(lp.second);
+				p.SetMinorColor(lp.second);
 			}
 			else if (lp.first == string("minor_shape")) {
 
-				p->SetMinorShape(lp.second);
+				p.SetMinorShape(lp.second);
 			}
 			else if (lp.first == string("minor_length")) {
 
-				p->SetMinorLength(stoi(lp.second));
+				p.SetMinorLength(stoi(lp.second));
 			}
 			else if (lp.first == string("minor_width")) {
 
-				p->SetMinorWidth(stoi(lp.second));
+				p.SetMinorWidth(stoi(lp.second));
 			}
 			else if (lp.first == string("minor_radius")) {
 
-				p->SetMinorRadius(stoi(lp.second));
+				p.SetMinorRadius(stoi(lp.second));
 			}
 			else if (lp.first == string("foreground")) {
 
-				p->SetForegroundColor(lp.second);
+				p.SetForegroundColor(lp.second);
 			}
 			else if (lp.first == string("background")) {
 
-				p->SetBackgroundColor(lp.second);
+				p.SetBackgroundColor(lp.second);
 			}
 			else if (lp.first == string("fontheight")) {
 
-				p->SetFontHeight(stoi(lp.second));
+				p.SetFontHeight(stoi(lp.second));
 			}
 			else if (lp.first == string("fontstyle")) {
 
-				p->SetFontStyle(lp.second);
+				p.SetFontStyle(lp.second);
 			}
 			else if (lp.first == string("fontname")) {
 
-				p->SetFontName(lp.second);
+				p.SetFontName(lp.second);
 			}
 			else if (lp.first == string("layer")) {
 
-				p->SetLayer(stoi(lp.second));
+				p.SetLayer(stoi(lp.second));
 			}
 			else if (lp.first == string("transparency")) {
 
-				p->SetTransparency(stof(lp.second));
+				p.SetTransparency(stof(lp.second));
 			}
 			else if (lp.first == string("scale")) {
 
-				p->SetScalingFactor(stod(lp.second));
+				p.SetScalingFactor(stod(lp.second));
 			}
 		}
 	}
@@ -1239,19 +1151,36 @@ CRuler* CDashboardLayout::parseRulerElement(elementSection& sect)
 		throw ParsingException(ec, _line, sect.name.c_str(), _curDashboardFileName.c_str());
 	}
 
-	return p;
+	//checkElementLocalSettingsOverwrite(p);
+
+	// check if this ruler element belongs to another element (by using property) or not
+	//if (p.GetUsingElement() == string(""))
+	//{
+	//	// this ruler element is a standalone element just like all the other elements
+	//	// so initialize it and add it to the elements list
+	//	p.Init();
+
+	//	// add this ruler element to the elements list here 
+	//	_curDashboard.AddDashboardElement(p);
+	//}
+	//else {
+	// asign this ruler element to a temporary lookup table; this is needed in case the ruler element is not
+	// the last element in the layout file. Thus it is possible that the ruler will be parsed before the
+	// element it belongs to!
+	rulerTable[p.GetUsingElement()] = p;
+	//}
 }
 
 
-CRingGauge* CDashboardLayout::parseRingGaugeElement(elementSection& sect)
+void CDashboardLayout::parseRingGaugeElement(elementSection& sect)
 {
-	CRingGauge* ptr = new CRingGauge();
+	CRingGauge g;
 	int _line = 0;
 	ldf_pair lp;
 
 	try {
 
-		parseCommonKeys(ptr, sect);
+		parseCommonKeys(g, sect);
 
 		for (auto kp : sect.keyPairs)
 		{
@@ -1262,54 +1191,54 @@ CRingGauge* CDashboardLayout::parseRingGaugeElement(elementSection& sect)
 
 			if (lp.first == string("id")) {
 
-				ptr->SetID(lp.second);
+				g.SetID(lp.second);
 			}
 			else if (lp.first == string("rectangle")) {
 
-				ptr->SetRectangle(lp.second);
+				g.SetRectangle(lp.second);
 			}
 			else if (lp.first == string("range")) {
 
-				ptr->SetRange(lp.second);
+				g.SetRange(lp.second);
 			}
 			else if (lp.first == string("width")) {
 
-				ptr->SetRingWidth(lp.second);
+				g.SetRingWidth(lp.second);
 			}
 			else if (lp.first == string("sweep")) {
 
-				ptr->SetSweep(lp.second);
+				g.SetSweep(lp.second);
 			}
 			else if (lp.first == string("rotation")) {
 
-				ptr->SetRotation(lp.second);
+				g.SetRotation(lp.second);
 			}
 			else if (lp.first == string("foreground")) {
 
-				ptr->SetForegroundColor(lp.second);
+				g.SetForegroundColor(lp.second);
 			}
 			else if (lp.first == string("shaded")) {
 
 				if ((lp.second == "yes") || (lp.second == "true"))
-					ptr->SetShaded(true);
+					g.SetShaded(true);
 				else
-					ptr->SetShaded(false);
+					g.SetShaded(false);
 			}
 			else if (lp.first == string("marker_width")) {
 
-				ptr->SetMarkerWidth(lp.second);
+				g.SetMarkerWidth(lp.second);
 			}
 			else if (lp.first == string("marker_color")) {
 
-				ptr->SetMarkerColor(lp.second);
+				g.SetMarkerColor(lp.second);
 			}
 			else if (lp.first == string("marker_hold_time")) {
 
-				ptr->SetMarkerHoldTime(lp.second);
+				g.SetMarkerHoldTime(lp.second);
 			}
 			else if (lp.first == string("marker_decay")) {
 
-				ptr->SetMarkerDecay(lp.second);
+				g.SetMarkerDecay(lp.second);
 			}
 		}
 	}
@@ -1322,5 +1251,7 @@ CRingGauge* CDashboardLayout::parseRingGaugeElement(elementSection& sect)
 		throw ParsingException(ec, _line, sect.name.c_str(), _curDashboardFileName.c_str());
 	}
 
-	return ptr;
+	checkElementLocalSettingsOverwrite(g);
+	g.Init();
+	_curDashboard.AddDashboardElement(g);
 }

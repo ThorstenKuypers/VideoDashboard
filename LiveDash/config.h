@@ -12,6 +12,9 @@
 
 struct _config
 {
+	ILiveLogger* logger;
+	IDashboardLayout* dash;
+
 	std::wstring dashboardPath;
 	std::wstring selectedDashboard;
 	int posX;

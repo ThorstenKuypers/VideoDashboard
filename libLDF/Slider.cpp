@@ -4,16 +4,14 @@
 using namespace libLDF;
 
 
-CSlider::CSlider()
+CSlider::CSlider() :CDashboardElement(),
+_orientation(SliderOrientation::vertical),
+_rgbNegative(Color::Red),
+_rgbPositive(Color::Blue),
+_cp(PointF(0, 0)),
+_valStep(0)
 {
 	type = DashboardElementType::slider;
-
-	_orientation = SliderOrientation::vertical;
-	_rgbNegative = Color::Red;
-	_rgbPositive = Color::Blue;
-
-	_cp = PointF(0, 0);
-	_valStep = 0;
 }
 
 
@@ -49,13 +47,14 @@ void CSlider::Init()
 
 }
 
-Gdiplus::Bitmap* CSlider::Render(int sampleIndex)
+Gdiplus::Bitmap* CSlider::Render(DataSample& sample, IGenericLogger& logger, bool renderBlank)
 {
 	Graphics* gfx = NULL;
 	int min = std::get<0>(_range), max = std::get<1>(_range);
 	float w = 0, h = 0;
 	RectF rc = RectF(0, 0, 0, 0);
-	Brush* br =nullptr;
+	Brush* br = nullptr;
+	float val = 0;
 
 	Bitmap* bmp = new Bitmap(_rectangle.Width, _rectangle.Height, PixelFormat32bppARGB);
 	if (bmp != NULL)
@@ -63,13 +62,35 @@ Gdiplus::Bitmap* CSlider::Render(int sampleIndex)
 		gfx = Graphics::FromImage(bmp);
 		if (gfx != NULL)
 		{
+			if (!renderBlank) {
+				try {
+					CDataChannel& ch = std::move(logger.GetChannel(_channel));
+					SampleValue sv = CDataChannel::GetSampleData(sample, ch);
 
-			float v = 0;
-			if (_dataLoggerInst != NULL)
-				_dataLoggerInst->GetChannelData(_channel, sampleIndex, &v);
-			//v *= 100.0f;
-
-			//v = v / 9.81;
+					switch (sv.type())
+					{
+					case irsdk_float:
+						val = sv.get_value<float>();
+						break;
+					case irsdk_double:
+						val = static_cast<float>(sv.get_value<double>());
+						break;
+					case irsdk_int:
+						val = static_cast<float>(sv.get_value<int>());
+						break;
+					case irsdk_char:
+						val = static_cast<float>(sv.get_value<char>());
+						break;
+					default:
+						val = 0;
+						break;
+					}
+				}
+				catch (std::exception)
+				{
+					throw;
+				}
+			}
 
 #pragma region "Center 0 Slider rendering (min->0->max)"
 
@@ -77,10 +98,10 @@ Gdiplus::Bitmap* CSlider::Render(int sampleIndex)
 			{
 				if (_orientation == SliderOrientation::horizontal) {
 
-					w = v / _valStep;
+					w = val / _valStep;
 
 					// render from min to max with 0 in center
-					if (v < 0) {
+					if (val < 0) {
 
 						br = new SolidBrush(_rgbNegative);
 
@@ -123,9 +144,9 @@ Gdiplus::Bitmap* CSlider::Render(int sampleIndex)
 
 				if (_orientation == SliderOrientation::vertical) {
 
-					h = v / _valStep;
+					h = val / _valStep;
 
-					if (v < 0) {
+					if (val < 0) {
 
 						br = new SolidBrush(_rgbNegative);
 
@@ -182,9 +203,9 @@ Gdiplus::Bitmap* CSlider::Render(int sampleIndex)
 			{
 				if (_orientation == SliderOrientation::horizontal)
 				{
-					w = v / _valStep;
+					w = val / _valStep;
 
-					if (v < 0) {
+					if (val < 0) {
 
 						br = new SolidBrush(_rgbNegative);
 						if (w < 0)
@@ -232,9 +253,9 @@ Gdiplus::Bitmap* CSlider::Render(int sampleIndex)
 
 				if (_orientation == SliderOrientation::vertical)
 				{
-					h = v / _valStep;
+					h = val / _valStep;
 
-					if (v < 0) {
+					if (val < 0) {
 
 						br = new SolidBrush(_rgbNegative);
 
@@ -359,18 +380,13 @@ void CSlider::SetColorNegative(string& s)
 	}
 }
 
-void CSlider::SetRuler(void* r)
+void CSlider::SetRuler(CRuler& r)
 {
-	if (r != nullptr) {
+	r.SetPathRange(std::get<0>(_range), std::get<1>(_range));
+	r.SetLineOrientation(_orientation);
+	r.SetPathType(pathType_line);
+	r.SetRectangle(_rectangle);
 
-		_ruler = r;
-
-		((CRuler*)_ruler)->SetPathRange(std::get<0>(_range), std::get<1>(_range));
-		((CRuler*)_ruler)->SetLineOrientation(_orientation);
-		((CRuler*)_ruler)->SetPathType(pathType_line);
-		((CRuler*)_ruler)->SetRectangle(_rectangle);
-
-		if (_scale != 1)
-			((CRuler*)_ruler)->SetScalingFactor(_scale);
-	}
+	if (_scale != 1)
+		r.SetScalingFactor(_scale);
 }

@@ -4,28 +4,25 @@
 using namespace libLDF;
 
 
-CGauge::CGauge() : CDashboardElement()
+CGauge::CGauge() : CDashboardElement(),
+_range(std::tuple<int, int>(0, 0)),
+_pos(tuple<int, int>(-1, -1)),
+_sweepAngle(tuple<float, float>(0.0f, 0.0f)), // (135.0f, 270.0f);
+_divisions(0),
+_radius(0),
+_imgFile(std::string("")),
+_needleImgFile(string("")),
+_needleCenter(tuple<int, int>(-1, -1)),
+_needleOffset(tuple<int, int>(0, 0)),
+_useImg(true),
+_precision(0),
+_margin(5),
+_imgSize(Size(-1, -1)),
+_renderStartAngle(0),
+_bgImg(nullptr),
+_needleImg(nullptr)
 {
 	type = DashboardElementType::gauge;
-
-	_range = std::tuple<int, int>(0, 0);
-	_pos = tuple<int, int>(-1, -1);
-	_sweepAngle = tuple<float, float>(0.0f, 0.0f); // (135.0f, 270.0f);
-	_divisions = 0;
-	_radius = 0;
-	_imgFile = std::string("");
-	_needleImgFile = string("");
-	_needleCenter = tuple<int, int>(-1, -1);
-	_needleOffset = tuple<int, int>(0, 0);
-	_useImg = true;
-	_precision = 0;
-
-	_margin = 5;
-	_imgSize = Size(-1, -1);
-	_renderStartAngle = 0;
-
-	_bgImg = nullptr;
-	_needleImg = nullptr;
 }
 
 
@@ -41,12 +38,6 @@ CGauge::~CGauge()
 
 		delete _needleImg;
 		_needleImg = nullptr;
-	}
-
-	if (_ruler != nullptr) {
-
-		delete _ruler;
-		_ruler = nullptr;
 	}
 }
 
@@ -117,7 +108,7 @@ void CGauge::Init()
 //
 // Bitmap* Render()
 ///////////////////////////////////////////////////////////////////////////////
-Gdiplus::Bitmap* CGauge::Render(int sampleIndex)
+Gdiplus::Bitmap* CGauge::Render(libOGA::DataSample& sample, IGenericLogger& logger, bool renderBlank)
 {
 	float maxVal = 0, minVal = 0;
 
@@ -164,7 +155,7 @@ Gdiplus::Bitmap* CGauge::Render(int sampleIndex)
 				// no face image given, so render gauge based on data specified in layout
 				// file without face image
 
-				if (_divisions != 0 && _ruler == nullptr) {
+				if (_divisions != 0) {
 					// draw a simple scale based on divisions parameter
 
 					gfx->FillRectangle(&SolidBrush(_background), 0, 0, bmp->GetWidth(), bmp->GetHeight());
@@ -223,13 +214,29 @@ Gdiplus::Bitmap* CGauge::Render(int sampleIndex)
 			// check for correct data type and allocate space accordingly
 			float vf = 0;
 
-			if (_dataLoggerInst != NULL)
-				_dataLoggerInst->GetChannelData(_channel, sampleIndex, &vf);
+			if (!renderBlank) {
+				try {
+					CDataChannel& ch = std::move(logger.GetChannel(_channel));
+					SampleValue val = CDataChannel::GetSampleData(sample, ch);
+					if (val.type() == irsdk_int)
+						vf = static_cast<float>(val.get_value<int>());
+					else if (val.type() == irsdk_char)
+						vf = static_cast<float>(val.get_value<char>());
+					else if (val.type() == irsdk_double)
+						vf = static_cast<float>(val.get_value<double>());
+					else if (val.type() == irsdk_float)
+						vf = val.get_value<float>();
+					else
+						vf = 0;
 
-
-			// scale channel value
-			//if (_scale != 0)
-			vf *= (float)_scale;
+				}
+				catch (std::exception)
+				{
+					throw;
+				}
+				// scale channel value
+				vf *= (float)_scale;
+			}
 
 			// is current value lower than minumum value defined by range attribute?
 			if (vf < minVal)
@@ -376,22 +383,16 @@ void CGauge::SetNeedleCenter(string& s)
 	std::get<1>(_needleCenter) = stoi(toks[1]);
 }
 
-void CGauge::SetRuler(void* ruler)
+void CGauge::SetRuler(CRuler& ruler)
 {
-	_ruler = ruler;
+	ruler.SetPathRange(std::get<0>(_range), std::get<1>(_range));
+	ruler.SetArcSweep((int)std::get<0>(_sweepAngle), (int)std::get<1>(_sweepAngle));
+	ruler.SetArcRadius(_radius);
+	ruler.SetPathType(std::string("arc"));
+	ruler.SetRectangle(_rectangle);
 
-	if (_ruler != nullptr) {
-
-		((CRuler*)_ruler)->SetPathRange(std::get<0>(_range), std::get<1>(_range));
-		((CRuler*)_ruler)->SetArcSweep((int)std::get<0>(_sweepAngle), (int)std::get<1>(_sweepAngle));
-		((CRuler*)_ruler)->SetArcRadius(_radius);
-		((CRuler*)_ruler)->SetPathType(std::string("arc"));
-		((CRuler*)_ruler)->SetRectangle(_rectangle);
-
-		if (_scale != 1)
-			((CRuler*)_ruler)->SetScalingFactor(_scale);
-
-	}
+	if (_scale != 1)
+		ruler.SetScalingFactor(_scale);
 }
 
 void CGauge::SetImageFile(string& s)

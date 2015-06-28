@@ -4,6 +4,7 @@
 #include <typeinfo.h>
 #include <cassert>
 #include <tuple>
+#include <string>
 
 #define __MODULE__ "DataLogger.dll"
 

@@ -2,43 +2,6 @@
 
 using namespace libLDF;
 
-CDashboardElement::CDashboardElement()
-{
-	_useGlobalForeColor = true;
-	_useGlobalBackColor = true;
-	_useGlobalFontname = true;
-	_useGlobalFontstyle = true;
-	_useGlobalJustify = true;
-
-	_background = Color::Transparent;
-	_foreground = Color::White;
-	_fontname = std::string("Arial");
-	_fontheight = 10;
-	_fontstyle = FontStyleRegular;
-	_justify = TextJustify_center;
-	_scale = 1;
-	_channel = std::string("");
-	_layer = 0;
-	_rectangle = Rect(-1, -1, -1, -1);
-	_id = std::string("");
-	_taperStep = 0;
-
-	_dataLoggerInst = NULL;
-	_ruler = NULL;
-	_transparency = 0;
-	_dashFilePath = std::string("");
-}
-
-
-CDashboardElement::~CDashboardElement()
-{
-}
-
-//void CDashboardElement::Render()
-//{
-//
-//}
-
 void CDashboardElement::SetRectangle(string& s)
 {
 	parsing_error ec = parsing_error::ok;
@@ -81,7 +44,7 @@ void CDashboardElement::SetBackgroundColor(std::string& s)
 		getColorFromString(s, &c);
 		if (c.size() == 1)
 			_background = Color((255) | c[0]);
-		if (c.size() ==3)
+		if (c.size() == 3)
 			_background = Color((BYTE)c[0], (BYTE)c[1], (BYTE)c[2]);
 	}
 	catch (parsing_error& ec)

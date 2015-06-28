@@ -4,25 +4,24 @@
 using namespace libLDF;
 
 
-CIndicator::CIndicator()
+CIndicator::CIndicator() : CDashboardElement(),
+_rgbOn(Color::Transparent),
+_rgbOff(Color::Transparent),
+_thresholdVal(0),
+_shape(Indicator_ShapeType_image),
+_imgOff(string()),
+_imgOn(string()),
+_thickness(1),
+_outlined(true),
+_filled(true),
+_shaded(false),
+_unshaded(0.1f),
+_bmpOn(nullptr),
+_bmpOff(nullptr)
 {
-	_rgbOn = Color::Transparent;
-	_rgbOff = Color::Transparent;
-	_thresholdVal = 0;
-	_shape = Indicator_ShapeType_image;
-	_imgOff = string();
-	_imgOn = string();
-	_thickness = 1;
-	_outlined = true;
-	_filled = true;
-	_shaded = false;
-	_unshaded = 0.1f;
-
+	type = DashboardElementType::indicator;
 	_position = Point(0, 0);
 	_rectangle = Rect(-1, -1, -1, -1);
-
-	_bmpOn = nullptr;
-	_bmpOff = nullptr;
 }
 
 
@@ -72,18 +71,40 @@ void CIndicator::SetOffImage(string& s)
 		_imgOff = _dashFilePath + s;
 }
 
-Gdiplus::Bitmap* CIndicator::Render(int sampleIndex)
+Gdiplus::Bitmap* CIndicator::Render(DataSample& sample, IGenericLogger& logger, bool renderBlank)
 {
 	Gdiplus::Bitmap* img = nullptr;
 
 	float val = 0;
-	try {
-		if (_dataLoggerInst != nullptr)
-			_dataLoggerInst->GetChannelData(_channel, sampleIndex, &val);
-	}
-	catch (exception e)
-	{
-		throw;
+
+	if (!renderBlank) {
+		try {
+			CDataChannel& ch = std::move(logger.GetChannel(_channel));
+			SampleValue sv = CDataChannel::GetSampleData(sample, ch);
+
+			switch (sv.type())
+			{
+			case irsdk_float:
+				val = sv.get_value<float>();
+				break;
+			case irsdk_double:
+				val = static_cast<float>(sv.get_value<double>());
+				break;
+			case irsdk_int:
+				val = static_cast<float>(sv.get_value<int>());
+				break;
+			case irsdk_char:
+				val = static_cast<float>(sv.get_value<char>());
+				break;
+			default:
+				val = 0;
+				break;
+			}
+		}
+		catch (std::exception)
+		{
+			throw;
+		}
 	}
 
 	switch (_shape) {

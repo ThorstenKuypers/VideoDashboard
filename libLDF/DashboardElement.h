@@ -1,19 +1,145 @@
 #pragma once
+#ifndef _DASHBOARD_ELEMENT_H_
+#define _DASHBOARD_ELEMENT_H_
 
+///////////////////////////////////////////////////////////////////////////////
+//
+//	VideoDashboard
+//	----------------------
+//	Project: libLDF - layout definition format library
+//
+//	Copyright 2014-2015 Thorsten Kuypers
+//  All Rights Reserved
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+#include "libLDF.h"
 #include "common.h"
-//#include "Ruler.h"
 
 namespace libLDF
 {
+	using namespace Gdiplus;
+
+	class CRuler;
+
 	// abstract baseclass for all elements. Defines all attributes and operators common for all
 	// layout elements
 	class CDashboardElement
 	{
-	public:
-		CDashboardElement();
-		virtual ~CDashboardElement();
 
-		virtual Gdiplus::Bitmap* Render(int sampleIndex) =0;
+	public:
+
+		CDashboardElement(CDashboardElement&) = delete;
+		CDashboardElement& operator=(CDashboardElement&) = delete;
+
+		CDashboardElement() :
+			_useGlobalForeColor(true),
+			_useGlobalBackColor(true),
+			_useGlobalFontname(true),
+			_useGlobalFontstyle(true),
+			_useGlobalJustify(true),
+			_background(Color::Transparent),
+			_foreground(Color::White),
+			_fontname(std::string("Arial")),
+			_fontheight(10),
+			_fontstyle(FontStyleRegular),
+			_justify(TextJustify_center),
+			_scale(1),
+			_channel(std::string("")),
+			_layer(0),
+			_rectangle(Rect(-1, -1, -1, -1)),
+			_id(std::string("")),
+			_taperStep(0),
+			_transparency(0),
+			_dashFilePath(std::string(""))
+		{
+		}
+
+		CDashboardElement(CDashboardElement&& o)
+		{
+			type = o.type;
+			o.type = DashboardElementType::unknown;
+
+			_dashFilePath = o._dashFilePath;
+			o._dashFilePath = "";
+
+			_useGlobalForeColor = o._useGlobalForeColor;
+			o._useGlobalForeColor = false;
+
+			_useGlobalBackColor = o._useGlobalBackColor;
+			o._useGlobalBackColor = false;
+
+			_useGlobalFontname = o._useGlobalFontname;
+			o._useGlobalFontname = false;
+
+			_useGlobalFontstyle = o._useGlobalFontstyle;
+			o._useGlobalFontstyle = false;
+
+			_useGlobalJustify = o._useGlobalJustify;
+			o._useGlobalJustify = false;
+
+			_background = o._background;
+			_foreground = o._foreground;
+			_fontname = o._fontname;
+			_fontstyle = o._fontstyle;
+			_fontheight = o._fontheight;
+			_justify = o._justify;
+			_scale = o._scale;
+			_channel = o._channel;
+			_layer = o._layer;
+			_rectangle = o._rectangle;
+			_id = o._id;
+			_transparency = o._transparency;
+			_taperStep = o._taperStep;
+			_position = o._position;
+		}
+
+		CDashboardElement& operator=(CDashboardElement&& o)
+		{
+			type = o.type;
+			o.type = DashboardElementType::unknown;
+
+			_dashFilePath = o._dashFilePath;
+			o._dashFilePath = "";
+
+			_useGlobalForeColor = o._useGlobalForeColor;
+			o._useGlobalForeColor = false;
+
+			_useGlobalBackColor = o._useGlobalBackColor;
+			o._useGlobalBackColor = false;
+
+			_useGlobalFontname = o._useGlobalFontname;
+			o._useGlobalFontname = false;
+
+			_useGlobalFontstyle = o._useGlobalFontstyle;
+			o._useGlobalFontstyle = false;
+
+			_useGlobalJustify = o._useGlobalJustify;
+			o._useGlobalJustify = false;
+
+			_background = o._background;
+			_foreground = o._foreground;
+			_fontname = o._fontname;
+			_fontstyle = o._fontstyle;
+			_fontheight = o._fontheight;
+			_justify = o._justify;
+			_scale = o._scale;
+			_channel = o._channel;
+			_layer = o._layer;
+			_rectangle = o._rectangle;
+			_id = o._id;
+			_transparency = o._transparency;
+			_taperStep = o._taperStep;
+			_position = o._position;
+
+			return *this;
+		}
+
+		virtual ~CDashboardElement() {}
+
+		virtual Gdiplus::Bitmap* Render(libOGA::DataSample& sample, IGenericLogger& logger, bool renderBlank) { return nullptr; }
+
 		// used to initialize the element after it is parsed
 		// create all static/cached bitmaps that only change after re-parsing of the layout file;
 		// precalculate values needed in each subsequent rendering run
@@ -69,8 +195,8 @@ namespace libLDF
 
 		DashboardElementType GetElementType(){ return type; }
 
-		virtual void SetRuler(void* ruler) {}
-		virtual void* GetRuler() { return _ruler; }
+		virtual void SetRuler(CRuler& ruler) { }
+		//		virtual  GetRuler() { return _ruler; }
 
 
 		bool UseGlobalForegroundColor() { return _useGlobalForeColor; }
@@ -78,8 +204,6 @@ namespace libLDF
 		bool UseGlobalFontName() { return _useGlobalFontname; }
 		bool UseGlobalFontStyle() { return _useGlobalFontstyle; }
 		bool UseGlobalTextJustify() { return _useGlobalJustify; }
-
-		void SetDataLoggerInstance(libDataLogging::DataLogger::IDataLogger* inst) { _dataLoggerInst = inst; }
 
 	protected:
 
@@ -135,7 +259,8 @@ namespace libLDF
 		// eg when an image is used and the size is taken from that image
 		Gdiplus::Point _position;
 
-		libDataLogging::DataLogger::IDataLogger* _dataLoggerInst;
 	};
 
 }
+
+#endif // _DASHBOARD_ELEMENT_H_

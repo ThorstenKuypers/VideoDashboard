@@ -30,15 +30,46 @@ bool CLiveDataLogger::GetSample(std::vector<BYTE>& buf)
 {
 	if (!_samplesQueue.empty()) {
 
+		std::unique_lock<std::mutex> ql;
+
 		DataSample s = _samplesQueue.front();
 		buf = std::move(s);
-		_samplesQueue.pop_front();
+		//_samplesQueue.pop_front();
+
+		ql.unlock();
+		return true;
+	}
+
+	return false;
+}
+
+int CLiveDataLogger::GetSampleBufferCount()
+{
+	int c = 0;
+	std::unique_lock<std::mutex> ql;
+	c = _samplesQueue.size();
+
+	return c;
+}
+
+bool CLiveDataLogger::GetSample(std::vector<BYTE>& buf, int idx)
+{
+	std::unique_lock<std::mutex> ql;
+	if (idx < 0 || idx > (int)_samplesQueue.size())
+		return false;
+
+	if (!_samplesQueue.empty()) {
+
+		DataSample s = _samplesQueue.at(idx);
+		buf = std::move(s);
+		//_samplesQueue.pop_front();
 
 		return true;
 	}
 
 	return false;
 }
+
 
 void CLiveDataLogger::_simConnected()
 {
@@ -76,8 +107,17 @@ void CLiveDataLogger::_simDataUpdate()
 		int len = irsdkHeader->bufLen;
 		DataSample sample;
 		sample.assign(buf, buf + len);
-		
-		_samplesQueue.emplace_back(sample);
+
+		std::unique_lock<std::mutex> ql;
+
+		if (_samplesQueue.size() < 3)
+			_samplesQueue.push_front(sample);
+		else {
+			_samplesQueue.pop_back();
+			_samplesQueue.push_front(sample);
+		}
+
+		ql.unlock();
 
 		DataUpdate(e);
 	}

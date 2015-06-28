@@ -10,8 +10,6 @@ namespace libDataLogging {
 
 		using namespace libDataLogging::DataLogger;
 
-		typedef std::vector<BYTE> DataSample;
-
 		struct ILiveLogger
 		{
 		public:

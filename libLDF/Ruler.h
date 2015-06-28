@@ -1,14 +1,29 @@
 #pragma once
+#ifndef _RULER_H_
+#define _RULER_H_
 
+///////////////////////////////////////////////////////////////////////////////
+//
+//	VideoDashboard
+//	----------------------
+//	Project: libLDF - layout definition format library
+//
+//	Copyright 2014-2015 Thorsten Kuypers
+//  All Rights Reserved
+//
+///////////////////////////////////////////////////////////////////////////////
+
+#include "libLDF.h"
 #include "common.h"
 #include "DashboardElement.h"
-//#include "Gauge.h"
 
 namespace libLDF {
 
+	using namespace Gdiplus;
+
 	// A Ruler draws equally spaced marks laid out along a path.The path can be a line, an elliptical arc,
 	// or a sweeper.The marks are categorized as major and minor.Major marks can be labeled.
-	class CRuler : public CDashboardElement
+	class CRuler// : public CDashboardElement
 	{
 
 		typedef struct _tickMarkLabel {
@@ -41,15 +56,18 @@ namespace libLDF {
 		//void SetForegroundColor(string& s);
 		void SetFontStyle(string& s);
 
-		void SetFontHeight(int h) { _fontheight = h; }
+		void SetFontHeight(int h) { this->_fontheight = h; }
 		void SetFontName(string& s) { _fontname = s; }
 
 		void SetLayer(int i) { _layer = i; }
 		void SetTransparency(float f) { _transparency = f; }
-
+		int GetLayer() { return _layer; }
 
 		void SetUsingElement(string& s) { _using = s; }
 		string& GetUsingElement() { return _using; }
+
+		void SetBackgroundColor(std::string& s);
+		void SetForegroundColor(std::string& s);
 
 		void SetPathType(string& s);
 		void SetPathType(PathType type);
@@ -208,22 +226,20 @@ namespace libLDF {
 		//// common element values
 		////////////////////////////////////////////////////////////////////////////////////////////////
 
-		//// element background color
-		//Gdiplus::Color _background;
-		//// element foreground color
-		//Gdiplus::Color _foreground;
-		//// element fontname
-		//std::string _fontname;
-		//// element fontstyle
-		//Gdiplus::FontStyle _fontstyle;
-		//// 
-		//int _fontheight;
-		//// element layer
-		//int _layer;
-		//// transparency value added to colors; defined separate from color values
-		//float _transparency;
-		//// rectangle of element this ruler belongs to
-		//RectF _rect;
+		bool _useGlobalForeColor;
+		bool _useGlobalBackColor;
+		bool _useGlobalFontname;
+		bool _useGlobalFontstyle;
+		bool _useGlobalJustify;
+
+		// element background color
+		Gdiplus::Color _background;
+		// element foreground color
+		Gdiplus::Color _foreground;
+		// element fontname
+		std::string _fontname;
+		// element fontstyle
+		Gdiplus::FontStyle _fontstyle;
 		////////////////////////////////////////////////////////////////////////////////////////////////
 
 		// The id of another element.The ruler will use attributes of the identified element.Gauge,
@@ -319,6 +335,13 @@ namespace libLDF {
 		int _subSteps;
 		int _range;
 
+		int _fontheight;
+		int _layer;
+		float _transparency;
+
+		Rect _rectangle;
 	};
 
 }
+
+#endif // _RULER_H_

@@ -1,64 +1,23 @@
+///////////////////////////////////////////////////////////////////////////////
+//
+//	VideoDashboard
+//	----------------------
+//	Project: libLDF - layout definition format library
+//
+//	Copyright 2014-2015 Thorsten Kuypers
+//  All Rights Reserved
+//
+///////////////////////////////////////////////////////////////////////////////
+
 #include "Dashboard.h"
 
 using namespace libLDF;
 
-CDashboard::CDashboard()
+void CDashboard::Parse()
 {
-	_targetwidth = 0;
-	_height = 0;
-	_width = 0;
-
-	_fontHeight = 12;
-	_fontName = string("Arial");
-	_fontStyle = FontStyleRegular;
-	_foreground = Color::White;
-	_background = Color::Transparent;
-
-	_dataLoggerInst = NULL;
-	_showBoundingBoxes = false;
-
 }
 
-CDashboard::CDashboard(std::string name, int targetWidth)
-{
-	_targetwidth = targetWidth;
-	_height = 0;
-	_width = 0;
-
-	_shortName = name;
-	_showBoundingBoxes = false;
-}
-
-CDashboard::~CDashboard()
-{
-	for (unsigned int i = 0; i < _elements.size(); i++) {
-
-		if (_elements[i] != nullptr) {
-
-			delete _elements[i];
-			_elements[i] = nullptr;
-		}
-	}
-
-	_dataLoggerInst = nullptr;
-}
-
-void CDashboard::Render(Gdiplus::Bitmap& videoFrame, int sampleIndex)// ,Point pos, float transparency, float scaleFactor
-{
-	Gdiplus::Graphics* gfx = Gdiplus::Graphics::FromImage(&videoFrame);
-	if (gfx != nullptr) {
-
-		Gdiplus::Bitmap* dash = RenderToImage(sampleIndex);
-		if (dash != nullptr) {
-
-			gfx->DrawImage(dash, 0, 0, dash->GetWidth(), dash->GetHeight());
-		}
-
-		delete gfx;
-	}
-}
-
-Bitmap* CDashboard::RenderToImage(int sampleIndex)
+Bitmap* CDashboard::RenderToImage(libOGA::DataSample& sample, IGenericLogger& logger, bool renderBlank)
 {
 	Gdiplus::Bitmap* img = nullptr;
 
@@ -93,7 +52,7 @@ Bitmap* CDashboard::RenderToImage(int sampleIndex)
 		throw - 1;
 	}
 
-	CRuler* ruler = nullptr;
+	CRuler ruler;
 	Bitmap* rulerImg = nullptr;
 	Gdiplus::Rect rulerRect;
 	Bitmap* bmp;
@@ -105,18 +64,26 @@ Bitmap* CDashboard::RenderToImage(int sampleIndex)
 	for (int layer = 0; layer < MAX_LAYERS; layer++){
 		for (unsigned int i = 0; i < _elements.size(); i++) {
 
-			ruler = (CRuler*)_elements[i]->GetRuler();
-			if (layer == _elements[i]->GetLayer()) {
-				bmp = _elements[i]->Render(sampleIndex);
-				rc = _elements[i]->GetRectangle();
+			// check if element has a ruler assigned to it
+			for (auto r : rulerTable){
+				if (r.first == _elements[i]->GetID()) {
+					ruler = r.second;
+					break;
+				}
+				else {
+					ruler = r.second;
+				}
+			}
+
+			//ruler = (CRuler*)_elements[i].GetRuler();
+			if (layer == _elements[i].GetLayer()) {
+				bmp = _elements[i].Render(sample, logger, renderBlank);
+				rc = _elements[i].GetRectangle();
 				if (bmp != nullptr) {
 
-					if (ruler != nullptr) {
-
-						rulerImg = ruler->Render(sampleIndex);
-						rulerRect = ruler->GetRectangle();
-						rulerLayer = ruler->GetLayer();
-					}
+						rulerImg = ruler.Render(bmp, layer);
+						rulerRect = ruler.GetRectangle();
+						rulerLayer = ruler.GetLayer();
 
 					// TODO: add layering
 					if (rulerImg != nullptr && rulerLayer <= layer) {
@@ -144,7 +111,7 @@ Bitmap* CDashboard::RenderToImage(int sampleIndex)
 					// NO NOT free the returned image if the rendered element is a ruler because
 					// the ruler element is the only static element. The image reference is held 
 					// in its class and freed when the ruler class instance is destroyed!
-					if (_elements[i]->GetElementType() != DashboardElementType::ruler) {
+					if (_elements[i].GetElementType() != DashboardElementType::ruler) {
 						delete bmp;
 						bmp = nullptr;
 					}
@@ -237,17 +204,6 @@ void CDashboard::SetTextJustification(string& s)
 	else {
 
 		_justify = TextJustify_left;
-	}
-}
-
-void CDashboard::SetDataLogger(IDataLogger* logger)
-{
-	_dataLoggerInst = logger;
-
-	// assign data logger instance to each element
-	for (size_t i = 0; i < _elements.size(); i++) {
-
-		_elements[i]->SetDataLoggerInstance(logger);
 	}
 }
 

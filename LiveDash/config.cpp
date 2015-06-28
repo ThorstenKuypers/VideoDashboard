@@ -7,6 +7,47 @@
 using namespace std;
 using namespace libLDF;
 
+void ShowDashboardOverlay(HWND hwnd, LIVEDASH_CONFIG* cfg, const std::wstring file)
+{
+	std::string fn(file.begin(), file.end());
+	if (cfg != nullptr) {
+
+		cfg->selectedDashboard = file;
+		if (cfg->logger != nullptr && cfg->dash != nullptr) {
+
+			cfg->dash->ParseLayoutFile(fn);
+			Bitmap* bmp = (Bitmap*)cfg->dash->RenderDashboard(fn, 0);
+			HWND pv = GetDlgItem(hwnd, IDC_PREVIEW);
+			HDC hdc = GetWindowDC(pv);
+
+			Graphics* g = Graphics::FromHDC(hdc);
+
+			DWORD bg = GetSysColor(COLOR_WINDOW);
+			g->Clear(Gdiplus::Color{ bg });
+
+			RECT rc = { 0 };
+			GetClientRect(pv, &rc);
+			Vect2 frameSize = API->GetBaseSize();
+			int w = bmp->GetWidth(), h = bmp->GetHeight();
+			float a = (float)0;
+
+			a = (float)((float)rc.right / w);
+			w = (int)((float)a*(float)bmp->GetWidth());
+			h = (int)((float)a*(float)bmp->GetHeight());
+
+			g->DrawImage(bmp, 0, 0, w, h);
+			ReleaseDC(pv, hdc);
+
+			if (bmp != nullptr) {
+				delete bmp;
+				bmp = nullptr;
+			}
+			delete g;
+		}
+	}
+}
+
+
 INT_PTR CALLBACK ConfigDialogProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	const size_t sbufLen = 128;
@@ -18,13 +59,16 @@ INT_PTR CALLBACK ConfigDialogProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPa
 	HWND sliderScale = GetDlgItem(hwnd, IDC_SLIDER_SCALE);
 	HWND sliderOpacity = GetDlgItem(hwnd, IDC_SLIDER_OPACITY);
 
-	static LIVEDASH_CONFIG* cfg = NULL;// (LIVEDASH_CONFIG*)lParam;
+	LIVEDASH_CONFIG* cfg = (LIVEDASH_CONFIG*)GetWindowLongPtr(hwnd, DWLP_USER);
 
 	switch (msg)
 	{
 	case WM_INITDIALOG:
 	{
 		cfg = (LIVEDASH_CONFIG*)lParam; // GetWindowLongPtr(hwnd, DWL_MSGRESULT);
+		if (cfg != NULL) {
+			SetWindowLongPtr(hwnd, DWLP_USER, (LONG)cfg);
+		}
 		// initialize dashboard list
 		HWND hwndDashList = NULL;
 		hwndDashList = GetDlgItem(hwnd, IDC_OVERLAY_LIST);
@@ -55,8 +99,6 @@ INT_PTR CALLBACK ConfigDialogProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPa
 			OSFindClose(hfind);
 		}
 
-		ComboBox_SetCurSel(hwndDashList, 0);
-
 		// initialize slider controls
 		DWORD range = 0;
 		range = MAKELPARAM(0, 200);
@@ -83,6 +125,15 @@ INT_PTR CALLBACK ConfigDialogProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPa
 		swprintf_s(sbuf, sbufLen, L"%d %%", 100);
 		Static_SetText(GetDlgItem(hwnd, IDC_SCALE_VAL), sbuf);
 
+		ComboBox_SetCurSel(hwndDashList, 0);
+		//ComboBox_GetLBText(hwndDashList, 0, sbuf);
+
+		//file = DASHBOARD_PATH;
+		//file.append(L"\\");
+		//file.append(sbuf);
+		//file.append(L".layout");
+
+		//ShowDashboardOverlay(hwnd, cfg, file);
 		return TRUE;
 	}
 
@@ -93,15 +144,6 @@ INT_PTR CALLBACK ConfigDialogProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPa
 
 		case IDOK:
 		{
-			int idx = ComboBox_GetCurSel(GetDlgItem(hwnd, IDC_OVERLAY_LIST));
-			if (idx > -1) {
-				if (ComboBox_GetLBTextLen(GetDlgItem(hwnd, IDC_OVERLAY_LIST), idx) < sbufLen) {
-					ComboBox_GetLBText(GetDlgItem(hwnd, IDC_OVERLAY_LIST), idx, (LPCTSTR)&sbuf[0]);
-					cfg->selectedDashboard = std::wstring(sbuf);
-					cfg->selectedDashboard.append(L".layout");
-				}
-			}
-
 			cfg->posX = (int)SendMessage(GetDlgItem(hwnd, IDC_SLIDER_POSX), TBM_GETPOS, 0, 0);
 			cfg->posY = (int)SendMessage(GetDlgItem(hwnd, IDC_SLIDER_POSY), TBM_GETPOS, 0, 0);
 			cfg->scale = (float)((float)SendMessage(GetDlgItem(hwnd, IDC_SLIDER_SCALE), TBM_GETPOS, 0, 0) / 100.0f);
@@ -147,25 +189,18 @@ INT_PTR CALLBACK ConfigDialogProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPa
 		{
 			if (HIWORD(wParam) == CBN_SELCHANGE) {
 
-				//int idx = SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0);
-				//ComboBox_GetLBText((HWND)lParam, idx, sbuf);
+				int idx = SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0);
+				if (idx > -1)
+					ComboBox_GetLBText((HWND)lParam, idx, sbuf);
+				else
+					return FALSE;
 
-				//wchar_t b[512]{0};
+				std::wstring file{ DASHBOARD_PATH };
+				file.append(L"\\");
+				file.append(sbuf);
+				file.append(L".layout");
 
-				//wsprintfW((LPWSTR)b, L"%ws\\%ws.layout", DASHBOARD_PATH, sbuf);
-				//std::wstring file{ b };
-				//file.append(L"\\");
-				//file.append(sbuf);
-				//file.append(L".layout");
-
-				IDashboardLayout* d = get_LDF();
-				//std::string fn(file.begin(), file.end());
-				//std::string fn("D:\\Development\\Projects\\VideoDashboard\\bin\\Debug\\x86\\dashboards\\RedCarbon_300KPH.layout");
-				//d->ParseLayoutFile("D:\\Development\\Projects\\VideoDashboard\\bin\\Debug\\x86\\dashboards\\RedCarbon_300KPH.layout");
-				//Bitmap* bmp = (Bitmap*)d->RenderDashboard(fn, 0);
-
-
-				release_LDF(d);
+				ShowDashboardOverlay(hwnd, cfg, file);
 			}
 			return TRUE;
 		}
@@ -232,8 +267,13 @@ INT_PTR CALLBACK ConfigDialogProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPa
 
 void ConfigPlugin(HWND hwnd)
 {
-	LIVEDASH_CONFIG cfg{ L"", L"", 0, 0, 0.0f, 0 };
+	LIVEDASH_CONFIG cfg{ nullptr, nullptr, L"", L"", 0, 0, 0.0f, 0 };
 	LONG_PTR* p = (LONG_PTR*)&cfg;
+
+	if (logger != nullptr)
+		cfg.logger = logger;
+	if (dash != nullptr)
+		cfg.dash = dash;
 
 	INT_PTR ret = OBSDialogBox(pluginInst, MAKEINTRESOURCE(IDD_LIVEDASH_CFG_DLG), API->GetMainWindow(), ConfigDialogProc, (LPARAM)p);
 	switch (ret) {

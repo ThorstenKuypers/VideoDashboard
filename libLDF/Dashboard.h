@@ -1,8 +1,19 @@
 #pragma once
+#ifndef _DASHBOARD_H_
+#define _DASHBOARD_H_
+
+///////////////////////////////////////////////////////////////////////////////
+//
+//	VideoDashboard
+//	----------------------
+//	Project: libLDF - layout definition format library
+//
+//	Copyright 2014-2015 Thorsten Kuypers
+//  All Rights Reserved
+//
+///////////////////////////////////////////////////////////////////////////////
 
 #include <fstream>
-#include <Windows.h>
-#include <gdiplus.h>
 
 #include "common.h"
 #include "libLDF.h"
@@ -22,21 +33,40 @@
 namespace libLDF
 {
 
-	// class CDashboard
-	// (C) 2012-2014 Thorsten Kuypers
-	// 
-	// This class defines the base layout of the dashboard.
+	// This class defines the actual dashboard element as a whole
 	class CDashboard
 	{
 	public:
 
-		CDashboard();
-		CDashboard(std::string name, int targetWidth = 1024);
+		CDashboard(std::string file) :
+			_targetwidth(0),
+			_height(0),
+			_width(0),
+			_fontHeight(12),
+			_fontName(string("Arial")),
+			_fontStyle(FontStyleRegular),
+			_foreground(Color::White),
+			_background(Color::Transparent),
+			_showBoundingBoxes(false)
+		{
+			_fileName = file;
+		}
 
-		~CDashboard();
+		CDashboard(std::string name, int targetWidth = 1024) :
+			_targetwidth(targetWidth),
+			_height(0),
+			_width(0),
+			_shortName(name),
+			_showBoundingBoxes(false)
+		{
+		}
 
-		void Render(Gdiplus::Bitmap& videoFrame, int sampleIndex);
-		Bitmap* RenderToImage(int sampleIndex);
+		~CDashboard() {}
+
+		// prses the dashboard object from file
+		void Parse();
+
+		Bitmap* RenderToImage(libOGA::DataSample& sample, IGenericLogger& logger, bool renderBlank);
 
 		void SetDashboardFilePath(std::string s) { _dashFilePath = s; }
 
@@ -60,12 +90,10 @@ namespace libLDF
 
 		void SetBackgroundColor(std::string& s);
 		void SetBackgroundColor(int r, int g, int b) { _background = Color((BYTE)r, (BYTE)g, (BYTE)b); }
-		//std::tuple<int, int, int> GetBackgroundColor() { return std::tuple<int, int, int>(_background.GetR(), _background.GetG(), _background.GetB()); }
 		Color GetBackgroundColor() { return _background; }
 
 		void SetForegroundColor(std::string& s);
 		void SetForegroundColor(int r, int g, int b) { _foreground = Color((BYTE)r, (BYTE)g, (BYTE)b); }
-		//std::tuple<int, int, int> GetForegroundColor() { return std::tuple<int, int, int>(_foreground.GetR(), _foreground.GetG(), _foreground.GetB()); }
 		Color GetForegroundColor() { return _foreground; }
 
 		void SetFontName(std::string& s) { _fontName = s; }
@@ -80,25 +108,46 @@ namespace libLDF
 		void SetFontHeight(int h) { _fontHeight = h; }
 		int GetFontHeight() { return _fontHeight; }
 
-		void SetDataLogger(IDataLogger* logger);
+		void AddDashboardElement(CDashboardElement& element) { _elements.emplace_back(std::move(element)); }
 
-		void AddDashboardElement(CDashboardElement* element) { _elements.push_back(element); }
+		std::vector<CDashboardElement>& GetDashboardElements() { return _elements; }
 
-		std::vector<CDashboardElement*>& GetDashboardElements() { return _elements; }
+		void SetRulerTable(std::map<std::string, CRuler>& table) { rulerTable = std::move(table); }
+		std::map<std::string, CRuler>& GetRulerTable() { return rulerTable; }
+
 
 		void ShowBoundingBoxes(bool show)
 		{
 			_showBoundingBoxes = show;
 		}
 
+		void clear()
+		{
+			_elements.clear();
+			_showBoundingBoxes = false;
+			_dashFilePath = "";
+			_shortName = "";
+			_prettyName = "";
+			_targetwidth = 0;
+			_imagefile = "";
+			_height = 0;
+			_width = 0;
+			_background = 0;
+			_foreground = 0;
+			_fontHeight = 0;
+			_fontName = "";
+			_fontStyle = FontStyleRegular;
+			_justify = TextJustify_left;
+		}
+
 	private:
 
 		bool _showBoundingBoxes;
 
-		// the DataLogger instance
-		IDataLogger* _dataLoggerInst;
-
 		std::string _dashFilePath;
+
+		// file name of this dahboard object
+		std::string _fileName;
 
 		// the name that appears in the dashboard selection list
 		std::string _shortName;
@@ -127,9 +176,12 @@ namespace libLDF
 		// The height of the font, in pixels.The font height defaults to the height of the element's bounding
 		int _fontHeight;
 
+		std::map<std::string, CRuler> rulerTable;
 
 		// vector containig all elements found in definition file
-		std::vector<CDashboardElement*> _elements;
+		std::vector<std::unique_ptr<CDashboardElement>> _elements;
 	};
 
 }
+
+#endif // _DASHBOARD_H_

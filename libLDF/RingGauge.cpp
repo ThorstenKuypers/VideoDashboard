@@ -2,19 +2,18 @@
 
 using namespace libLDF;
 
-CRingGauge::CRingGauge()
+CRingGauge::CRingGauge() : CDashboardElement(),
+_range(std::tuple<int, int>(0, 0)),
+_width(0),
+_sweep(std::tuple<int, int>(0, 0)),
+_rotation(RotationType::cw),
+_shaded(false),
+_markerWidth(1),
+_markerColor(Color(255, 255, 255)),
+_markerDecay(0),
+_markerHoldTime(0)
 {
 	type = DashboardElementType::ringgauge;
-
-	_range = std::tuple<int, int>(0, 0);
-	_width = 0;
-	_sweep = std::tuple<int, int>(0, 0);
-	_rotation = RotationType::cw;
-	_shaded = false;
-	_markerWidth = 1;
-	_markerColor = Color(255, 255, 255);
-	_markerDecay = 0;
-	_markerHoldTime = 0;
 }
 
 
@@ -23,7 +22,7 @@ CRingGauge::~CRingGauge()
 }
 
 
-Gdiplus::Bitmap* CRingGauge::Render(int sampleIndex)
+Gdiplus::Bitmap* CRingGauge::Render(DataSample& sample, IGenericLogger& logger, bool renderBlank)
 {
 	Bitmap* bmp = new Bitmap(_rectangle.Width, _rectangle.Height, PixelFormat32bppARGB);
 	if (bmp != nullptr) {
@@ -34,7 +33,7 @@ Gdiplus::Bitmap* CRingGauge::Render(int sampleIndex)
 			gfx->SetSmoothingMode(SmoothingMode::SmoothingModeAntiAlias);
 			gfx->SetTextRenderingHint(TextRenderingHint::TextRenderingHintClearTypeGridFit);
 
-			float sweep = (float)(std::get<1>(_sweep) - std::get<0>(_sweep));
+			float sweep = (float)(std::get<1>(_sweep) -std::get<0>(_sweep));
 			//if (sweep < 0)
 			if (_rotation == RotationType::cw) {
 				sweep *= -1;
@@ -54,11 +53,38 @@ Gdiplus::Bitmap* CRingGauge::Render(int sampleIndex)
 
 			float val = 0;
 
-			if (_dataLoggerInst != NULL)
-				_dataLoggerInst->GetChannelData(_channel, sampleIndex, &val);
+			if (!renderBlank) {
+				try {
+					CDataChannel& ch = std::move(logger.GetChannel(_channel));
+					SampleValue sv = CDataChannel::GetSampleData(sample, ch);
 
-			// scale channel value
-			val *= (float)_scale;
+					switch (sv.type())
+					{
+					case irsdk_float:
+						val = sv.get_value<float>();
+						break;
+					case irsdk_double:
+						val = static_cast<float>(sv.get_value<double>());
+						break;
+					case irsdk_int:
+						val = static_cast<float>(sv.get_value<int>());
+						break;
+					case irsdk_char:
+						val = static_cast<float>(sv.get_value<char>());
+						break;
+					default:
+						val = 0;
+						break;
+					}
+				}
+				catch (std::exception)
+				{
+					throw;
+				}
+
+				// scale channel value
+				val *= (float)_scale;
+			}
 
 			// is current value lower than minumum value defined by range attribute?
 			if (val < minVal)
@@ -178,53 +204,47 @@ void CRingGauge::SetMarkerDecay(string& s)
 	_markerDecay = stoi(s);
 }
 
-void CRingGauge::SetRuler(void* ruler)
+void CRingGauge::SetRuler(CRuler& ruler)
 {
-	_ruler = ruler;
+	ruler.SetPathRange(std::get<0>(_range), std::get<1>(_range));
+	ruler.SetArcRadius(_rectangle.Width / 2);
+	ruler.SetRectangle(_rectangle);
 
-	if (_ruler != nullptr) {
+	if (_rectangle.Width == _rectangle.Height)
+		ruler.SetPathType(std::string("arc"));
+	else
+		ruler.SetPathType(std::string("sweeper"));
 
-		((CRuler*)_ruler)->SetPathRange(std::get<0>(_range), std::get<1>(_range));
-		((CRuler*)_ruler)->SetArcRadius(_rectangle.Width / 2);
-		((CRuler*)_ruler)->SetRectangle(_rectangle);
+	if (_scale != 1)
+		ruler.SetScalingFactor(_scale);
 
-		if (_rectangle.Width == _rectangle.Height)
-			((CRuler*)_ruler)->SetPathType(std::string("arc"));
+	int s = std::get<0>(_sweep), e = std::get<1>(_sweep);
+	if (_rotation == RotationType::cw) {
+
+		if (s > 0)
+			s = 360 - s;
 		else
-			((CRuler*)_ruler)->SetPathType(std::string("sweeper"));
+			s *= -1;
 
-		if (_scale != 1)
-			((CRuler*)_ruler)->SetScalingFactor(_scale);
-
-		int s = std::get<0>(_sweep), e = std::get<1>(_sweep);
-		if (_rotation == RotationType::cw) {
-
-			if (s > 0)
-				s = 360 - s;
-			else
-				s *= -1;
-
-			if (e < 0)
-				e = -360 - e;
-			else
-				e *= -1;
-
-		}
-		if (_rotation == RotationType::ccw) {
-
-			if (s > 0)
-				s *= -1;
-			else
-				s = -360 - s;
-
-			if (e < 0)
-				e *= -1;
-			else
-				e = 360 - e;
-
-		}
-
-		((CRuler*)_ruler)->SetArcSweep(s, e);
+		if (e < 0)
+			e = -360 - e;
+		else
+			e *= -1;
 
 	}
+	if (_rotation == RotationType::ccw) {
+
+		if (s > 0)
+			s *= -1;
+		else
+			s = -360 - s;
+
+		if (e < 0)
+			e *= -1;
+		else
+			e = 360 - e;
+
+	}
+
+	ruler.SetArcSweep(s, e);
 }

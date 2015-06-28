@@ -1,7 +1,20 @@
 #pragma once
+#ifndef _GCIRCLE_H_
+#define GCIRCLE_H_
+///////////////////////////////////////////////////////////////////////////////
+//
+//	VideoDashboard
+//	----------------------
+//	Project: libLDF - layout definition format library
+//
+//	Copyright 2014-2015 Thorsten Kuypers
+//  All Rights Reserved
+//
+///////////////////////////////////////////////////////////////////////////////
 
 #include "common.h"
 #include "DashboardElement.h"
+#include "Ruler.h"
 
 namespace libLDF
 {
@@ -18,7 +31,7 @@ namespace libLDF
 
 		// Renders the element into a bitmap with the data set by elements channel name
 		// and sample buffer index
-		virtual Gdiplus::Bitmap* Render(int sampleIndex);
+		virtual Gdiplus::Bitmap* Render(DataSample& sample, IGenericLogger& logger, bool renderBlank);
 
 		void SetDivisions(int i) { _divisions = i; }
 		int GetDivisions() { return _divisions; }
@@ -70,3 +83,5 @@ namespace libLDF
 	};
 
 }
+
+#endif // GCIRCLE_H_

@@ -287,7 +287,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="BaseDataLogger.cpp" />
+    <ClCompile Include="BaseTelemetryFile.cpp" />
     <ClCompile Include="Channel.cpp" />
     <ClCompile Include="csvDataLogger.cpp" />
     <ClCompile Include="DataLog.cpp">
@@ -336,7 +336,7 @@
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</CompileAsManaged>
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</CompileAsManaged>
     </ClCompile>
-    <ClCompile Include="ibtDataLogger.cpp" />
+    <ClCompile Include="IracingBinaryTelemetryFile.cpp" />
     <ClCompile Include="irsdk_utils.cpp" />
     <ClCompile Include="libDataLogging.cpp" />
     <ClCompile Include="LiveChannels.cpp" />
@@ -369,7 +369,7 @@
     <ClCompile Include="yaml_parser.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BaseDataLogger.h" />
+    <ClInclude Include="BaseTelemetryFile.h" />
     <ClInclude Include="Channel.h" />
     <ClInclude Include="common.h" />
     <ClInclude Include="csvDataLogger.h" />
@@ -377,7 +377,7 @@
     <ClInclude Include="datalogger.h" />
     <ClInclude Include="errex.h" />
     <ClInclude Include="events.h" />
-    <ClInclude Include="ibtDataLogger.h" />
+    <ClInclude Include="IracingBinaryTelemetryFile.h" />
     <ClInclude Include="irsdk_defines.h" />
     <ClInclude Include="libDataLogging.h" />
     <ClInclude Include="LiveChannels.h" />

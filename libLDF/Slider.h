@@ -1,4 +1,16 @@
 #pragma once
+#ifndef _SLIDER_H_
+#define _SLIDER_H_
+///////////////////////////////////////////////////////////////////////////////
+//
+//	VideoDashboard
+//	----------------------
+//	Project: libLDF - layout definition format library
+//
+//	Copyright 2014-2015 Thorsten Kuypers
+//  All Rights Reserved
+//
+///////////////////////////////////////////////////////////////////////////////
 
 #include "common.h"
 #include "DashboardElement.h"
@@ -20,11 +32,11 @@ namespace libLDF
 
 		virtual void Init();
 
-		virtual void SetRuler(void* r);
+		virtual void SetRuler(CRuler& r);
 
 		// Renders the element into a bitmap with the data set by elements channel name
 		// and sample buffer index
-		virtual Gdiplus::Bitmap* Render(int sampleIndex);
+		virtual Gdiplus::Bitmap* Render(DataSample& sample, IGenericLogger& logger, bool renderBlank);
 
 		void SetRange(string& s);
 		tuple<int, int> GetRange() { return _range; }
@@ -50,6 +62,9 @@ namespace libLDF
 		// The color to use when the variable value is < zero
 		Gdiplus::Color _rgbNegative;
 		// 
+
 	};
 
 }
+
+#endif // _SLIDER_H_

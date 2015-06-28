@@ -1,28 +1,33 @@
 #pragma once
+#ifndef _LIBLDF_COMMON_H_
+#define _LIBLDF_COMMON_H_
 
+///////////////////////////////////////////////////////////////////////////////
+//
+//	VideoDashboard
+//	----------------------
+//	Project: libLDF - layout definition format library
+//
+//	Copyright 2014-2015 Thorsten Kuypers
+//  All Rights Reserved
+//
+///////////////////////////////////////////////////////////////////////////////
 // common header file for all classes
 
-#include <Windows.h>
-
 #include <string>
-#include <tuple>
 #include <vector>
-#include <array>
-#include <sstream>
-#include <Windows.h>
-#include <gdiplus.h>
+#include <algorithm>
 
-#include "libDataLogging.h"
 #include "errex.h"
-
+#include "liboga.h"
 
 namespace libLDF
 {
-	using namespace std;
-	using namespace Gdiplus;
-	using namespace iR_sdk;
-	using namespace libDataLogging;
-	using namespace libDataLogging::DataLogger;
+
+	using namespace libOGA;
+	using namespace libOGA::FileLogs;
+	using namespace libOGA::LiveLogs;
+
 
 #define PI 3.141592653f
 #define RAD(x) ((PI / 180.0f) * x)
@@ -30,6 +35,7 @@ namespace libLDF
 
 	enum _elementType
 	{
+		unknown =-1,
 		gauge = 1,
 		textbox,
 		gcircle,
@@ -126,3 +132,5 @@ namespace libLDF
 
 	bool isAbsoluteFilePath(std::string path);
 }
+
+#endif // _LIBLDF_COMMON_H_

@@ -9,7 +9,7 @@
 
 namespace libDataLogging {
 
-class CErrEx
+class CErrEx : std::exception
 {
 public:
 	CErrEx(char* mod, char* cls, char* fnc, char* file, int line, DWORD err, bool format);
@@ -17,6 +17,11 @@ public:
 
 	char* msg;	// error Message String (from FormatMessage function)
 	char* logMsg;	// extended error message for error.log file
+
+	virtual const char* what()
+	{
+		return msg;
+	}
 
 protected:
 	char* m_module;

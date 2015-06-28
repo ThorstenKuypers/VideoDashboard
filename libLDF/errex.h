@@ -1,4 +1,16 @@
 #pragma once
+#ifndef _LIBLDF_ERREX_H_
+#define _LIBLDF_ERREX_H_
+///////////////////////////////////////////////////////////////////////////////
+//
+//	VideoDashboard
+//	----------------------
+//	Project: libLDF - layout definition format library
+//
+//	Copyright 2014-2015 Thorsten Kuypers
+//  All Rights Reserved
+//
+///////////////////////////////////////////////////////////////////////////////
 
 #include <exception>
 #include <system_error>
@@ -105,4 +117,7 @@ namespace libLDF {
 		int _lineNo;
 		int _e;
 	};
+	
 }
+
+#endif // _LIBLDF_ERREX_H_

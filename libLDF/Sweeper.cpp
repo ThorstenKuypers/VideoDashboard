@@ -4,31 +4,28 @@
 using namespace libLDF;
 
 
-CSweeper::CSweeper()
+CSweeper::CSweeper() : CDashboardElement(),
+_path(pathType_sweeper),
+_range(tuple<int, int>(0, 0)),
+_sweepAngle(tuple<int, int>(0, 0)),
+_sweep(0),
+_divisions(0),
+_rect(Rect(-1, -1, -1, -1)),
+_lineEnd(std::tuple<int, int>(0, 0)),
+_lineStart(std::tuple<int, int>(0, 0)),
+_shape(_shapeType_Sweeper::shapeType_line),
+_extend(0),
+_thickness(0),
+_taper(0),
+_rgbOff(Color::White),
+_rgbOn(Color::Black),
+_threshold(std::vector<int>()),
+_rgbThresholdOn(std::vector<Color>()),
+_renderDir(RotationType::cw),
+_sweeperInfo(SWEEPER_INFO()),
+_origRect(Rect(-1, -1, -1, -1))
 {
 	type = DashboardElementType::sweeper;
-
-	_path = pathType_sweeper;
-	_range = tuple<int, int>(0, 0);
-	_sweepAngle = tuple<int, int>(0, 0);
-	_sweep = 0;
-	_divisions = 0;
-	_rect = Rect(-1, -1, -1, -1);
-	_lineEnd = std::tuple<int, int>(0, 0);
-	_lineStart = std::tuple<int, int>(0, 0);
-	_shape = _shapeType_Sweeper::shapeType_line;
-	_extend = 0;
-	_thickness = 0;
-	_taper = 0;
-	_divisions = 0;
-	_rgbOff = Color::White;
-	_rgbOn = Color::Black;
-	_threshold = std::vector<int>();
-	_rgbThresholdOn = std::vector<Color>();
-	_renderDir = RotationType::cw;
-	_sweeperInfo = SWEEPER_INFO();
-	_origRect = Rect(-1, -1, -1, -1);
-
 }
 
 
@@ -36,21 +33,18 @@ CSweeper::~CSweeper()
 {
 }
 
-void CSweeper::SetRuler(void* r)
+void CSweeper::SetRuler(CRuler& r)
 {
-	_ruler = r;
-
-	((CRuler*)_ruler)->SetRectangle(_rect);
-	((CRuler*)_ruler)->SetPathType(_path);
-	((CRuler*)_ruler)->SetPathRange(std::get<0>(_range), std::get<1>(_range));
-	((CRuler*)_ruler)->SetArcSweep((int)round(std::get<0>(_sweepAngle)), (int)(round(std::get<1>(_sweepAngle))));
+	r.SetRectangle(_rect);
+	r.SetPathType(_path);
+	r.SetPathRange(std::get<0>(_range), std::get<1>(_range));
+	r.SetArcSweep((int)round(std::get<0>(_sweepAngle)), (int)(round(std::get<1>(_sweepAngle))));
 
 	if (_scale != 1)
-		((CRuler*)_ruler)->SetScalingFactor(_scale);
-
+		r.SetScalingFactor(_scale);
 }
 
-Gdiplus::Bitmap* CSweeper::Render(int sampleIndex)
+Gdiplus::Bitmap* CSweeper::Render(DataSample& sample, IGenericLogger& logger, bool renderBlank)
 {
 	int w = _sweeperInfo.width;
 	int h = _sweeperInfo.height + 2;
@@ -68,8 +62,36 @@ Gdiplus::Bitmap* CSweeper::Render(int sampleIndex)
 			// TODO: FixMe***
 			// check for correct data type!
 			float val = 0;
-			if (_dataLoggerInst != NULL)
-				_dataLoggerInst->GetChannelData(_channel, sampleIndex, (void*)&val);
+
+			if (!renderBlank) {
+				try {
+					CDataChannel& ch = std::move(logger.GetChannel(_channel));
+					SampleValue sv = CDataChannel::GetSampleData(sample, ch);
+
+					switch (sv.type())
+					{
+					case irsdk_float:
+						val = sv.get_value<float>();
+						break;
+					case irsdk_double:
+						val = static_cast<float>(sv.get_value<double>());
+						break;
+					case irsdk_int:
+						val = static_cast<float>(sv.get_value<int>());
+						break;
+					case irsdk_char:
+						val = static_cast<float>(sv.get_value<char>());
+						break;
+					default:
+						val = 0;
+						break;
+					}
+				}
+				catch (std::exception)
+				{
+					throw;
+				}
+			}
 
 			if (_scale != 0)
 				val *= (float)_scale;

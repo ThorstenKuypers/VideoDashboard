@@ -150,13 +150,13 @@
     <None Include="VERSION" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\libDataLogging\libDataLogging.vcxproj">
-      <Project>{fd91ff87-ceed-4483-954f-f44f9eff309e}</Project>
-      <Name>libDataLogging</Name>
-    </ProjectReference>
     <ProjectReference Include="..\libLDF\libLDF.vcxproj">
       <Project>{fc46c657-4f91-4497-9bc8-4aba83b81f5e}</Project>
       <Name>libLDF</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\liboga\liboga.vcxproj">
+      <Project>{11556771-e43d-4e25-afe0-590c9d414fd7}</Project>
+      <Name>liboga</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

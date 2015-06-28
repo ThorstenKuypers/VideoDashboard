@@ -7,9 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-using libDataLogging.DataLogWrapper;
+using libOGA.NetWrapper;
 
-namespace VideoDashboard
+namespace DashboardViewer
 {
     public partial class frmChannelsList : Form
     {

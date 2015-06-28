@@ -1,26 +1,15 @@
 
-#include "ibtDataLogger.h"
+#include "IracingBinaryTelemetryFile.h"
 
 using namespace libDataLogging::DataLogger;
 
 
-CibtDataLogger::CibtDataLogger(wchar_t *logfile) : CBaseDataLogger(logfile)
+CIracingBinaryTelemetryFile::CIracingBinaryTelemetryFile(const std::wstring& logfile) : CBaseTelemetryFile(logfile),
+m_header({ 0 }),
+m_varHeaders(),
+m_subHeader({ 0 }),
+m_sessionInfo("")
 {
-	memset(&m_header, 0, sizeof(irsdk_header));
-	memset(&m_subHeader, 0, sizeof(irsdk_diskSubHeader));
-
-	m_varHeaders = NULL;
-	m_sessionInfo = NULL;
-
-	m_curLapIdx = 0;
-	m_sampleCnt = 0;
-
-	memset(&m_carDataInfo, 0, sizeof(CAR_DATA_INFO));
-
-	exportedChannelNames = std::vector<string>();
-	exportedChannels = std::vector<CBaseChannel*>();
-	specialChannels = std::vector<CBaseChannel*>();
-
 	try {
 		this->processDataFile();
 	}
@@ -29,40 +18,32 @@ CibtDataLogger::CibtDataLogger(wchar_t *logfile) : CBaseDataLogger(logfile)
 	}
 }
 
-CibtDataLogger::~CibtDataLogger()
+CIracingBinaryTelemetryFile::~CIracingBinaryTelemetryFile()
 {
-	if (m_sessionInfo)
-		delete[] m_sessionInfo;
-	m_sessionInfo = NULL;
+	//for (std::vector<CBaseChannel&>::iterator it = specialChannels.begin(); it != specialChannels.end(); ++it) {
 
-	if (m_varHeaders)
-		delete[] m_varHeaders;
-	m_varHeaders = NULL;
+	//	CBaseChannel ch = (*it);
+	//	if (ch != NULL) {
+	//		delete ch;
+	//		ch = NULL;
+	//	}
+	//}
+	//for (std::vector<CBaseChannel&>::iterator it = exportedChannels.begin(); it != exportedChannels.end(); ++it) {
 
-	for (std::vector<CBaseChannel*>::iterator it = specialChannels.begin(); it != specialChannels.end(); ++it) {
-
-		CBaseChannel* ch = (*it);
-		if (ch != NULL) {
-			delete ch;
-			ch = NULL;
-		}
-	}
-	for (std::vector<CBaseChannel*>::iterator it = exportedChannels.begin(); it != exportedChannels.end(); ++it) {
-
-		CBaseChannel* ch = (*it);
-		if (ch != NULL) {
-			delete ch;
-			ch = NULL;
-		}
-	}
+	//	CBaseChannel* ch = (*it);
+	//	if (ch != NULL) {
+	//		delete ch;
+	//		ch = NULL;
+	//	}
+	//}
 }
 
-int CibtDataLogger::GetSampleTickRate()
+int CIracingBinaryTelemetryFile::GetSampleTickRate()
 {
 	return this->m_header.tickRate;
 }
 
-void CibtDataLogger::processDataFile()
+void CIracingBinaryTelemetryFile::processDataFile()
 {
 	try
 	{
@@ -76,44 +57,19 @@ void CibtDataLogger::processDataFile()
 		for (int i = 0; i < m_header.numVars; i++) {
 
 			irsdk_varHeader* rec = (irsdk_varHeader*)&m_varHeaders[i];
-			channelsMap[rec->name] = i;
+			channels.emplace(make_pair(rec->name, CDataChannel(rec->name, rec->unit, rec->desc, i, rec->type, rec->offset)));
 
-			if (rec->type == irsdk_int) {
-
-				exportedChannels.push_back((CBaseChannel*)new CChannel<int>(rec->name, rec->desc, rec->unit, m_sampleCnt));
-			}
-			if (rec->type == irsdk_float) {
-
-				exportedChannels.push_back((CBaseChannel*)new CChannel<float>(rec->name, rec->desc, rec->unit, m_sampleCnt));
-			}
-			if (rec->type == irsdk_double) {
-
-				exportedChannels.push_back((CBaseChannel*)new CChannel<double>(rec->name, rec->desc, rec->unit, m_sampleCnt));
-			}
-			if (rec->type == irsdk_char) {
-
-				exportedChannels.push_back((CBaseChannel*)new CChannel<char>(rec->name, rec->desc, rec->unit, m_sampleCnt));
-			}
-			if (rec->type == irsdk_bool) {
-
-				exportedChannels.push_back((CBaseChannel*)new CChannel<bool>(rec->name, rec->desc, rec->unit, m_sampleCnt));
-			}
-			if (rec->type == irsdk_bitField) {
-
-				exportedChannels.push_back((CBaseChannel*)new CChannel<DWORD>(rec->name, rec->desc, rec->unit, m_sampleCnt));
-			}
 		}
-
-		specialChannelsMap[CH_SP_SPEED_KPH] = "Speed";
-		specialChannelsMap[CH_SP_SPEED_MPH] = "Speed";
-		specialChannelsMap[CH_SP_LATG] = "LatAccel";
-		specialChannelsMap[CH_SP_LONGG] = "LongAccel";
+		mathChannelsMap[CH_SP_SPEED_KPH] = "Speed";
+		mathChannelsMap[CH_SP_SPEED_MPH] = "Speed";
+		mathChannelsMap[CH_SP_LATG] = "LatAccel";
+		mathChannelsMap[CH_SP_LONGG] = "LongAccel";
 		//specialChannelsMap[CH_SP_LAP] = "Lap";
 
-		specialChannels.push_back((CBaseChannel*)new CChannel<float>("Speed_Kph", "Ground speed in KPH", "kph", m_sampleCnt));
-		specialChannels.push_back((CBaseChannel*)new CChannel<float>("Speed_Mph", "Ground speed in MPH", "mph", m_sampleCnt));
-		specialChannels.push_back((CBaseChannel*)new CChannel<float>("LatG", "Lateral G forces", "g", m_sampleCnt));
-		specialChannels.push_back((CBaseChannel*)new CChannel<float>("LongG", "Longitudinal G forces", "g", m_sampleCnt));
+		mathChannels.push_back(CDataChannel("Speed_Kph", "kph", "Ground speed in KPH", 0, irsdk_float, 0));
+		mathChannels.push_back(CDataChannel("Speed_Mph", "mph", "Ground speed in MPH", 1, irsdk_float, 1));
+		mathChannels.push_back(CDataChannel("LatG", "g", "Lateral G forces", 2, irsdk_float, 2));
+		mathChannels.push_back(CDataChannel("LongG", "g", "Longitudinal G forces", 3, irsdk_float, 3));
 		//specialChannels.push_back((CBaseChannel*)new CChannel<float>("BestLap", "Best lap in stint", "", m_sampleCnt));
 		//specialChannels.push_back((CBaseChannel*)new CChannel<float>("BestLapTime", "Best lap time in stint", "s", m_sampleCnt));
 		//specialChannels.push_back((CBaseChannel*)new CChannel<float>("LastLapTime", "Last lap time", "s", m_sampleCnt));
@@ -133,7 +89,7 @@ void CibtDataLogger::processDataFile()
 	}
 }
 
-void CibtDataLogger::ParseSessionInfo(const char* sessionInfoStr)
+void CIracingBinaryTelemetryFile::ParseSessionInfo(const char* sessionInfoStr)
 {
 	const char* val = NULL;
 	int len = 0;
@@ -458,7 +414,7 @@ void CibtDataLogger::ParseSessionInfo(const char* sessionInfoStr)
 }
 
 
-void CibtDataLogger::readIBTHeader()
+void CIracingBinaryTelemetryFile::readIBTHeader()
 {
 	int len;
 	DWORD ret = 0;
@@ -466,12 +422,12 @@ void CibtDataLogger::readIBTHeader()
 	len = sizeof(irsdk_header);
 	if (!ReadFile(m_file, (LPVOID)&m_header, len, &ret, NULL)) {
 		ret = GetLastError();
-		CErrEx* ex = new CErrEx(__MODULE__, (char*)typeid(this).name(), __FUNCTION__, __FILE__, __LINE__, ret, true);
+		CErrEx ex = CErrEx(__MODULE__, (char*)typeid(this).name(), __FUNCTION__, __FILE__, __LINE__, ret, true);
 		throw ex;
 	}
 }
 
-void CibtDataLogger::readSubHeader()
+void CIracingBinaryTelemetryFile::readSubHeader()
 {
 	int len;
 	DWORD ret = 0;
@@ -479,158 +435,156 @@ void CibtDataLogger::readSubHeader()
 	len = sizeof(irsdk_diskSubHeader);
 	if (!ReadFile(m_file, (LPVOID)&m_subHeader, len, &ret, NULL)) {
 		ret = GetLastError();
-		CErrEx* ex = new CErrEx(__MODULE__, (char*)typeid(this).name(), __FUNCTION__, __FILE__, __LINE__, ret, true);
+		CErrEx ex = CErrEx(__MODULE__, (char*)typeid(this).name(), __FUNCTION__, __FILE__, __LINE__, ret, true);
 		throw ex;
 	}
 }
 
-void CibtDataLogger::readVarHeaders()
+void CIracingBinaryTelemetryFile::readVarHeaders()
 {
 	int len;
 	DWORD ret = 0;
 
 	len = sizeof(irsdk_varHeader)* m_header.numVars;
-	m_varHeaders = new irsdk_varHeader[m_header.numVars];
-	if (m_varHeaders == NULL) {
-		CErrEx* ex = new CErrEx(__MODULE__, (char*)typeid(this).name(), __FUNCTION__, __FILE__, __LINE__, (DWORD)-1, true);
+	irsdk_varHeader* ptr = new irsdk_varHeader[m_header.numVars];
+	if (ptr == nullptr) {
+		CErrEx ex = CErrEx(__MODULE__, (char*)typeid(this).name(), __FUNCTION__, __FILE__, __LINE__, (DWORD)-1, true);
 		throw ex;
 	}
 
 	SetFilePointer(m_file, m_header.varHeaderOffset, NULL, FILE_BEGIN);
-	if (!ReadFile(m_file, m_varHeaders, len, &ret, NULL)) {
+	if (!ReadFile(m_file, ptr, len, &ret, NULL)) {
+		delete ptr;
+		ptr = nullptr;
+
 		ret = GetLastError();
-		CErrEx* ex = new CErrEx(__MODULE__, (char*)typeid(this).name(), __FUNCTION__, __FILE__, __LINE__, ret, true);
+		CErrEx ex = CErrEx(__MODULE__, (char*)typeid(this).name(), __FUNCTION__, __FILE__, __LINE__, ret, true);
 		throw ex;
 	}
 
 	for (int i = 0; i < m_header.numVars; i++) {
 
-		exportedChannelNames.push_back(string(m_varHeaders[i].name));
+		m_varHeaders.emplace_back(ptr[i]);
+		exportedChannelNames.push_back(std::string(ptr[i].name));
 	}
+
+	delete ptr;
+	ptr = nullptr;
 }
 
-void CibtDataLogger::readSessInfo()
+void CIracingBinaryTelemetryFile::readSessInfo()
 {
 	DWORD ret = 0;
 	int len = m_header.sessionInfoLen;
 
-	m_sessionInfo = new char[len];
-	if (m_sessionInfo == NULL)
-		throw - 1;
+	char* ptr = new char[len];
+	if (ptr == nullptr)
+		throw CErrEx(__MODULE__, (char*)typeid(this).name(), __FUNCTION__, __FILE__, __LINE__, ret, true);
 
 	SetFilePointer(m_file, m_header.sessionInfoOffset, NULL, FILE_BEGIN);
-	if (!ReadFile(m_file, (LPVOID)m_sessionInfo, len, &ret, NULL)) {
+	if (!ReadFile(m_file, (LPVOID)ptr, len, &ret, NULL)) {
 		ret = GetLastError();
-		CErrEx* ex = new CErrEx(__MODULE__, (char*)typeid(this).name(), __FUNCTION__, __FILE__, __LINE__, ret, true);
-		throw ex;
+		throw CErrEx(__MODULE__, (char*)typeid(this).name(), __FUNCTION__, __FILE__, __LINE__, ret, true);;
 	}
-	m_sessionInfo[m_header.sessionInfoLen - 1] = '\0';
+	ptr[m_header.sessionInfoLen - 1] = '\0';
 
+	m_sessionInfo = std::string(ptr);
 	ParseSessionInfo(m_sessionInfo);
+
+	delete ptr;
+	ptr = nullptr;
 }
 
-void CibtDataLogger::extractChannelData(char* buf)
+//void CIracingBinaryTelemetryFile::extractChannelData(char* buf)
+//{
+//
+//	for (unsigned int i = 0; i < exportedChannels.size(); i++)
+//	{
+//		irsdk_varHeader* rec = &m_varHeaders[i];
+//		assert(m_header.numVars == (int)exportedChannels.size());
+//		if (std::string(rec->name) == exportedChannels[i]->GetName()) {
+//
+//			if (exportedChannels[i]->GetType() == irsdk_int) {
+//
+//				int v = 0;
+//				memcpy(&v, (buf + rec->offset), sizeof(int));
+//				((CChannel<int>*)exportedChannels[i])->AddSample(v);
+//			}
+//
+//			if (exportedChannels[i]->GetType() == irsdk_float) {
+//
+//				float v = 0;
+//				memcpy(&v, (buf + rec->offset), sizeof(float));
+//
+//				if (exportedChannels[i]->GetName() == "Throttle")
+//					v *= 100.0f;
+//				if (exportedChannels[i]->GetName() == "Brake")
+//					v *= 100.0f;
+//				if (exportedChannels[i]->GetName() == "Clutch")
+//					v *= 100.0f;
+//
+//				((CChannel<float>*)exportedChannels[i])->AddSample(v);
+//			}
+//
+//			if (exportedChannels[i]->GetType() == irsdk_double) {
+//
+//				double v = 0;
+//				memcpy(&v, (buf + rec->offset), sizeof(double));
+//				((CChannel<double>*)exportedChannels[i])->AddSample(v);
+//			}
+//
+//			if (exportedChannels[i]->GetType() == irsdk_char) {
+//
+//				char v = 0;
+//				memcpy(&v, (buf + rec->offset), sizeof(char));
+//				((CChannel<char>*)exportedChannels[i])->AddSample(v);
+//			}
+//
+//			if (exportedChannels[i]->GetType() == irsdk_bool) {
+//
+//				bool v = 0;
+//				memcpy(&v, (buf + rec->offset), sizeof(bool));
+//				((CChannel<bool>*)exportedChannels[i])->AddSample(v);
+//			}
+//		}
+//	}
+//}
+
+
+void CIracingBinaryTelemetryFile::readDataBuf()
 {
-
-	for (unsigned int i = 0; i < exportedChannels.size(); i++)
-	{
-		irsdk_varHeader* rec = &m_varHeaders[i];
-		assert(m_header.numVars == (int)exportedChannels.size());
-		if (std::string(rec->name) == exportedChannels[i]->GetName()) {
-
-			if (exportedChannels[i]->GetType() == irsdk_int) {
-
-				int v = 0;
-				memcpy(&v, (buf + rec->offset), sizeof(int));
-				((CChannel<int>*)exportedChannels[i])->AddSample(v);
-			}
-
-			if (exportedChannels[i]->GetType() == irsdk_float) {
-
-				float v = 0;
-				memcpy(&v, (buf + rec->offset), sizeof(float));
-
-				if (exportedChannels[i]->GetName() == "Throttle")
-					v *= 100.0f;
-				if (exportedChannels[i]->GetName() == "Brake")
-					v *= 100.0f;
-				if (exportedChannels[i]->GetName() == "Clutch")
-					v *= 100.0f;
-
-				((CChannel<float>*)exportedChannels[i])->AddSample(v);
-			}
-
-			if (exportedChannels[i]->GetType() == irsdk_double) {
-
-				double v = 0;
-				memcpy(&v, (buf + rec->offset), sizeof(double));
-				((CChannel<double>*)exportedChannels[i])->AddSample(v);
-			}
-
-			if (exportedChannels[i]->GetType() == irsdk_char) {
-
-				char v = 0;
-				memcpy(&v, (buf + rec->offset), sizeof(char));
-				((CChannel<char>*)exportedChannels[i])->AddSample(v);
-			}
-
-			if (exportedChannels[i]->GetType() == irsdk_bool) {
-
-				bool v = 0;
-				memcpy(&v, (buf + rec->offset), sizeof(bool));
-				((CChannel<bool>*)exportedChannels[i])->AddSample(v);
-			}
-		}
-	}
-}
-
-
-void CibtDataLogger::readDataBuf()
-{
-	int len;
-	char* varBuf;
+	int len = m_header.bufLen;
 	DWORD ret = 0;
 	int ln = 0;
 	size_t k = 0;
 	int prevLap = 0;
 
-	len = m_header.bufLen;
-	varBuf = new char[m_header.bufLen];
-	if (varBuf == NULL) {
-		CErrEx* ex = new CErrEx(__MODULE__, (char*)typeid(this).name(), __FUNCTION__, __FILE__, __LINE__, (DWORD)-1, true);
+	try {
+		sampleBuffer = std::shared_ptr<BYTE>((BYTE*)new char[len]);
+	}
+	catch (std::exception ex)
+	{
 		throw ex;
 	}
 
-	// allocate buffer for lapInfoArray
 	this->m_lapCnt = this->m_subHeader.sessionLapCount;
-	this->m_lapInfo = new PLAPINFO[this->m_lapCnt];
-	memset(this->m_lapInfo, 0, sizeof(PLAPINFO)* this->m_lapCnt);
-	for (int i = 0; i < this->m_lapCnt; i++) {
-		this->m_lapInfo[i] = new LAPINFO;
-		memset(this->m_lapInfo[i], 0, sizeof(LAPINFO));
-	}
-
-
-	this->m_lastLap = 0;
-	this->m_curLapIdx = 0;
 
 	SetFilePointer(m_file, m_header.varBuf[0].bufOffset, NULL, FILE_BEGIN);
+	if (!ReadFile(m_file, (LPVOID)sampleBuffer.get(), len, &ret, NULL)) {
+		ret = GetLastError();
+		CErrEx* ex = new CErrEx(__MODULE__, (char*)typeid(this).name(), __FUNCTION__, __FILE__, __LINE__, ret, true);
+		throw ex;
+	}
 
 	int sampleCnt = m_subHeader.sessionRecordCount;
 	for (int i = 0; i < sampleCnt; i++) {
 
-		if (!ReadFile(m_file, varBuf, len, &ret, NULL)) {
-			ret = GetLastError();
-			CErrEx* ex = new CErrEx(__MODULE__, (char*)typeid(this).name(), __FUNCTION__, __FILE__, __LINE__, ret, true);
-			throw ex;
-		}
-
 		try {
-			extractChannelData(varBuf);
+
 			if (i == 0) {
 				// first (valid) entry in sample,so get first lap number
 				this->m_curLapIdx = 0;
-				this->m_lapInfo[this->m_curLapIdx]->lapNo = ((CChannel<int>*)exportedChannels[channelsMap["Lap"]])->GetChannelData(i);  /*channels.chLap.GetChannelData(i);*/
+				this->m_lapInfo[this->m_curLapIdx].lapNo = channels["Lap"];
 				this->m_lapInfo[this->m_curLapIdx]->sampleIdx = i;
 				this->m_lapInfo[this->m_curLapIdx]->SessTimeIdx = ((CChannel<double>*)exportedChannels[channelsMap["SessionTime"]])->GetChannelData(i); /*channels.chSessionTime.GetChannelData(i);*/
 

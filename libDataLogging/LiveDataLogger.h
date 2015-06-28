@@ -66,6 +66,8 @@ namespace libDataLogging {
 
 			// returns a raw sample buffer from the sample queue
 			virtual bool GetSample(std::vector<BYTE>& buf);
+			virtual bool GetSample(std::vector<BYTE>& buf, int idx);
+			virtual int GetSampleBufferCount();
 
 			virtual SampleValue GetSampleData(DataSample& s, CLiveChannel& c)
 			{

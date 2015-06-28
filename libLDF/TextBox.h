@@ -1,5 +1,18 @@
 #pragma once
+#ifndef _TEXTBOX_H_
+#define _TEXTBOX_H_
+///////////////////////////////////////////////////////////////////////////////
+//
+//	VideoDashboard
+//	----------------------
+//	Project: libLDF - layout definition format library
+//
+//	Copyright 2014-2015 Thorsten Kuypers
+//  All Rights Reserved
+//
+///////////////////////////////////////////////////////////////////////////////
 
+#include "libLDF.h"
 #include "common.h"
 #include "DashboardElement.h"
 
@@ -19,7 +32,7 @@ namespace libLDF
 
 		// Renders the element into a bitmap with the data set by elements channel name
 		// and sample buffer index
-		virtual Gdiplus::Bitmap* Render(int sampleIndex);
+		virtual Gdiplus::Bitmap* Render(DataSample& sample, IGenericLogger& logger, bool renderBlank);
 
 		void SetFormatType(string& s);
 		LabelFormatType GetFormatType() { return _format; }
@@ -52,3 +65,5 @@ namespace libLDF
 	};
 
 }
+
+#endif // _TEXTBOX_H_

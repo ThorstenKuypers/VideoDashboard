@@ -36,16 +36,10 @@
     <ClCompile Include="yaml_parser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="BaseDataLogger.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Channel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="csvDataLogger.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ibtDataLogger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="LogChannel.cpp">
@@ -61,6 +55,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="LiveChannels.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseTelemetryFile.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IracingBinaryTelemetryFile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -92,9 +92,6 @@
     <ClInclude Include="yaml_parser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BaseDataLogger.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Channel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -102,9 +99,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="csvDataLogger.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ibtDataLogger.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="LogChannel.h">
@@ -120,6 +114,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="LiveChannels.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseTelemetryFile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IracingBinaryTelemetryFile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

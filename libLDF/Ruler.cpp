@@ -3,53 +3,48 @@
 
 using namespace libLDF;
 
-CRuler::CRuler()
+CRuler::CRuler() :
+_path(pathType_arc),
+_drawPath(false),
+_pathColor(Color::Black),
+_pathOffset(0),
+_pathWidth(1),
+_pathPos(PathPosition_inside),
+_drawLabel(true),
+_labelMargin(0),
+_labelFormat(LabelFormatType_integer),
+_drawMajor(false),
+_mjDiv(0),
+_mjUnits(0),
+_mjMargin(0),
+_mjColor(Color::Black),
+_mjShape(TickShape::line),
+_mjLength(0),
+_mjWidth(1),
+_mjRadius(0),
+_drawMinor(false),
+_mnDiv(0),
+_mnUnits(0),
+_mnMargin(0),
+_mnColor(Color::Black),
+_mnShape(TickShape::line),
+_mnLength(0),
+_mnWidth(1),
+_mnRadius(0),
+_fontname(string("Arial")),
+_fontheight(10),
+_fontstyle(FontStyleRegular),
+_foreground(Color::Black),
+_layer(0),
+_transparency(0),
+_arcRadius(0),
+_rulerImg(nullptr),
+_rulerGfx(nullptr),
+_lblFont(nullptr),
+textR(0),
+_scale(1),
+_using(string(""))
 {
-	type = DashboardElementType::ruler;
-
-	_path = pathType_arc;
-	_drawPath = false;
-	_pathColor = Color::Black;
-	_pathOffset = 0;
-	_pathWidth = 1;
-	_pathPos = PathPosition_inside;
-	_drawLabel = true;
-	_labelMargin = 0;
-	_labelFormat = LabelFormatType_integer;
-	_drawMajor = false;
-	_mjDiv = 0;
-	_mjUnits = 0;
-	_mjMargin = 0;
-	_mjColor = Color::Black;
-	_mjShape = TickShape::line;
-	_mjLength = 0;
-	_mjWidth = 1;
-	_mjRadius = 0;
-	_drawMinor = false;
-	_mnDiv = 0;
-	_mnUnits = 0;
-	_mnMargin = 0;
-	_mnColor = Color::Black;
-	_mnShape = TickShape::line;
-	_mnLength = 0;
-	_mnWidth = 1;
-	_mnRadius = 0;
-
-	_fontname = string("Arial");
-	_fontheight = 10;
-	_fontstyle = FontStyleRegular;
-	_foreground = Color::Black;
-	_layer = 0;
-	_transparency = 0;
-	_arcRadius = 0;
-
-	_rulerImg = nullptr;
-	_rulerGfx = nullptr;
-	_lblFont = nullptr;
-	textR = 0;
-	_scale = 1;
-
-	_using = string("");
 }
 
 
@@ -184,6 +179,44 @@ void CRuler::Init()
 		}
 	}
 }
+
+void CRuler::SetBackgroundColor(std::string& s)
+{
+	std::vector<int> c;
+
+	try {
+		getColorFromString(s, &c);
+		if (c.size() == 1)
+			_background = Color((255) | c[0]);
+		if (c.size() == 3)
+			_background = Color((BYTE)c[0], (BYTE)c[1], (BYTE)c[2]);
+	}
+	catch (parsing_error& ec)
+	{
+		throw ec;
+	}
+	_useGlobalBackColor = false;
+}
+
+void CRuler::SetForegroundColor(std::string& s)
+{
+	std::vector<int> c;
+
+	try {
+		getColorFromString(s, &c);
+		if (c.size() == 1)
+			_foreground = Color((255) | c[0]);
+		if (c.size() == 3)
+			_foreground = Color((BYTE)c[0], (BYTE)c[1], (BYTE)c[2]);
+	}
+	catch (parsing_error& ec)
+	{
+		throw ec;
+	}
+
+	_useGlobalForeColor = false;
+}
+
 
 void CRuler::drawMinorTicks()
 {
