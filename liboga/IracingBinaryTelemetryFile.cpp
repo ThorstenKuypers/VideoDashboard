@@ -66,6 +66,8 @@ void CIracingBinaryTelemetryFile::processDataFile()
 		mathChannels.emplace(make_pair(CH_SP_BEST_LAP_TIME, CDataChannel(CH_SP_BEST_LAP_TIME, "s", "Best lap time in stint", 5, irsdk_double, 5, ChannelType_Math)));
 		//mathChannels.push_back(CDataChannel("LastLapTime", "s", "Last lap time", 6, irsdk_double, 6, ChannelType_Math));
 
+		mathChannelBuf = std::vector<std::vector<SampleValue>>(mathChannels.size());
+
 #ifdef _DEBUG
 		this->readSessInfo();
 #endif
@@ -573,38 +575,6 @@ void CIracingBinaryTelemetryFile::readDataBuf()
 					currentSector++;
 				}
 			}
-
-			// calculate math channels values
-			//for (std::vector<CDataChannel>::iterator it = mathChannels.begin(); it != mathChannels.end(); ++it)
-			//{
-			//	GetSample(s, i);
-			//	float v = 0;
-			//	SampleValue val = GetSampleData(s, channels["Speed"]);
-
-			//	if (it->get_Name() == std::string(CH_SP_SPEED_KPH))
-			//	{
-			//		v = val.get_value<float>(); // ((CChannel<float>*)exportedChannels[channelsMap[specialChannelsMap[CH_SP_SPEED_KPH]]])->GetChannelData(i);
-			//		v *= 3.6f;
-			//		((CChannel<float>*)ch)->AddSample(v);
-			//	}
-			//	else if (it->get_Name() == std::string(CH_SP_SPEED_MPH))
-			//	{
-			//		v = ((CChannel<float>*)exportedChannels[channelsMap[specialChannelsMap[CH_SP_SPEED_MPH]]])->GetChannelData(i);
-			//		v *= 2.23694f;
-			//		((CChannel<float>*)ch)->AddSample(v);
-			//	}
-			//	else if (it->get_Name() == std::string(CH_SP_LATG))
-			//	{
-			//		v = ((CChannel<float>*)exportedChannels[channelsMap[specialChannelsMap[CH_SP_LATG]]])->GetChannelData(i);
-			//		v /= 9.81f;
-			//		((CChannel<float>*)ch)->AddSample(v);
-			//	}
-			//	else if (it->get_Name() == std::string(CH_SP_LONGG))
-			//	{
-			//		v = ((CChannel<float>*)exportedChannels[channelsMap[specialChannelsMap[CH_SP_LONGG]]])->GetChannelData(i);
-			//		v /= 9.81f;
-			//		((CChannel<float>*)ch)->AddSample(v);
-			//	}
 		}
 		catch (...) {
 			CErrEx ex = CErrEx(__MODULE__, (char*)typeid(this).name(), __FUNCTION__, __FILE__, ln, (DWORD)-1, true);

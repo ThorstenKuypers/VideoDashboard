@@ -22,77 +22,50 @@
 
 #include "libLDF.h"
 #include "common.h"
-#include "Dashboard.h"
 #include "errex.h"
+#include "Dashboard.h"
 
 namespace libLDF
 {
 #pragma unmanaged
 
-	typedef std::pair<int, std::string> ldf_line;
-	typedef std::pair<std::string, std::string> ldf_pair;
-
-	struct _section
-	{
-		std::string name;
-		map<int, ldf_pair> keyPairs;
-		std::vector<ldf_line> lines;
-	};
-	typedef struct _section elementSection;
 
 
-	class CDashboardLayout : public IDashboardLayout
-	{
-	public:
-		CDashboardLayout();
-		~CDashboardLayout();
+	//class CDashboardLayout
+	//{
+	//public:
+	//	CDashboardLayout();
+	//	~CDashboardLayout();
 
-		void SetActiveDashboard(const std::string& filename);
+	//	void SetActiveDashboard(const std::string& filename);
 
-		std::string& GetDashboardPrettyName(std::string& filename);
-		std::string& GetDashboardShortName(std::string& filename);
+	//	std::string& GetDashboardPrettyName(std::string& filename);
+	//	std::string& GetDashboardShortName(std::string& filename);
 
-		void ShowBoundingBoxes(bool show);
+	//	void ShowBoundingBoxes(bool show);
 
-		virtual Gdiplus::Bitmap* RenderDashboard(libOGA::DataSample& sample, IGenericLogger& logger, bool renderBlank);
-		virtual Gdiplus::Bitmap* RenderDashboard(IGenericLogger& logger, int sampleIndex, bool renderBlank);
+	//	virtual Gdiplus::Bitmap* RenderDashboard(libOGA::DataSample& sample, IGenericLogger& logger, bool renderBlank);
+	//	virtual Gdiplus::Bitmap* RenderDashboard(IGenericLogger& logger, int sampleIndex, bool renderBlank);
 
-	private:
+	//private:
 
-		void parseLayoutFile(const std::string& filename);
-		void extractDashboardFilePath();
-		void parseSections(elementSection& sec);
-		void parseCommonKeys(CDashboardElement& e, elementSection& sect);
+	//	//std::string _curDashboardFileName;
+	//	//std::string _curDashboardFilePath;
+	//	//CDashboard _curDashboard; // current active dashboard (single instance)
+	//	//ULONG_PTR _gdiplus_tok;
 
-		void parseDashboardSection(elementSection& section);
-		void parseTextBoxSection(elementSection& section);
-		void parseGaugeSection(elementSection& sect);
-		void parseIndicatorSection(elementSection& sect);
-		void parseSliderSection(elementSection& sect);
-		void parseGCircleSection(elementSection& sect);
-		void parseSweeperElement(elementSection& sect);
-		void parseRulerElement(elementSection& sect);
-		void parseRingGaugeElement(elementSection& sect);
+	//	//std::shared_ptr<Gdiplus::Bitmap> _lastDashboardImg; // last rendered dashboard image
 
-		void checkElementLocalSettingsOverwrite(CDashboardElement& e);
+	//	//// ruler lookup table
+	//	//std::map<std::string, CRuler> rulerTable;
 
-		std::string _curDashboardFileName;
-		std::string _curDashboardFilePath;
-		CDashboard _curDashboard; // current active dashboard (single instance)
-		ULONG_PTR _gdiplus_tok;
+	//	////bool _useLocalForeColor;
+	//	////bool _useLocalBackColor;
+	//	////bool _useLocalFontname;
+	//	////bool _useLocalFontstyle;
+	//	////bool _useLocalJustify;
 
-		std::shared_ptr<Gdiplus::Bitmap> _lastDashboardImg; // last rendered dashboard image
-
-		// ruler lookup table
-		std::map<std::string, CRuler> rulerTable;
-
-		//bool _useLocalForeColor;
-		//bool _useLocalBackColor;
-		//bool _useLocalFontname;
-		//bool _useLocalFontstyle;
-		//bool _useLocalJustify;
-
-	};
+	//};
 
 }
 

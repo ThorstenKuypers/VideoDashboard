@@ -23,7 +23,7 @@ namespace libLDF {
 
 	// A Ruler draws equally spaced marks laid out along a path.The path can be a line, an elliptical arc,
 	// or a sweeper.The marks are categorized as major and minor.Major marks can be labeled.
-	class CRuler// : public CDashboardElement
+	class CRuler : public CDashboardElement
 	{
 
 		typedef struct _tickMarkLabel {

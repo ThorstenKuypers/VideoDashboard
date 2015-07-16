@@ -40,24 +40,16 @@ void CLiveDataLogger::simConnected()
 		}
 	}
 
-	//EventArgs e;
-	//Connected(e);
-
 	_callbackIf.SimConnected();
 }
 
 void CLiveDataLogger::simDisconnected()
 {
-	//EventArgs e;
-	//Disconnected(e);
-
 	_callbackIf.SimDisconnected();
 }
 
 void CLiveDataLogger::simDataUpdate()
 {
-	//SampleDataUpdateEventArgs e;
-
 	if (_map != nullptr) {
 		BYTE* buf = (BYTE*)((BYTE*)_map + irsdkHeader->varBuf[_latest].bufOffset);
 		int len = irsdkHeader->bufLen;
@@ -72,10 +64,6 @@ void CLiveDataLogger::simDataUpdate()
 			_samplesQueue.pop_back();
 			_samplesQueue.push_front(sample);
 		}
-
-		//ql.unlock();
-
-		//DataUpdate(e);
 
 		_callbackIf.SimDataUpdate(sample);
 	}
@@ -236,7 +224,6 @@ bool CLiveDataLogger::GetSample(DataSample& s)
 
 		DataSample _s = _samplesQueue.front();
 		s = std::move(_s);
-		//_samplesQueue.pop_front();
 
 		ql.unlock();
 		return true;
@@ -250,8 +237,8 @@ CDataChannel& CLiveDataLogger::GetChannel(std::string& name)
 	try {
 
 		// check if name is one of the math channels
-		if (name == CH_SP_SPEED_KPH || CH_SP_SPEED_MPH || CH_SP_LATG || CH_SP_LONGG || CH_SP_LAP_TIME ||
-			CH_SP_LAP || CH_SP_BEST_LAP_TIME || CH_SP_BEST_LAP || CH_SP_CURRENT_SECTOR || CH_SP_SECTOR_TIME)
+		if (name == CH_SP_SPEED_KPH || name == CH_SP_SPEED_MPH || name == CH_SP_LATG || name == CH_SP_LONGG || name == CH_SP_LAP_TIME ||
+			name == CH_SP_LAP || name == CH_SP_BEST_LAP_TIME || name == CH_SP_BEST_LAP || name == CH_SP_CURRENT_SECTOR || name == CH_SP_SECTOR_TIME)
 			return mathChannels[name];
 		else
 			return channels[name];

@@ -1,15 +1,14 @@
 
 #include "libLDF.h"
-#include "DashboardLayout.h"
-
+#include "Dashboard.h"
 
 using namespace libLDF;
 
 extern "C" LIBLDF_API IDashboardLayout* get_LDF()
 {
 	//try {
-		IDashboardLayout* p = (IDashboardLayout*)new CDashboardLayout();
-		return p;
+	IDashboardLayout* p = (IDashboardLayout*)new CDashboard();
+	return p;
 	//}
 	//catch (...)
 	//{
@@ -19,7 +18,7 @@ extern "C" LIBLDF_API IDashboardLayout* get_LDF()
 }
 
 
-extern "C" LIBLDF_API void release_LDF(IDashboardLayout* inst)
+extern "C" LIBLDF_API void release_LDF(void* inst)
 {
 	if (inst != nullptr)
 		delete inst;

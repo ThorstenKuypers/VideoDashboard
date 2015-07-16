@@ -65,7 +65,7 @@ Gdiplus::Bitmap* CSlider::Render(DataSample& sample, IGenericLogger& logger, boo
 			if (!renderBlank) {
 				try {
 					CDataChannel& ch = std::move(logger.GetChannel(_channel));
-					SampleValue sv = CDataChannel::GetSampleData(sample, ch);
+					SampleValue sv = CDataChannel::GetSampleData(logger, sample, ch);
 
 					switch (sv.type())
 					{

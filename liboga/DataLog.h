@@ -217,12 +217,7 @@ namespace libOGA {
 				try
 				{
 					wchar_t* t = (wchar_t*)p.ToPointer();
-					//if (!(t)) {
-
-					//	String^ msg = gcnew String("Error in libDataLogging class factory");
-					//	throw msg;
-					//}
-					m_dataLogger = __get_inst(t);
+					m_dataLogger = LoggerInstanceFactory::GetFileLogInstance(t);
 					InitSampleList();
 					InitLapTimigInfo();
 				}
@@ -236,8 +231,6 @@ namespace libOGA {
 				}
 
 				Marshal::FreeHGlobal(p);
-
-				//XXX:
 			}
 
 			~CDataLog(void)
@@ -386,7 +379,8 @@ namespace libOGA {
 				bool vb = false;
 
 				DataSample _s = {};
-				CDataChannel c = std::move(m_dataLogger->GetChannel(std::string(ch)));
+				//CDataChannel c = std::move(m_dataLogger->GetChannel(std::string(ch)));
+				CDataChannel& c = m_dataLogger->GetChannel(std::string(ch));
 				m_dataLogger->GetSample(_s, index);
 				SampleValue val = CDataChannel::GetSampleData(_s, c);
 
@@ -518,22 +512,6 @@ namespace libOGA {
 					return a;
 				}
 			}
-
-			//property cli::array<String^>^ TEST
-			//{
-			//	cli::array<String^>^ get()
-			//	{
-			//		std::vector<CBaseChannel*> ch = m_dataLogger->GetExportedChannels();
-
-			//		cli::array<String^>^ a = gcnew cli::array<String^>(ch.size());
-			//		for (size_t i = 0; i < ch.size(); i++)
-			//		{
-			//			a[i] = gcnew String((char*)ch[i]->GetName().c_str());
-			//		}
-
-			//		return a;
-			//	}
-			//}
 		};
 
 	}

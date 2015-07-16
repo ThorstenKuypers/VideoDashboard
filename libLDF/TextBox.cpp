@@ -69,7 +69,7 @@ Gdiplus::Bitmap* CTextBox::Render(DataSample& sample, IGenericLogger& logger, bo
 
 			if (!renderBlank) {
 				CDataChannel& ch = std::move(logger.GetChannel(_channel));
-				sv = CDataChannel::GetSampleData(sample, ch);
+				sv = CDataChannel::GetSampleData(logger, sample, ch);
 			}
 
 			switch (_format) {

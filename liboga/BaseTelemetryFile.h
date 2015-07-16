@@ -24,8 +24,6 @@ namespace libOGA {
 
 		class CBaseTelemetryFile :public IDataLogFile
 		{
-			//friend class CDataLogger;
-
 		public:
 			CBaseTelemetryFile(const std::wstring& logfile);
 			virtual ~CBaseTelemetryFile();
@@ -106,6 +104,8 @@ namespace libOGA {
 			std::vector<SampleBufferRow> sampleBuffer;
 
 			// sample buffer of math channels
+			std::vector<std::vector<SampleValue>> mathChannelBuf;
+
 		private:
 			void CloseFile();
 

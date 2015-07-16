@@ -112,76 +112,196 @@ int CDataChannel::get_Offset()
 	return _offset;
 }
 
+ChannelType CDataChannel::get_ChannelType()
+{
+	return _channelType;
+}
+
 #pragma endregion
 
-SampleValue& CDataChannel::GetSampleData(DataSample& s, CDataChannel& c)
+SampleValue CDataChannel::GetSampleData(IGenericLogger& logger, DataSample& s, CDataChannel& c)
 {
 	SampleValue val;
 
-	switch (c.get_Type())
-	{
-	case irsdk_int:
-	{
-		int i = 0;
-		memcpy(&i, &s[c.get_Offset()], sizeof(int));
-		val = SampleValue(i);
-		break;
-	}
-	case irsdk_float:
-	{
-		float f = (float)*(&s[c.get_Offset()]);
-		memcpy(&f, &s[c.get_Offset()], sizeof(float));
-		val = SampleValue(f);
-		break;
-	}
-	case irsdk_double:
-	{
-		double d = (double)*(&s[c.get_Offset()]);
-		memcpy(&d, &s[c.get_Offset()], sizeof(double));
-		val = SampleValue(d);
-		break;
-	}
-	case irsdk_char:
-	{
-		char _c = (char)*(&s[c.get_Offset()]);
-		memcpy(&c, &s[c.get_Offset()], sizeof(char));
-		val = SampleValue(_c);
-		break;
-	}
-	case irsdk_bool:
-	{
-		if (sizeof(bool) == 1)
+	if (c.get_ChannelType() == ChannelType_File) {
+		switch (c.get_Type())
 		{
-			BYTE b = (BYTE)*(&s[c.get_Offset()]);
-			memcpy(&b, &s[c.get_Offset()], sizeof(BYTE));
-			if (b)
-				val = SampleValue((bool)true);
-			else
-				val = SampleValue((bool)false);
-		}
-		else
+		case irsdk_int:
 		{
-			DWORD b = (DWORD)*(&s[c.get_Offset()]);
-			memcpy(&b, &s[c.get_Offset()], sizeof(BYTE));
-			if (b)
-				val = SampleValue((bool)true);
-			else
-				val = SampleValue((bool)false);
+			int i = 0;
+			memcpy(&i, &s[c.get_Offset()], sizeof(int));
+			val = SampleValue(i);
+			break;
 		}
-		break;
+		case irsdk_float:
+		{
+			float f = (float)*(&s[c.get_Offset()]);
+			memcpy(&f, &s[c.get_Offset()], sizeof(float));
+			val = SampleValue(f);
+			break;
+		}
+		case irsdk_double:
+		{
+			double d = (double)*(&s[c.get_Offset()]);
+			memcpy(&d, &s[c.get_Offset()], sizeof(double));
+			val = SampleValue(d);
+			break;
+		}
+		case irsdk_char:
+		{
+			char _c = (char)*(&s[c.get_Offset()]);
+			memcpy(&c, &s[c.get_Offset()], sizeof(char));
+			val = SampleValue(_c);
+			break;
+		}
+		case irsdk_bool:
+		{
+			if (sizeof(bool) == 1)
+			{
+				BYTE b = (BYTE)*(&s[c.get_Offset()]);
+				memcpy(&b, &s[c.get_Offset()], sizeof(BYTE));
+				if (b)
+					val = SampleValue((bool)true);
+				else
+					val = SampleValue((bool)false);
+			}
+			else
+			{
+				DWORD b = (DWORD)*(&s[c.get_Offset()]);
+				memcpy(&b, &s[c.get_Offset()], sizeof(BYTE));
+				if (b)
+					val = SampleValue((bool)true);
+				else
+					val = SampleValue((bool)false);
+			}
+			break;
+		}
+		case irsdk_bitField:
+		{
+			DWORD dw = (DWORD)*(&s[c.get_Offset()]);
+			memcpy(&dw, &s[c.get_Offset()], sizeof(DWORD));
+			val = SampleValue(dw);
+			break;
+		}
+		default:
+			break;
+		}
 	}
-	case irsdk_bitField:
-	{
-		DWORD dw = (DWORD)*(&s[c.get_Offset()]);
-		memcpy(&dw, &s[c.get_Offset()], sizeof(DWORD));
-		val = SampleValue(dw);
-		break;
+	else if (c.get_ChannelType() == ChannelType_Math) {
+
+		float v = 0;
+
+		if (c.get_Name() == std::string(CH_SP_SPEED_KPH))
+		{
+			CDataChannel& ch = logger.GetChannel(std::string("Speed"));
+			SampleValue val = CDataChannel::GetSampleData(s, ch);
+			v = val.get_value<float>(); // ((CChannel<float>*)exportedChannels[channelsMap[specialChannelsMap[CH_SP_SPEED_KPH]]])->GetChannelData(i);
+			v *= 3.6f;
+			return SampleValue(v);
+		}
+		else if (c.get_Name() == std::string(CH_SP_SPEED_MPH))
+		{
+			CDataChannel& ch = logger.GetChannel(std::string("Speed"));
+			SampleValue val = CDataChannel::GetSampleData(s, ch);
+			v = val.get_value<float>();
+			v *= 2.23694f;
+			return SampleValue(v);
+		}
+		else if (c.get_Name() == std::string(CH_SP_LATG))
+		{
+			CDataChannel& ch = logger.GetChannel(std::string("LatAccel"));
+			SampleValue val = CDataChannel::GetSampleData(s, ch);
+			v = val.get_value<float>();
+			v /= 9.81f;
+			return SampleValue(v);
+		}
+		else if (c.get_Name() == std::string(CH_SP_LONGG))
+		{
+			CDataChannel& ch = logger.GetChannel(std::string("LongAccel"));
+			SampleValue val = CDataChannel::GetSampleData(s, ch);
+			v = val.get_value<float>();
+			v /= 9.81f;
+			return SampleValue(v);
+		}
 	}
-	default:
-		break;
+
+	return std::move(val);
+}
+
+SampleValue CDataChannel::GetSampleData(DataSample& s, CDataChannel& c)
+{
+	SampleValue val;
+
+	if (c.get_ChannelType() == ChannelType_File) {
+		switch (c.get_Type())
+		{
+		case irsdk_int:
+		{
+			int i = 0;
+			memcpy(&i, &s[c.get_Offset()], sizeof(int));
+			val = SampleValue(i);
+			break;
+		}
+		case irsdk_float:
+		{
+			float f = (float)*(&s[c.get_Offset()]);
+			memcpy(&f, &s[c.get_Offset()], sizeof(float));
+			val = SampleValue(f);
+			break;
+		}
+		case irsdk_double:
+		{
+			double d = (double)*(&s[c.get_Offset()]);
+			memcpy(&d, &s[c.get_Offset()], sizeof(double));
+			val = SampleValue(d);
+			break;
+		}
+		case irsdk_char:
+		{
+			char _c = (char)*(&s[c.get_Offset()]);
+			memcpy(&c, &s[c.get_Offset()], sizeof(char));
+			val = SampleValue(_c);
+			break;
+		}
+		case irsdk_bool:
+		{
+			if (sizeof(bool) == 1)
+			{
+				BYTE b = (BYTE)*(&s[c.get_Offset()]);
+				memcpy(&b, &s[c.get_Offset()], sizeof(BYTE));
+				if (b)
+					val = SampleValue((bool)true);
+				else
+					val = SampleValue((bool)false);
+			}
+			else
+			{
+				DWORD b = (DWORD)*(&s[c.get_Offset()]);
+				memcpy(&b, &s[c.get_Offset()], sizeof(BYTE));
+				if (b)
+					val = SampleValue((bool)true);
+				else
+					val = SampleValue((bool)false);
+			}
+			break;
+		}
+		case irsdk_bitField:
+		{
+			DWORD dw = (DWORD)*(&s[c.get_Offset()]);
+			memcpy(&dw, &s[c.get_Offset()], sizeof(DWORD));
+			val = SampleValue(dw);
+			break;
+		}
+		default:
+			break;
+		}
+	}
+	else {
+		throw std::exception("Invalid data channel specified");
 	}
 	return std::move(val);
 }
+
 
 //bool CBaseChannel::GetSample(DataSample&)
 //{
@@ -205,10 +325,56 @@ IDataLogFile* __get_inst(std::wstring file)
 ILiveDataLogger* __get_live(ILiveLoggingCallback& callback)
 {
 	ILiveDataLogger* p = new CLiveDataLogger(callback);
-
 	return p;
 }
 
+void __release_inst(void* inst)
+{
+	if (inst != nullptr)
+	{
+		delete inst;
+		inst = nullptr;
+	}
+}
+
+#pragma region // Interface Instance Factory class implementation
+IDataLogFile* LoggerInstanceFactory::GetFileLogInstance(const wchar_t* fileName)
+{
+	if (fileName != nullptr)
+	{
+		return new CIracingBinaryTelemetryFile(std::wstring(fileName));
+	}
+
+	return nullptr;
+}
+
+void LoggerInstanceFactory::ReleaseFileLogInstance(IDataLogFile* inst)
+{
+	if (inst != nullptr)
+	{
+		CIracingBinaryTelemetryFile* p=static_cast<CIracingBinaryTelemetryFile*>(inst);
+		delete p;
+		p = nullptr;
+		inst = nullptr;
+	}
+}
+
+libOGA::LiveLogs::ILiveDataLogger* LoggerInstanceFactory::GetLiveLoggerInstance(libOGA::LiveLogs::ILiveLoggingCallback& cb)
+{
+	return new CLiveDataLogger(cb);
+}
+
+void LoggerInstanceFactory::ReleaseLiveLoggerInstance(libOGA::LiveLogs::ILiveDataLogger* inst)
+{
+	if (inst != nullptr) {
+		CLiveDataLogger* p = static_cast<CLiveDataLogger*>(inst);
+		delete p;
+		p = nullptr;
+		inst = nullptr;
+	}
+}
+
+#pragma endregion
 
 BOOL WINAPI DllMain(HINSTANCE hInst, DWORD reason, LPVOID p)
 {

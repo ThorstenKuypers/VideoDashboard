@@ -29,12 +29,14 @@ namespace libLDF
 	struct _IDashboardLayout
 	{
 	public:
-		//virtual void ParseLayoutFile(const std::string& filename) = 0;
 		virtual void SetActiveDashboard(const std::string& filename) = 0;
-		virtual std::string& GetDashboardPrettyName(std::string& filename) = 0;
-		virtual std::string& GetDashboardShortName(std::string& filename) = 0;
-		virtual Gdiplus::Bitmap* RenderDashboard(libOGA::DataSample& sample, libOGA::IGenericLogger& logger, bool renderBlank) = 0;
+		virtual std::string& GetPrettyName() = 0;
+		virtual std::string& GetShortName() = 0;
+		virtual Gdiplus::Bitmap* Render(libOGA::IGenericLogger& logger, int sampleIndex, bool renderBlank) = 0;
+		virtual Gdiplus::Bitmap* Render(libOGA::IGenericLogger& logger, libOGA::DataSample& sample, bool renderBlank) = 0;
 		virtual Gdiplus::Bitmap* RenderDashboard(libOGA::IGenericLogger& logger, int sampleIndex, bool renderBlank) = 0;
+		virtual void Parse() = 0;
+		virtual void ShowBoundingBoxes(bool show) = 0;
 
 		//virtual void SetDataLogger(libDataLogging::DataLogger::IDataLogger* logger) = 0;
 	};
@@ -43,6 +45,6 @@ namespace libLDF
 }
 
 extern "C" LIBLDF_API libLDF::IDashboardLayout* get_LDF();
-extern "C" LIBLDF_API void release_LDF(libLDF::IDashboardLayout* inst);
+extern "C" LIBLDF_API void release_LDF(void* inst);
 
 #endif // _LIBLDF_H_

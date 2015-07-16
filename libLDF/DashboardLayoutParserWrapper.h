@@ -21,7 +21,7 @@ namespace libLDFWrapper {
 			_logger(nullptr),
 			_ldf(nullptr)
 		{
-			_ldf = new CDashboardLayout();
+			_ldf = new CDashboard();
 		}
 
 		~DashboardLayout()
@@ -49,7 +49,7 @@ namespace libLDFWrapper {
 						string fname = string(ptr);
 
 						_ldf->SetActiveDashboard(fname);
-
+						_ldf->Parse();
 						Marshal::FreeHGlobal(IntPtr(ptr));
 					}
 				}
@@ -65,13 +65,9 @@ namespace libLDFWrapper {
 		{
 			if (file != nullptr && file != "") {
 
-				char* ptr = (char*)Marshal::StringToHGlobalAnsi(file).ToPointer();
-				std::string str = string(ptr);
-
-				std::string name = _ldf->GetDashboardPrettyName(str);
+				std::string name = _ldf->GetPrettyName();
 				String^ ret = gcnew String(name.c_str());
 
-				Marshal::FreeHGlobal(IntPtr(ptr));
 				return ret;
 			}
 
@@ -82,13 +78,9 @@ namespace libLDFWrapper {
 		{
 			if (file != nullptr && file != "") {
 
-				char* ptr = (char*)Marshal::StringToHGlobalAnsi(file).ToPointer();
-				std::string str = string(ptr);
-
-				std::string name = _ldf->GetDashboardShortName(str);
+				std::string name = _ldf->GetShortName();
 				String^ ret = gcnew String(name.c_str());
 
-				Marshal::FreeHGlobal(IntPtr(ptr));
 				return ret;
 			}
 
@@ -114,7 +106,7 @@ namespace libLDFWrapper {
 				std::string str = string(ptr);
 				
 				try {
-					dashImg = reinterpret_cast<Gdiplus::Bitmap*>(_ldf->RenderDashboard(*_logger, sampleIndex, true));
+					dashImg = reinterpret_cast<Gdiplus::Bitmap*>(_ldf->Render(*_logger, sampleIndex, false));
 					if (dashImg != nullptr) {
 
 						Gdiplus::BitmapData bd = { 0 };
@@ -170,7 +162,7 @@ namespace libLDFWrapper {
 	private:
 
 		libOGA::IGenericLogger* _logger;
-		CDashboardLayout* _ldf;
+		CDashboard* _ldf;
 	};
 }
 

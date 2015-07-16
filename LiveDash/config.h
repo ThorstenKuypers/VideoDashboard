@@ -12,15 +12,11 @@
 
 struct _config
 {
-	ILiveLogger* logger;
-	IDashboardLayout* dash;
+	libLDF::IDashboardLayout* dash;
+	libOGA::LiveLogs::ILiveDataLogger* logger;
 
 	std::wstring dashboardPath;
 	std::wstring selectedDashboard;
-	int posX;
-	int posY;
-	float scale;
 	int opacity;
-
 };
 typedef struct _config LIVEDASH_CONFIG;

@@ -15,8 +15,10 @@ void ShowDashboardOverlay(HWND hwnd, LIVEDASH_CONFIG* cfg, const std::wstring fi
 		cfg->selectedDashboard = file;
 		if (cfg->logger != nullptr && cfg->dash != nullptr) {
 
-			cfg->dash->ParseLayoutFile(fn);
-			Bitmap* bmp = (Bitmap*)cfg->dash->RenderDashboard(fn, 0);
+			cfg->dash->SetActiveDashboard(fn);
+			cfg->dash->Parse();
+
+			Bitmap* bmp = (Bitmap*)cfg->dash->RenderDashboard(*cfg->logger, 0, true);
 			HWND pv = GetDlgItem(hwnd, IDC_PREVIEW);
 			HDC hdc = GetWindowDC(pv);
 
@@ -46,7 +48,7 @@ void ShowDashboardOverlay(HWND hwnd, LIVEDASH_CONFIG* cfg, const std::wstring fi
 		}
 	}
 }
-
+ 
 
 INT_PTR CALLBACK ConfigDialogProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -144,9 +146,6 @@ INT_PTR CALLBACK ConfigDialogProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPa
 
 		case IDOK:
 		{
-			cfg->posX = (int)SendMessage(GetDlgItem(hwnd, IDC_SLIDER_POSX), TBM_GETPOS, 0, 0);
-			cfg->posY = (int)SendMessage(GetDlgItem(hwnd, IDC_SLIDER_POSY), TBM_GETPOS, 0, 0);
-			cfg->scale = (float)((float)SendMessage(GetDlgItem(hwnd, IDC_SLIDER_SCALE), TBM_GETPOS, 0, 0) / 100.0f);
 			cfg->opacity = (int)SendMessage(GetDlgItem(hwnd, IDC_SLIDER_OPACITY), TBM_GETPOS, 0, 0);
 
 			EndDialog(hwnd, TRUE);
@@ -199,6 +198,9 @@ INT_PTR CALLBACK ConfigDialogProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPa
 				file.append(L"\\");
 				file.append(sbuf);
 				file.append(L".layout");
+
+				cfg->dashboardPath = DASHBOARD_PATH;
+				cfg->selectedDashboard = file;
 
 				ShowDashboardOverlay(hwnd, cfg, file);
 			}
@@ -267,23 +269,22 @@ INT_PTR CALLBACK ConfigDialogProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPa
 
 void ConfigPlugin(HWND hwnd)
 {
-	LIVEDASH_CONFIG cfg{ nullptr, nullptr, L"", L"", 0, 0, 0.0f, 0 };
+	LIVEDASH_CONFIG& cfg = g_dash->GetConfig();
 	LONG_PTR* p = (LONG_PTR*)&cfg;
-
-	if (logger != nullptr)
-		cfg.logger = logger;
-	if (dash != nullptr)
-		cfg.dash = dash;
 
 	INT_PTR ret = OBSDialogBox(pluginInst, MAKEINTRESOURCE(IDD_LIVEDASH_CFG_DLG), API->GetMainWindow(), ConfigDialogProc, (LPARAM)p);
 	switch (ret) {
 
 	case TRUE:
+#ifdef _DEBUG
 		OBSMessageBox(API->GetMainWindow(), L"save config", L"CFG", MB_OK);
+#endif		
 		break;
 
 	case FALSE:
+#ifdef _DEBUG
 		OBSMessageBox(API->GetMainWindow(), L"parent HWND invalid", L"CFG", MB_OK);
+#endif
 		break;
 
 	case IDCANCEL:

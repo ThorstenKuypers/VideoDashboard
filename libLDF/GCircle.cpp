@@ -40,9 +40,9 @@ Gdiplus::Bitmap* CGCircle::Render(DataSample& sample, IGenericLogger& logger, bo
 					CDataChannel& chLat = std::move(logger.GetChannel(string("LatAccel")));
 					CDataChannel& chLong = std::move(logger.GetChannel(string("LongAccel")));
 
-					SampleValue val = CDataChannel::GetSampleData(sample, chLat);
+					SampleValue val = CDataChannel::GetSampleData(logger, sample, chLat);
 					latG = val.get_value<float>();
-					val = CDataChannel::GetSampleData(sample, chLong);
+					val = CDataChannel::GetSampleData(logger, sample, chLong);
 					longG = val.get_value<float>();
 				}
 				catch (std::exception)

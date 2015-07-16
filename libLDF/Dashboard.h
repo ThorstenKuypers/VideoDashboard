@@ -24,22 +24,47 @@
 #include "Slider.h"
 #include "Sweeper.h"
 #include "TextBox.h"
-#include "Ruler.h"
 #include "RingGauge.h"
+#include "Ruler.h"
 
 #define MAX_LAYERS	16 // maximum number of supported layers
 
 
 namespace libLDF
 {
+	typedef std::pair<int, std::string> ldf_line;
+	typedef std::pair<std::string, std::string> ldf_pair;
+	typedef std::map<std::string, std::unique_ptr<CRuler>> RulerLookupTable;
+
+
+	struct _section
+	{
+		std::string name;
+		map<int, ldf_pair> keyPairs;
+		std::vector<ldf_line> lines;
+	};
+	typedef struct _section elementSection;
 
 	// This class defines the actual dashboard element as a whole
-	class CDashboard
+	class CDashboard : public IDashboardLayout
 	{
 	public:
 
-		CDashboard(std::string file) :
-			_targetwidth(0),
+		//CDashboard() :
+		//	_targetwidth(0),
+		//	_height(0),
+		//	_width(0),
+		//	_fontHeight(12),
+		//	_fontName(string("Arial")),
+		//	_fontStyle(FontStyleRegular),
+		//	_foreground(Color::White),
+		//	_background(Color::Transparent),
+		//	_showBoundingBoxes(false)
+		//{
+		//}
+
+		CDashboard(int targetWidth = 1024) :
+			_targetwidth(targetWidth),
 			_height(0),
 			_width(0),
 			_fontHeight(12),
@@ -49,32 +74,49 @@ namespace libLDF
 			_background(Color::Transparent),
 			_showBoundingBoxes(false)
 		{
-			_fileName = file;
-		}
-
-		CDashboard(std::string name, int targetWidth = 1024) :
-			_targetwidth(targetWidth),
-			_height(0),
-			_width(0),
-			_shortName(name),
-			_showBoundingBoxes(false)
-		{
 		}
 
 		~CDashboard() {}
 
 		// prses the dashboard object from file
-		void Parse();
+		virtual void Parse();
+		virtual void SetActiveDashboard(const std::string& filename) { clear(); _fileName = filename; }
 
+		virtual Gdiplus::Bitmap* RenderDashboard(IGenericLogger& logger, int sampleIndex, bool renderBlank)
+		{
+			return Render(logger, sampleIndex, renderBlank);
+		}
+
+		virtual Gdiplus::Bitmap* Render(IGenericLogger& logger, int sampleIndex, bool renderBlank)
+		{
+				DataSample s;
+				if (!renderBlank) {
+					logger.GetSample(s, sampleIndex);
+				}
+			
+				return RenderToImage(s, logger, renderBlank);
+		}
+
+		virtual Gdiplus::Bitmap* Render(IGenericLogger& logger, DataSample& sample, bool renderBlank)
+		{
+			return RenderToImage(sample, logger, renderBlank);
+		}
+
+		virtual void ShowBoundingBoxes(bool show)
+		{
+			_showBoundingBoxes = show;
+		}
+		virtual string& GetShortName() { return _shortName; }
+		virtual std::string& GetPrettyName() { return _prettyName; }
+
+	private:
 		Bitmap* RenderToImage(libOGA::DataSample& sample, IGenericLogger& logger, bool renderBlank);
 
 		void SetDashboardFilePath(std::string s) { _dashFilePath = s; }
 
 		void SetShortName(string& name) { _shortName = name; }
-		string& GetShortName() { return _shortName; }
 
 		void SetPrettyName(std::string& s) { _prettyName = s; }
-		std::string& GetPrettyName() { return _prettyName; }
 
 		void SetTargetWidth(int w) { _targetwidth = w; }
 		int GetTargetWidth() { return _targetwidth; }
@@ -108,18 +150,7 @@ namespace libLDF
 		void SetFontHeight(int h) { _fontHeight = h; }
 		int GetFontHeight() { return _fontHeight; }
 
-		void AddDashboardElement(CDashboardElement& element) { _elements.emplace_back(std::move(element)); }
-
-		std::vector<CDashboardElement>& GetDashboardElements() { return _elements; }
-
-		void SetRulerTable(std::map<std::string, CRuler>& table) { rulerTable = std::move(table); }
-		std::map<std::string, CRuler>& GetRulerTable() { return rulerTable; }
-
-
-		void ShowBoundingBoxes(bool show)
-		{
-			_showBoundingBoxes = show;
-		}
+		void AddDashboardElement(CDashboardElement* element) { _elements.emplace_back(std::move(element)); }
 
 		void clear()
 		{
@@ -140,11 +171,28 @@ namespace libLDF
 			_justify = TextJustify_left;
 		}
 
-	private:
+
+		void parseSections(elementSection& sect);
+		void parseCommonKeys(CDashboardElement* e, elementSection& sect);
+
+		void parseDashboardSection(elementSection& sect);
+		void parseTextBoxSection(elementSection& sect);
+		void parseGaugeSection(elementSection& sect);
+		void parseIndicatorSection(elementSection& sect);
+		void parseSliderSection(elementSection& sect);
+		void parseGCircleSection(elementSection& sect);
+		void parseSweeperElement(elementSection& sect);
+		void parseRulerElement(elementSection& sect);
+		void parseRingGaugeElement(elementSection& sect);
+
+		void checkElementLocalSettingsOverwrite(CDashboardElement* e);
+		void extractDashboardFilePath();
 
 		bool _showBoundingBoxes;
 
 		std::string _dashFilePath;
+
+		std::string _dashboardFilePath;
 
 		// file name of this dahboard object
 		std::string _fileName;
@@ -176,7 +224,7 @@ namespace libLDF
 		// The height of the font, in pixels.The font height defaults to the height of the element's bounding
 		int _fontHeight;
 
-		std::map<std::string, CRuler> rulerTable;
+		RulerLookupTable rulerTable;
 
 		// vector containig all elements found in definition file
 		std::vector<std::unique_ptr<CDashboardElement>> _elements;

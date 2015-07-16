@@ -1,36 +1,26 @@
 
 #include "Plugin.h"
-#include "LiveDash.h"
+#include "LiveDashImageSource.h"
 
 // only global variables
 static const CTSTR g_PluginName = L"LiveDash";
 static const CTSTR g_PluginDesc = L"VideoDashboard live streaming telemetry dashboard plugin";
 HINSTANCE pluginInst = NULL;
-ILiveLogger* logger = nullptr;
-IDashboardLayout* dash = nullptr;
-
-using namespace libDataLogging;
-using namespace libDataLogging::LiveDataLogger;
-using namespace libLDF;
+CLiveDashboard* g_dash = nullptr;
 
 bool LoadPlugin()
 {
 	// all initial initialization goes here
-
-	if (!make_instance(IID_LIVELOGGER, (void**)&logger, NULL)) {
-
-		//TODO: add error log message
+	try {
+		g_dash = new CLiveDashboard();
+		if (g_dash == nullptr)
+			return false;
+	}
+	catch (std::exception e)
+	{
+		// TODO: write exception message to plugin logfile
 		return false;
 	}
-	dash = get_LDF();
-	if (dash == nullptr)
-		return false;
-
-	//dash->SetDataLogger(logger);
-
-	logger->Connected += MAKE_DELEGATE_FN(LoggerConnect);
-	logger->Disconnected += MAKE_DELEGATE_FN(LoggerDisconnect);
-	logger->DataUpdate += MAKE_DELEGATE_FN(LoggerUpdate);
 
 	OBSRegisterImageSourceClass(TEXT("LiveDashSource"), TEXT("Live Dash Source"), (OBSCREATEPROC)CreateLDImage, (OBSCONFIGPROC)NULL);
 	return true;
@@ -39,19 +29,10 @@ bool LoadPlugin()
 void UnloadPlugin()
 {
 	// all final cleanup goes here
-
-	if (logger != NULL) {
-
-		release_instance(logger);
-		logger = NULL;
+	if (g_dash != nullptr){
+		delete g_dash;
+		g_dash = nullptr;
 	}
-
-	if (dash != NULL) {
-
-		release_LDF(dash);
-		dash = NULL;
-	}
-
 }
 
 CTSTR GetPluginName()
@@ -62,6 +43,36 @@ CTSTR GetPluginName()
 CTSTR GetPluginDescription()
 {
 	return (CTSTR)g_PluginDesc;
+}
+
+ImageSource* STDCALL CreateLDImage(XElement* data)
+{
+	if (g_dash != nullptr) {
+
+		return new CLiveDashImageSource(g_dash);
+
+	}
+	return nullptr;
+}
+
+void OnStartStream()
+{
+	g_dash->OnStartStream();
+}
+
+void OnStopStream()
+{
+	g_dash->OnStopStream();
+}
+
+void OnStartStreaming()
+{
+	g_dash->OnStartStreaming();
+}
+
+void OnStopStreaming()
+{
+	g_dash->OnStopStreaming();
 }
 
 BOOL WINAPI DllMain(HINSTANCE hInst, DWORD reason, LPVOID p)

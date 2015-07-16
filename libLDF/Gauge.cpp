@@ -217,7 +217,7 @@ Gdiplus::Bitmap* CGauge::Render(libOGA::DataSample& sample, IGenericLogger& logg
 			if (!renderBlank) {
 				try {
 					CDataChannel& ch = std::move(logger.GetChannel(_channel));
-					SampleValue val = CDataChannel::GetSampleData(sample, ch);
+					SampleValue val = CDataChannel::GetSampleData(logger, sample, ch);
 					if (val.type() == irsdk_int)
 						vf = static_cast<float>(val.get_value<int>());
 					else if (val.type() == irsdk_char)

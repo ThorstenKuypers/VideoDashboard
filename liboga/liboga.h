@@ -196,6 +196,7 @@ namespace libOGA {
 
 #pragma endregion
 
+	struct IGenericLogger;
 
 	// common telemetry data value class
 	class SampleValue
@@ -217,15 +218,40 @@ namespace libOGA {
 			_dVal(0),
 			_cVal(0),
 			_bVal(0),
-			_uVal(0)
+			_uVal(0),
+			_type(irsdk_bool)
 		{}
 
-		SampleValue(int val) { _iVal = val; }
-		SampleValue(float val) { _fVal = val; }
-		SampleValue(double val) { _dVal = val; }
-		SampleValue(char val) { _cVal = val; }
-		SampleValue(bool val) { _bVal = val; }
-		SampleValue(unsigned long val) { _uVal = val; }
+		//SampleValue& SampleValue::operator=(SampleValue&) = delete;
+		//SampleValue& SampleValue::operator=(SampleValue&& o)
+		//{
+		//	_iVal = o._iVal;
+		//	o._iVal = 0;
+
+		//	_fVal = o._fVal;
+		//	o._fVal = 0;
+
+		//	_dVal = o._dVal;
+		//	o._dVal = 0;
+
+		//	_cVal = o._cVal;
+		//	o._cVal = 0;
+
+		//	_bVal = o._bVal;
+		//	o._bVal = false;
+
+		//	_uVal = o._uVal;
+		//	o._uVal = 0;
+
+		//	return *this;
+		//}
+
+		SampleValue(int val) { _iVal = val; _type = irsdk_int; }
+		SampleValue(float val) { _fVal = val; _type = irsdk_float; }
+		SampleValue(double val) { _dVal = val; _type = irsdk_double; }
+		SampleValue(char val) { _cVal = val; _type = irsdk_char; }
+		SampleValue(bool val) { _bVal = val; _type = irsdk_bool; }
+		SampleValue(unsigned long val) { _uVal = val; _type = irsdk_bitField; }
 
 		irsdk_VarType type() { return _type; }
 
@@ -288,7 +314,10 @@ namespace libOGA {
 		int get_Key();
 		int get_Offset();
 
-		static LIBOGA_API SampleValue& GetSampleData(DataSample& s, CDataChannel& c);
+		ChannelType get_ChannelType();
+
+		static LIBOGA_API SampleValue GetSampleData(DataSample& s, CDataChannel& c);
+		static LIBOGA_API SampleValue GetSampleData(IGenericLogger& logger, DataSample& s, CDataChannel& c);
 
 	private:
 
@@ -324,7 +353,6 @@ namespace libOGA {
 		// does not use a full object!
 
 		class CIracingBinaryTelemetryFile;
-
 
 		struct IDataLogFile : IGenericLogger
 		{
@@ -364,13 +392,26 @@ namespace libOGA {
 
 		};
 	}
-} // loboga
 
-// TESTING interface
+	// 
+	class LIBOGA_API LoggerInstanceFactory
+	{
+	public:
+		static libOGA::FileLogs::IDataLogFile* GetFileLogInstance(const wchar_t* fileName);
+		static void ReleaseFileLogInstance(libOGA::FileLogs::IDataLogFile* inst);
 
-LIBOGA_API libOGA::FileLogs::IDataLogFile* __get_inst(std::wstring file);
+		static libOGA::LiveLogs::ILiveDataLogger* GetLiveLoggerInstance(libOGA::LiveLogs::ILiveLoggingCallback&);
+		static void ReleaseLiveLoggerInstance(libOGA::LiveLogs::ILiveDataLogger* inst);
+	};
 
-LIBOGA_API libOGA::LiveLogs::ILiveDataLogger* __get_live(libOGA::LiveLogs::ILiveLoggingCallback&);
+} // liboga
 
+//// TESTING interface
+//
+//LIBOGA_API libOGA::FileLogs::IDataLogFile* __get_inst(std::wstring file);
+//
+//LIBOGA_API libOGA::LiveLogs::ILiveDataLogger* __get_live(libOGA::LiveLogs::ILiveLoggingCallback&);
+//
+//LIBOGA_API void __release_inst(void* inst);
 
 #endif // _LIBOGA_H_

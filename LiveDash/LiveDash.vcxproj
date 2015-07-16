@@ -102,13 +102,13 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\Users\thorsten\Documents\GitHub\OBS\OBSApi;..\libLDF;..\libDataLogging;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\thorsten\Documents\GitHub\OBS\OBSApi;..\libLDF;..\libOGA;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ExceptionHandling>Sync</ExceptionHandling>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>C:\Users\thorsten\Documents\GitHub\OBS\OBSApi\Debug;..\bin\Debug\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>OBSApi.lib;strmiids.lib;libDataLogging.lib;libLDF.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>OBSApi.lib;strmiids.lib;libOGA.lib;libLDF.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <Version>
       </Version>
       <OutputFile>C:\Users\thorsten\Documents\GitHub\OBS\rundir\plugins\$(TargetName)$(TargetExt)</OutputFile>
@@ -199,16 +199,26 @@
   <ItemGroup>
     <ClCompile Include="config.cpp" />
     <ClCompile Include="LiveDash.cpp" />
+    <ClCompile Include="LiveDashImageSource.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config.h" />
     <ClInclude Include="LiveDash.h" />
+    <ClInclude Include="LiveDashImageSource.h" />
     <ClInclude Include="Plugin.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\libLDF\libLDF.vcxproj">
+      <Project>{fc46c657-4f91-4497-9bc8-4aba83b81f5e}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\liboga\liboga.vcxproj">
+      <Project>{11556771-e43d-4e25-afe0-590c9d414fd7}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
