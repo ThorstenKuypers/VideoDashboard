@@ -212,6 +212,9 @@ void CDashboard::extractDashboardFilePath()
 		std::string path;
 
 		pos = _fileName.rfind("\\");
+		if (pos ==std::string::npos)
+			pos = _fileName.rfind("/");
+
 		if (pos != std::string::npos)
 		{
 			_dashboardFilePath = _fileName.substr(0, pos + 1);

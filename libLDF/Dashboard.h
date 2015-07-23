@@ -27,6 +27,9 @@
 #include "RingGauge.h"
 #include "Ruler.h"
 
+#include "LayoutImage.h"
+
+
 #define MAX_LAYERS	16 // maximum number of supported layers
 
 

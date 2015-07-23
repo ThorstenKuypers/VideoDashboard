@@ -22,7 +22,7 @@
 #include <gdiplus.h>
 #include <string>
 
-#include "liboga.h"
+#include "../../../Projects/VideoDashboard/liboga/liboga.h"
 
 namespace libLDF
 {
