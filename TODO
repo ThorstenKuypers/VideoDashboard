@@ -5,31 +5,41 @@
 	--------
 	
 	GUI:
-
+	- evaluate reimplementaion using Qt framework (later!)
+	
 	Filter:
+	- reimplement according to C++11 standard
+	- check for and remove DirectShow errors and bad coding http://goldfishforthought.blogspot.de/2008/04/n-habits-of-highly-defective-directshow.html
+	
 	
 	libLDF:
-	- implement error and exception handling
-	- add simple layout format check prior to parsing (check for missing ';' at end of line, empty key values, 
-	  missing '}', missing '<>' at tuples, ...)
-	- add layering levels
+	- implement error and exception handling (partially done) ~/
 	- add transparency for colors (ex rgboff = transparent for sweeper indicators)
+	- add support for X11 colors
+	https://en.wikipedia.org/wiki/Web_colors#X11_color_names
+	- implement static image element
+	- fully implement Indicator element
+	- implement support for includes (include elements from other layout files)
+	- continue syntax check (partially done) ~/
+	- implement support for video in video (element?)
 	
-	libDataLogging:
+	?- design concept and implementation for WYSIWYG dashboard editor
+	
+	
+	libOGA: (former libDataLogging)
 	- add lap timing information to new system
+	- implement extraction of information from SessionInfo string
 	
-	
-	
-	-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	Filter:
-	  
-	GUI:
+	libds:
+	- reimplement according to C++11 standard
 	- implement new graph class for capture graph; use preview render graph as base for capture graph
-	[- implement AutoSync tool]
+	- rewrite renderer options and configuration
+	- rewrite WMV and other renderer profiles handling
+	- implement other codecs (Google VP8/9)
+	- implement video appending and merging using DES
 	
-	
-	  
-	  abgeschlossesn:
+----------------------------------------------------------------------------------------------------------------------------------------------
+	abgeschlossesn:
 	  ---
 	  - Einheitskreis um 90 Grad im UZS drehen( 0° -> 90° ); dadurch 0° pos von Kreis und Ellipse gleich!
 	  - Bei Kreisberechnung sinus und cosinus tauschen
