@@ -451,7 +451,7 @@ void CIracingBinaryTelemetryFile::readSessInfo()
 	m_sessionInfo = std::string(ptr);
 	ParseSessionInfo(m_sessionInfo);
 
-	delete ptr;
+	delete[] ptr;
 	ptr = nullptr;
 }
 

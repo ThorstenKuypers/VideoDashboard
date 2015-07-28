@@ -34,7 +34,8 @@ namespace libLDF
 
 		// Renders the element into a bitmap with the data set by elements channel name
 		// and sample buffer index
-		virtual Gdiplus::Bitmap* Render(libOGA::DataSample& sample, IGenericLogger& logger, bool renderBlank);
+		//virtual Gdiplus::Bitmap* Render(libOGA::DataSample& sample, IGenericLogger* logger, bool renderBlank);
+		virtual ImageInfo Render(libOGA::DataSample& sample, IGenericLogger* logger, bool renderBlank);
 		virtual void SetRuler(CRuler& ruler);
 
 		void SetRange(string& s);
@@ -46,10 +47,10 @@ namespace libLDF
 		void SetRadius(int r) { _radius = r; }
 		int GetRadius() { return _radius; }
 
-		void SetImageFile(string& s); // { _imgFile = s; }
+		void SetImageFile(string& s); 
 		string& GetImageFile() { return _imgFile; }
 
-		void SetNeedleImageFile(string& s); // { _needleImgFile = s; }
+		void SetNeedleImageFile(string& s); 
 		string& GetNeedleImageFile() { return _needleImgFile; }
 
 		void SetNeedleOffset(string& s);

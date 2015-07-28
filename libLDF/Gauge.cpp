@@ -76,9 +76,6 @@ void CGauge::Init()
 				}
 				else {
 
-					//_imgSize.Width = _rectangle.Width;
-					//_imgSize.Height = _rectangle.Height;
-
 					_imgSize.Width = _bgImg->GetWidth();
 					_imgSize.Height = _bgImg->GetHeight();
 
@@ -103,20 +100,31 @@ void CGauge::Init()
 		WCHAR* wc = (WCHAR*)ws.c_str();
 		_needleImg = new Bitmap(wc);
 	}
+
+	// allocate pixel buffer
+	imgInfo.height = _imgSize.Height;
+	imgInfo.width = _imgSize.Width;
+	imgInfo.stride = imgInfo.width * sizeof(int);
+
+	_pixBufLen = imgInfo.stride * imgInfo.height;
+	_pixBuf = std::shared_ptr<BYTE>(new BYTE[_pixBufLen]);
+	imgInfo.pixbuf = _pixBuf.get();
 }
 
 //
 // Bitmap* Render()
 ///////////////////////////////////////////////////////////////////////////////
-Gdiplus::Bitmap* CGauge::Render(libOGA::DataSample& sample, IGenericLogger& logger, bool renderBlank)
+ImageInfo CGauge::Render(libOGA::DataSample& sample, IGenericLogger* logger, bool renderBlank)
 {
 	float maxVal = 0, minVal = 0;
 
 	// the "final" element image
-	Bitmap* bmp = new Bitmap(_imgSize.Width, _imgSize.Height, PixelFormat32bppARGB);
-	if (bmp != nullptr) {
+	if (_pixBuf != nullptr)
+	{
+		memset(_pixBuf.get(), 0, _pixBufLen);
 
-		Graphics* gfx = Graphics::FromImage(bmp);
+		Gdiplus::Bitmap bmp(imgInfo.width, imgInfo.height, imgInfo.stride, imgInfo.pixelFormat, _pixBuf.get());
+		Graphics* gfx = Graphics::FromImage(&bmp);
 		if (gfx != nullptr) {
 			gfx->SetInterpolationMode(InterpolationMode::InterpolationModeHighQualityBicubic);
 			gfx->SetSmoothingMode(SmoothingMode::SmoothingModeAntiAlias);
@@ -142,14 +150,13 @@ Gdiplus::Bitmap* CGauge::Render(libOGA::DataSample& sample, IGenericLogger& logg
 			if (cp.X == -1 || cp.Y == -1) {
 
 				// no needle center specified. So use center of image
-				cp.X = (REAL)bmp->GetWidth() / 2;
-				cp.Y = (REAL)bmp->GetHeight() / 2;
+				cp.X = (REAL)bmp.GetWidth() / 2;
+				cp.Y = (REAL)bmp.GetHeight() / 2;
 			}
 
 			if (_useImg && _bgImg != nullptr) {
 
 				gfx->DrawImage(_bgImg, 0, 0, _imgSize.Width, _imgSize.Height);
-				//gfx->DrawImage(_bgImg, 0, 0, _rectangle.Width, _rectangle.Height);
 			}
 			else {
 				// no face image given, so render gauge based on data specified in layout
@@ -158,10 +165,9 @@ Gdiplus::Bitmap* CGauge::Render(libOGA::DataSample& sample, IGenericLogger& logg
 				if (_divisions != 0) {
 					// draw a simple scale based on divisions parameter
 
-					gfx->FillRectangle(&SolidBrush(_background), 0, 0, bmp->GetWidth(), bmp->GetHeight());
+					gfx->FillRectangle(&SolidBrush(_background), 0, 0, bmp.GetWidth(), bmp.GetHeight());
 
 					float divStep = sweep / (float)_divisions; // angle step for each division
-					//int divStepVal = (int)round((std::get<1>(_range) -std::get<0>(_range)) / _divisions);
 					int divStepVal = (int)round((maxVal - minVal) / _divisions);
 
 					// calculate radius of needle and scale based on largest divisions text
@@ -210,14 +216,11 @@ Gdiplus::Bitmap* CGauge::Render(libOGA::DataSample& sample, IGenericLogger& logg
 			}
 
 
-			// TODO: FixMe***
-			// check for correct data type and allocate space accordingly
 			float vf = 0;
-
-			if (!renderBlank) {
+			if (!renderBlank && logger != nullptr) {
 				try {
-					CDataChannel& ch = std::move(logger.GetChannel(_channel));
-					SampleValue val = CDataChannel::GetSampleData(logger, sample, ch);
+					CDataChannel& ch = std::move(logger->GetChannel(_channel));
+					SampleValue val = CDataChannel::GetSampleData(*logger, sample, ch);
 					if (val.type() == irsdk_int)
 						vf = static_cast<float>(val.get_value<int>());
 					else if (val.type() == irsdk_char)
@@ -283,9 +286,12 @@ Gdiplus::Bitmap* CGauge::Render(libOGA::DataSample& sample, IGenericLogger& logg
 
 			delete gfx;
 			gfx = nullptr;
+
+			return ImageInfo{ imgInfo.width, imgInfo.height, imgInfo.stride, imgInfo.pixelFormat, _pixBuf.get() };
 		}
 	}
-	return bmp;
+
+	return ImageInfo{ 0, 0, 0, 0, nullptr };
 }
 
 void CGauge::SetRange(string& s)

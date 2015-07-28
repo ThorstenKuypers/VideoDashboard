@@ -18,93 +18,101 @@ _connectToCenter(true)
 	type = DashboardElementType::gcircle;
 }
 
-
 CGCircle::~CGCircle()
 {
 }
 
-Gdiplus::Bitmap* CGCircle::Render(DataSample& sample, IGenericLogger& logger, bool renderBlank)
+void CGCircle::Init()
 {
-	Bitmap* bmp = nullptr;
-	bmp = new Bitmap(_rectangle.Width, _rectangle.Height, PixelFormat32bppARGB);
-	if (bmp != nullptr) {
+	imgInfo.width = _rectangle.Width;
+	imgInfo.height = _rectangle.Height;
+	imgInfo.stride = imgInfo.width * sizeof(int);
 
-		Graphics* gfx = Graphics::FromImage(bmp);
-		if (gfx != nullptr) {
+	_pixBufLen = imgInfo.stride * imgInfo.height;
+	_pixBuf = std::shared_ptr<BYTE>(new BYTE[_pixBufLen]);
+	imgInfo.pixbuf = _pixBuf.get();
+}
 
-			float longG = 0;
-			float latG = 0;
+ImageInfo CGCircle::Render(DataSample& sample, IGenericLogger* logger, bool renderBlank)
+{
+	memset(_pixBuf.get(), 0, _pixBufLen);
 
-			if (!renderBlank) {
-				try {
-					CDataChannel& chLat = std::move(logger.GetChannel(string("LatAccel")));
-					CDataChannel& chLong = std::move(logger.GetChannel(string("LongAccel")));
+	Bitmap bmp(imgInfo.width, imgInfo.height, imgInfo.stride, imgInfo.pixelFormat, static_cast<BYTE*>(imgInfo.pixbuf));
+	Graphics* gfx = Graphics::FromImage(&bmp);
+	if (gfx != nullptr) {
 
-					SampleValue val = CDataChannel::GetSampleData(logger, sample, chLat);
-					latG = val.get_value<float>();
-					val = CDataChannel::GetSampleData(logger, sample, chLong);
-					longG = val.get_value<float>();
-				}
-				catch (std::exception)
-				{
-					throw;
-				}
+		float longG = 0;
+		float latG = 0;
 
-				longG /= 9.81f;
-				latG /= 9.81f;
+		if (!renderBlank) {
+			try {
+				CDataChannel& chLat = std::move(logger->GetChannel(string("LatAccel")));
+				CDataChannel& chLong = std::move(logger->GetChannel(string("LongAccel")));
 
-				if (_scale != 0) {
-					longG *= (float)_scale;
-					latG *= (float)_scale;
-				}
-
-				if (_scaleLat != 0)
-					latG *= _scaleLat;
-				if (_scaleLong != 0)
-					longG *= _scaleLong;
+				SampleValue val = CDataChannel::GetSampleData(*logger, sample, chLat);
+				latG = val.get_value<float>();
+				val = CDataChannel::GetSampleData(*logger, sample, chLong);
+				longG = val.get_value<float>();
 			}
-			else
+			catch (std::exception)
 			{
-				latG = 0;
-				longG = 0;
+				throw;
 			}
 
-			PointF cp = PointF((REAL)_rectangle.Width / 2, (REAL)_rectangle.Height / 2);
-			float step = (float)((float)_rectangle.Width / 2) / (float)_radius;
+			longG /= 9.81f;
+			latG /= 9.81f;
 
-			// draw center lines
-			Pen* gridPen = new Pen(_foreground, (float)_lineWidth);
-			gridPen->SetDashStyle(DashStyleDash);
-
-			gfx->DrawLine(gridPen, 0.0f, cp.Y, (REAL)_rectangle.Width, cp.Y);
-			gfx->DrawLine(gridPen, cp.X, 0.0f, cp.X, (REAL)_rectangle.Height);
-
-			// draw grid circles
-			for (int i = 1; i < _divisions + 1; i++) {
-
-				float divStep = 0;
-				if (_divisions != 0)
-					divStep = (float)((float)_rectangle.Width / 2) / (float)_divisions;
-
-				RectF rc = RectF(cp.X - (i*divStep), cp.Y - (i*divStep), 2 * i*divStep, 2 * i*divStep);
-				gfx->DrawEllipse(gridPen, rc);
+			if (_scale != 0) {
+				longG *= (float)_scale;
+				latG *= (float)_scale;
 			}
 
-			Pen* ptrPen = new Pen(_pointerColor, (float)_pointerWidth);
-
-			// calculate pointer position based on values
-			PointF vp = PointF(cp.X + (step * latG), cp.Y + (step * longG)); // vector line enpoint
-			RectF ball = RectF(vp.X - ((float)_pointerSize / 2), vp.Y - ((float)_pointerSize / 2), (float)_pointerSize, (float)_pointerSize);
-
-			gfx->DrawLine(ptrPen, cp, vp);
-			gfx->FillEllipse(&SolidBrush(_pointerColor), ball);
-
-			delete ptrPen;
-			delete gridPen;
+			if (_scaleLat != 0)
+				latG *= _scaleLat;
+			if (_scaleLong != 0)
+				longG *= _scaleLong;
 		}
+		else
+		{
+			latG = 0;
+			longG = 0;
+		}
+
+		PointF cp = PointF((REAL)_rectangle.Width / 2, (REAL)_rectangle.Height / 2);
+		float step = (float)((float)_rectangle.Width / 2) / (float)_radius;
+
+		// draw center lines
+		Pen* gridPen = new Pen(_foreground, (float)_lineWidth);
+		gridPen->SetDashStyle(DashStyleDash);
+
+		gfx->DrawLine(gridPen, 0.0f, cp.Y, (REAL)_rectangle.Width, cp.Y);
+		gfx->DrawLine(gridPen, cp.X, 0.0f, cp.X, (REAL)_rectangle.Height);
+
+		// draw grid circles
+		for (int i = 1; i < _divisions + 1; i++) {
+
+			float divStep = 0;
+			if (_divisions != 0)
+				divStep = (float)((float)_rectangle.Width / 2) / (float)_divisions;
+
+			RectF rc = RectF(cp.X - (i*divStep), cp.Y - (i*divStep), 2 * i*divStep, 2 * i*divStep);
+			gfx->DrawEllipse(gridPen, rc);
+		}
+
+		Pen* ptrPen = new Pen(_pointerColor, (float)_pointerWidth);
+
+		// calculate pointer position based on values
+		PointF vp = PointF(cp.X + (step * latG), cp.Y + (step * longG)); // vector line enpoint
+		RectF ball = RectF(vp.X - ((float)_pointerSize / 2), vp.Y - ((float)_pointerSize / 2), (float)_pointerSize, (float)_pointerSize);
+
+		gfx->DrawLine(ptrPen, cp, vp);
+		gfx->FillEllipse(&SolidBrush(_pointerColor), ball);
+
+		delete ptrPen;
+		delete gridPen;
 	}
 
-	return bmp;
+	return ImageInfo{ imgInfo.width, imgInfo.height, imgInfo.stride, imgInfo.pixelFormat, _pixBuf.get() };
 }
 
 void CGCircle::SetPointerColor(string& s)

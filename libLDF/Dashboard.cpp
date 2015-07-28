@@ -9,9 +9,42 @@
 //
 ///////////////////////////////////////////////////////////////////////////////
 
+#include <assert.h>
+
 #include "Dashboard.h"
 
 using namespace libLDF;
+
+CDashboard::CDashboard(int targetWidth) :
+_targetwidth(targetWidth),
+_height(0),
+_width(0),
+_fontHeight(12),
+_fontName(string("Arial")),
+_fontStyle(FontStyleRegular),
+_foreground(Color::White),
+_background(Color::Transparent),
+_showBoundingBoxes(false),
+_baseImage(nullptr),
+_pixBuf(nullptr),
+_baseImageInfo(),
+_pixBufLen(0)
+{
+}
+
+CDashboard::~CDashboard()
+{
+	if (_pixBuf != nullptr)
+	{
+		_pixBuf.reset();
+	}
+
+	if (_baseImage != nullptr)
+	{
+		delete _baseImage;
+		_baseImage = nullptr;
+	}
+}
 
 void CDashboard::Parse()
 {
@@ -199,9 +232,59 @@ void CDashboard::Parse()
 		}
 	}
 
+	if (!_imagefile.empty()){
+		std::string fn = _dashboardFilePath + _imagefile;
+		wstring ws = wstring(fn.begin(), fn.end());
+#ifdef _DEBUG
+		WCHAR* f = (WCHAR*)ws.c_str();
+		_baseImage = new Bitmap(f);
+#else
+		img = new Bitmap((WCHAR*)ws.c_str());
+#endif
+		int w = _baseImage->GetWidth(), h = _baseImage->GetHeight();
+
+		int x = 0;
+	}
+	else if (_width != 0 && _height != 0) {
+
+		_baseImage = new Bitmap(_width, _height, PixelFormat32bppARGB);
+	}
+	else {
+		throw std::exception("error creating base bitmap!");
+	}
+
+	// allocate pixel buffer
+	_pixBufLen = _baseImage->GetWidth() * sizeof(int) * _baseImage->GetHeight();
+	_pixBuf = std::shared_ptr<BYTE>(new BYTE[_pixBufLen]);
+
+	// copy base image to pixel buffer
+	setBaseImage();
+
 #ifdef _DEBUG
 	int x = 0;
 #endif
+}
+
+void CDashboard::setBaseImage()
+{
+
+	BitmapData bd{ 0 };
+	Rect rc{ 0, 0, (int)_baseImage->GetWidth(), (int)_baseImage->GetHeight() };
+
+	Status ret = _baseImage->LockBits(&rc, ImageLockModeRead, _baseImage->GetPixelFormat(), &bd);
+	if (ret == Ok)
+	{
+		// copy base image to pixel buffer
+		assert(_pixBufLen == (bd.Stride * bd.Height));
+		memcpy(_pixBuf.get(), bd.Scan0, _pixBufLen);
+
+		_baseImageInfo.height = bd.Height;
+		_baseImageInfo.pixelFormat = bd.PixelFormat;
+		_baseImageInfo.stride = bd.Stride;
+		_baseImageInfo.width = bd.Width;
+
+		_baseImage->UnlockBits(&bd);
+	}
 }
 
 void CDashboard::extractDashboardFilePath()
@@ -212,7 +295,7 @@ void CDashboard::extractDashboardFilePath()
 		std::string path;
 
 		pos = _fileName.rfind("\\");
-		if (pos ==std::string::npos)
+		if (pos == std::string::npos)
 			pos = _fileName.rfind("/");
 
 		if (pos != std::string::npos)
@@ -222,115 +305,98 @@ void CDashboard::extractDashboardFilePath()
 	}
 }
 
-Bitmap* CDashboard::RenderToImage(libOGA::DataSample& sample, IGenericLogger& logger, bool renderBlank)
+ImageInfo CDashboard::RenderToImage(libOGA::DataSample& sample, IGenericLogger* logger, bool renderBlank)
 {
-	Gdiplus::Bitmap* img = nullptr;
+	//Gdiplus::Bitmap* img = nullptr;
 
-	WCHAR dir[256] = { 0 };
-	GetCurrentDirectoryW(256, dir);
+	//if (img == nullptr)
+	//	throw - 1;
 
+	if (_pixBuf != nullptr && _baseImage != nullptr)
+	{
+		memset(_pixBuf.get(), 0, _pixBufLen);
+		setBaseImage();
 
-	if (!_imagefile.empty()){
-		std::string fn = _dashboardFilePath + _imagefile;
-		wstring ws = wstring(fn.begin(), fn.end());
-#ifdef _DEBUG
-		WCHAR* f = (WCHAR*)ws.c_str();
-		img = new Bitmap(f);
-#else
-		img = new Bitmap((WCHAR*)ws.c_str());
-#endif
-		int w = img->GetWidth(), h = img->GetHeight();
+		Gdiplus::Bitmap img(_baseImageInfo.width, _baseImageInfo.height, _baseImageInfo.stride, _baseImageInfo.pixelFormat, _pixBuf.get());
+		Gdiplus::Graphics* gfx = Gdiplus::Graphics::FromImage(&img);
+		if (gfx == nullptr) {
 
-		int x = 0;
-	}
-	else if (_width != 0 && _height != 0) {
+			//if (img != nullptr)
+			//	delete img;
 
-		img = new Bitmap(_width, _height, PixelFormat32bppARGB);
-	}
-	else {
-		throw std::exception("error creating base bitmap!");
-	}
+			throw std::exception("can't acquire GDI+ graphics object!");
+		}
 
-	if (img == nullptr)
-		throw - 1;
+		Bitmap* rulerImg = nullptr;
+		Gdiplus::Rect rulerRect{ 0, 0, 0, 0 };
+		//Bitmap* bmp = nullptr;
+		Gdiplus::Rect rc{ 0, 0, 0, 0 };
+		int rulerLayer = -1;
+		
+		/***********************************************************************************************/
+		// experimental code
+		for (int layer = 0; layer < MAX_LAYERS; layer++){
+			for (unsigned int i = 0; i < _elements.size(); i++) {
 
-	Gdiplus::Graphics* gfx = Gdiplus::Graphics::FromImage(img);
-	if (gfx == nullptr) {
+				if (layer == _elements[i]->GetLayer()) {
+					ImageInfo& imgInfo = _elements[i]->Render(sample, logger, renderBlank);
+					Bitmap bmp(imgInfo.width, imgInfo.height, imgInfo.stride, imgInfo.pixelFormat, static_cast<BYTE*>(imgInfo.pixbuf));
 
-		if (img != nullptr)
-			delete img;
-
-		throw std::exception("can't acquire GDI+ graphics object!");
-	}
-
-	Bitmap* rulerImg = nullptr;
-	Gdiplus::Rect rulerRect{ 0, 0, 0, 0 };
-	Bitmap* bmp = nullptr;
-	Gdiplus::Rect rc{ 0, 0, 0, 0 };
-	int rulerLayer = -1;
-
-	/***********************************************************************************************/
-	// experimental code
-	for (int layer = 0; layer < MAX_LAYERS; layer++){
-		for (unsigned int i = 0; i < _elements.size(); i++) {
-
-			if (layer == _elements[i]->GetLayer()) {
-				bmp = _elements[i]->Render(sample, logger, renderBlank);
-				rc = _elements[i]->GetRectangle();
-				if (bmp != nullptr) {
-
-					// check if current element has a ruler assigned to it
-					for (RulerLookupTable::iterator it = rulerTable.begin(); it != rulerTable.end(); ++it) {
-						if (_elements[i]->GetID() == it->first) {
-							CRuler& ruler = (CRuler&)*it->second.get();
-							//rulerImg = ruler.Render(bmp, layer);
-							rulerImg = ruler.Render(0);
-							rulerRect = ruler.GetRectangle();
-							rulerLayer = ruler.GetLayer();
+					rc = _elements[i]->GetRectangle();
+					//if (bmp != nullptr) {
+					{
+						// check if current element has a ruler assigned to it
+						for (RulerLookupTable::iterator it = rulerTable.begin(); it != rulerTable.end(); ++it) {
+							if (_elements[i]->GetID() == it->first) {
+								CRuler& ruler = (CRuler&)*it->second.get();
+								//rulerImg = ruler.Render(bmp, layer);
+								rulerImg = ruler.Render(0);
+								rulerRect = ruler.GetRectangle();
+								rulerLayer = ruler.GetLayer();
+							}
 						}
-					}
 
-					// TODO: add layering
-					if (rulerImg != nullptr && rulerLayer <= layer) {
+						// TODO: add layering
+						if (rulerImg != nullptr && rulerLayer <= layer) {
 
-						// draw ruler image first if same or lower layer
-						gfx->DrawImage(rulerImg, rulerRect.X, rulerRect.Y, rulerImg->GetWidth(), rulerImg->GetHeight());
+							// draw ruler image first if same or lower layer
+							gfx->DrawImage(rulerImg, rulerRect.X, rulerRect.Y, rulerImg->GetWidth(), rulerImg->GetHeight());
 
+							if (_showBoundingBoxes)
+								gfx->DrawRectangle(&Pen(&SolidBrush(Color::Red)), rulerRect.X, rulerRect.Y, rulerImg->GetWidth(), rulerImg->GetHeight());
+						}
+
+
+						gfx->DrawImage(&bmp, rc.X, rc.Y, bmp.GetWidth(), bmp.GetHeight());
 						if (_showBoundingBoxes)
-							gfx->DrawRectangle(&Pen(&SolidBrush(Color::Red)), rulerRect.X, rulerRect.Y, rulerImg->GetWidth(), rulerImg->GetHeight());
-					}
+							gfx->DrawRectangle(&Pen(&SolidBrush(Color::Red)), rc.X, rc.Y, bmp.GetWidth(), bmp.GetHeight());
 
+						if (rulerImg != nullptr && rulerLayer > layer) {
 
-					gfx->DrawImage(bmp, rc.X, rc.Y, bmp->GetWidth(), bmp->GetHeight());
-					if (_showBoundingBoxes)
-						gfx->DrawRectangle(&Pen(&SolidBrush(Color::Red)), rc.X, rc.Y, bmp->GetWidth(), bmp->GetHeight());
+							// draw ruler image afetr corresponding element if ruler is on higher layer
+							gfx->DrawImage(rulerImg, rulerRect.X, rulerRect.Y, rulerImg->GetWidth(), rulerImg->GetHeight());
+							if (_showBoundingBoxes)
+								gfx->DrawRectangle(&Pen(&SolidBrush(Color::Red)), rulerRect.X, rulerRect.Y, rulerImg->GetWidth(), rulerImg->GetHeight());
+						}
 
-					if (rulerImg != nullptr && rulerLayer > layer) {
-
-						// draw ruler image afetr corresponding element if ruler is on higher layer
-						gfx->DrawImage(rulerImg, rulerRect.X, rulerRect.Y, rulerImg->GetWidth(), rulerImg->GetHeight());
-						if (_showBoundingBoxes)
-							gfx->DrawRectangle(&Pen(&SolidBrush(Color::Red)), rulerRect.X, rulerRect.Y, rulerImg->GetWidth(), rulerImg->GetHeight());
-					}
-
-					// NO NOT free the returned image if the rendered element is a ruler because
-					// the ruler element is the only static element. The image reference is held 
-					// in its class and freed when the ruler class instance is destroyed!
-					if (_elements[i]->GetElementType() != DashboardElementType::ruler) {
-						delete bmp;
-						bmp = nullptr;
+						// NO NOT free the returned image if the rendered element is a ruler because
+						// the ruler element is the only static element. The image reference is held 
+						// in its class and freed when the ruler class instance is destroyed!
+						//if (_elements[i]->GetElementType() != DashboardElementType::ruler) {
+						//	delete bmp;
+						//	bmp = nullptr;
+						//}
 					}
 				}
 			}
 		}
-	}
-
 	/*****************************************************************************************************/
 
 	delete gfx;
 	gfx = nullptr;
+	}
 
-	return img;
+	return ImageInfo{ _baseImageInfo.width, _baseImageInfo.height, _baseImageInfo.stride, _baseImageInfo.pixelFormat, _pixBuf.get() };
 
 	//return nullptr;
 }
@@ -419,7 +485,7 @@ void CDashboard::SetImageFile(std::string& s)
 	if (isAbsoluteFilePath(s))
 		_imagefile = s;
 	else
-		_imagefile = _dashFilePath + s;
+		_imagefile = _dashboardFilePath + s;
 }
 
 void CDashboard::parseSections(elementSection& sect)

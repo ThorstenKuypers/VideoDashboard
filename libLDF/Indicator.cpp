@@ -71,15 +71,16 @@ void CIndicator::SetOffImage(string& s)
 		_imgOff = _dashFilePath + s;
 }
 
-Gdiplus::Bitmap* CIndicator::Render(DataSample& sample, IGenericLogger& logger, bool renderBlank)
+ImageInfo CIndicator::Render(DataSample& sample, IGenericLogger* logger, bool renderBlank)
 {
 	Gdiplus::Bitmap* img = nullptr;
+	memset(_pixBuf.get(), 0, _pixBufLen);
 
 	float val = 0;
 
 	if (!renderBlank) {
 		try {
-			CDataChannel& ch = std::move(logger.GetChannel(_channel));
+			CDataChannel& ch = std::move(logger->GetChannel(_channel));
 			SampleValue sv = CDataChannel::GetSampleData(sample, ch);
 
 			switch (sv.type())
@@ -123,8 +124,8 @@ Gdiplus::Bitmap* CIndicator::Render(DataSample& sample, IGenericLogger& logger, 
 	default:
 		break;
 	}
-
-	return img;
+	
+	return ImageInfo{ imgInfo.width, imgInfo.height, imgInfo.stride, imgInfo.pixelFormat, _pixBuf.get() };
 }
 
 Gdiplus::Bitmap* CIndicator::drawEllipseShape(float val)

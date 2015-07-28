@@ -52,7 +52,10 @@ namespace libLDF
 			_id(std::string("")),
 			_taperStep(0),
 			_transparency(0),
-			_dashFilePath(std::string(""))
+			_dashFilePath(std::string("")),
+			_pixBuf(),
+			imgInfo({ 0, 0, 0, PixelFormat32bppARGB, nullptr }),
+			_pixBufLen(0)		
 		{
 		}
 
@@ -93,6 +96,11 @@ namespace libLDF
 			_transparency = o._transparency;
 			_taperStep = o._taperStep;
 			_position = o._position;
+
+			_pixBuf = std::move(o._pixBuf);
+			_pixBufLen = o._pixBufLen;
+			imgInfo = std::move(o.imgInfo);
+
 		}
 
 		CDashboardElement& operator=(CDashboardElement&& o)
@@ -133,12 +141,17 @@ namespace libLDF
 			_taperStep = o._taperStep;
 			_position = o._position;
 
+			_pixBuf = std::move(o._pixBuf);
+			_pixBufLen = o._pixBufLen;
+			imgInfo = std::move(o.imgInfo);
+
 			return *this;
 		}
 
 		virtual ~CDashboardElement() {}
 
-		virtual Gdiplus::Bitmap* Render(libOGA::DataSample& sample, IGenericLogger& logger, bool renderBlank) { return nullptr; }
+		//virtual Gdiplus::Bitmap* Render(libOGA::DataSample& sample, IGenericLogger* logger, bool renderBlank) { return nullptr; }
+		virtual ImageInfo Render(libOGA::DataSample& sample, IGenericLogger* logger, bool renderBlank) { return ImageInfo{ 0, 0, 0, 0, nullptr }; }
 
 		// used to initialize the element after it is parsed
 		// create all static/cached bitmaps that only change after re-parsing of the layout file;
@@ -196,8 +209,6 @@ namespace libLDF
 		DashboardElementType GetElementType(){ return type; }
 
 		virtual void SetRuler(CRuler& ruler) { }
-		//		virtual  GetRuler() { return _ruler; }
-
 
 		bool UseGlobalForegroundColor() { return _useGlobalForeColor; }
 		bool UseGlobalBackgroundColor() { return _useGlobalBackColor; }
@@ -259,6 +270,10 @@ namespace libLDF
 		// eg when an image is used and the size is taken from that image
 		Gdiplus::Point _position;
 
+		std::shared_ptr<BYTE> _pixBuf; // pixel buffer of image
+		size_t _pixBufLen;
+
+		ImageInfo imgInfo;
 	};
 
 }

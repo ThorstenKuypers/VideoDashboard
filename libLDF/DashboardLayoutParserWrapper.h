@@ -65,7 +65,7 @@ namespace libLDFWrapper {
 		{
 			if (file != nullptr && file != "") {
 
-				std::string name = _ldf->GetPrettyName();
+				std::string& name = _ldf->GetPrettyName();
 				String^ ret = gcnew String(name.c_str());
 
 				return ret;
@@ -78,7 +78,7 @@ namespace libLDFWrapper {
 		{
 			if (file != nullptr && file != "") {
 
-				std::string name = _ldf->GetShortName();
+				std::string& name = _ldf->GetShortName();
 				String^ ret = gcnew String(name.c_str());
 
 				return ret;
@@ -98,7 +98,7 @@ namespace libLDFWrapper {
 		System::Drawing::Bitmap^ RenderDashboard(String^ name, int sampleIndex)
 		{
 			System::Drawing::Bitmap^ bmp = nullptr;
-			Gdiplus::Bitmap* dashImg = nullptr;
+			ImageInfo imgInfo;
 
 			if (name != nullptr && sampleIndex >= 0) {
 
@@ -106,29 +106,22 @@ namespace libLDFWrapper {
 				std::string str = string(ptr);
 				
 				try {
-					dashImg = reinterpret_cast<Gdiplus::Bitmap*>(_ldf->Render(*_logger, sampleIndex, false));
-					if (dashImg != nullptr) {
+					imgInfo = _ldf->RenderDashboard(_logger, sampleIndex, false);
+					if (imgInfo.pixbuf != nullptr) {
 
-						Gdiplus::BitmapData bd = { 0 };
-						Gdiplus::Rect rc(0, 0, dashImg->GetWidth(), dashImg->GetHeight());
-						if (dashImg->LockBits(&rc, ImageLockModeRead, dashImg->GetPixelFormat(), &bd) == Gdiplus::Status::Ok) {
-
-							cli::array<Byte>^ pixbuf = gcnew cli::array<Byte>(bd.Stride * bd.Height);
-							Marshal::Copy(IntPtr(bd.Scan0), pixbuf, 0, pixbuf->Length);
+							cli::array<Byte>^ pixbuf = gcnew cli::array<Byte>(imgInfo.stride);
+							Marshal::Copy(IntPtr(imgInfo.pixbuf), pixbuf, 0, pixbuf->Length);
 
 							IntPtr pix = Marshal::UnsafeAddrOfPinnedArrayElement(pixbuf, 0);
 
-							bmp = gcnew System::Drawing::Bitmap(dashImg->GetWidth(),
-								dashImg->GetHeight(),
-								bd.Stride,
+							bmp = gcnew System::Drawing::Bitmap(imgInfo.width,
+								imgInfo.height,
+								imgInfo.stride,
 								System::Drawing::Imaging::PixelFormat::Format32bppArgb,
 								pix);
 
-							dashImg->UnlockBits(&bd);
-
 							delete pixbuf;
 							pixbuf = nullptr;
-						}
 
 					}
 				}
@@ -140,10 +133,6 @@ namespace libLDFWrapper {
 				}
 				finally
 				{
-					if (dashImg != nullptr) {
-						delete dashImg;
-						dashImg = nullptr;
-					}
 					Marshal::FreeHGlobal(IntPtr(ptr));
 				}
 			}

@@ -27,9 +27,6 @@
 #include "RingGauge.h"
 #include "Ruler.h"
 
-#include "LayoutImage.h"
-
-
 #define MAX_LAYERS	16 // maximum number of supported layers
 
 
@@ -52,55 +49,24 @@ namespace libLDF
 	class CDashboard : public IDashboardLayout
 	{
 	public:
+		CDashboard(int targetWidth = 1024);
+		virtual ~CDashboard();
 
-		//CDashboard() :
-		//	_targetwidth(0),
-		//	_height(0),
-		//	_width(0),
-		//	_fontHeight(12),
-		//	_fontName(string("Arial")),
-		//	_fontStyle(FontStyleRegular),
-		//	_foreground(Color::White),
-		//	_background(Color::Transparent),
-		//	_showBoundingBoxes(false)
-		//{
-		//}
-
-		CDashboard(int targetWidth = 1024) :
-			_targetwidth(targetWidth),
-			_height(0),
-			_width(0),
-			_fontHeight(12),
-			_fontName(string("Arial")),
-			_fontStyle(FontStyleRegular),
-			_foreground(Color::White),
-			_background(Color::Transparent),
-			_showBoundingBoxes(false)
-		{
-		}
-
-		~CDashboard() {}
-
-		// prses the dashboard object from file
+		// parses the dashboard object from file
 		virtual void Parse();
 		virtual void SetActiveDashboard(const std::string& filename) { clear(); _fileName = filename; }
 
-		virtual Gdiplus::Bitmap* RenderDashboard(IGenericLogger& logger, int sampleIndex, bool renderBlank)
+		virtual ImageInfo RenderDashboard(IGenericLogger* logger, int sampleIndex, bool renderBlank)
 		{
-			return Render(logger, sampleIndex, renderBlank);
+			DataSample s;
+			if (!renderBlank) {
+				logger->GetSample(s, sampleIndex);
+			}
+
+			return RenderToImage(s, logger, renderBlank);
 		}
 
-		virtual Gdiplus::Bitmap* Render(IGenericLogger& logger, int sampleIndex, bool renderBlank)
-		{
-				DataSample s;
-				if (!renderBlank) {
-					logger.GetSample(s, sampleIndex);
-				}
-			
-				return RenderToImage(s, logger, renderBlank);
-		}
-
-		virtual Gdiplus::Bitmap* Render(IGenericLogger& logger, DataSample& sample, bool renderBlank)
+		virtual ImageInfo RenderDashboard(IGenericLogger* logger, DataSample& sample, bool renderBlank)
 		{
 			return RenderToImage(sample, logger, renderBlank);
 		}
@@ -113,9 +79,11 @@ namespace libLDF
 		virtual std::string& GetPrettyName() { return _prettyName; }
 
 	private:
-		Bitmap* RenderToImage(libOGA::DataSample& sample, IGenericLogger& logger, bool renderBlank);
+		ImageInfo RenderToImage(libOGA::DataSample& sample, IGenericLogger* logger, bool renderBlank);
 
-		void SetDashboardFilePath(std::string s) { _dashFilePath = s; }
+		void setBaseImage();
+
+		void SetDashboardFilePath(std::string s) { _dashboardFilePath = s; }
 
 		void SetShortName(string& name) { _shortName = name; }
 
@@ -124,7 +92,7 @@ namespace libLDF
 		void SetTargetWidth(int w) { _targetwidth = w; }
 		int GetTargetWidth() { return _targetwidth; }
 
-		void SetImageFile(std::string& s); // { _imagefile = s; }
+		void SetImageFile(std::string& s);
 		std::string& GetImageFile() { return _imagefile; }
 
 		void SetHeight(int h) { _height = h; }
@@ -159,7 +127,7 @@ namespace libLDF
 		{
 			_elements.clear();
 			_showBoundingBoxes = false;
-			_dashFilePath = "";
+			_dashboardFilePath = "";
 			_shortName = "";
 			_prettyName = "";
 			_targetwidth = 0;
@@ -192,8 +160,6 @@ namespace libLDF
 		void extractDashboardFilePath();
 
 		bool _showBoundingBoxes;
-
-		std::string _dashFilePath;
 
 		std::string _dashboardFilePath;
 
@@ -231,6 +197,13 @@ namespace libLDF
 
 		// vector containig all elements found in definition file
 		std::vector<std::unique_ptr<CDashboardElement>> _elements;
+
+		std::shared_ptr<BYTE> _pixBuf; // pixel buffer
+		size_t _pixBufLen;
+
+		Bitmap* _baseImage; // base image for dashboard if used
+
+		ImageInfo _baseImageInfo;
 	};
 
 }

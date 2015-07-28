@@ -139,7 +139,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>Gdiplus.lib;User32.lib</AdditionalDependencies>
+      <AdditionalDependencies>Gdiplus.lib;User32.lib;memgr.lib</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AssemblyDebug>true</AssemblyDebug>
       <TargetMachine>MachineX86</TargetMachine>
@@ -287,7 +287,6 @@
     <ClCompile Include="Gauge.cpp" />
     <ClCompile Include="GCircle.cpp" />
     <ClCompile Include="Indicator.cpp" />
-    <ClCompile Include="LayoutImage.cpp" />
     <ClCompile Include="libLDF.cpp" />
     <ClCompile Include="RingGauge.cpp" />
     <ClCompile Include="Ruler.cpp" />
@@ -314,7 +313,6 @@
     <ClInclude Include="Gauge.h" />
     <ClInclude Include="GCircle.h" />
     <ClInclude Include="Indicator.h" />
-    <ClInclude Include="LayoutImage.h" />
     <ClInclude Include="libLDF.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="resource1.h" />

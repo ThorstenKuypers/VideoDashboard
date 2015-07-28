@@ -4,22 +4,28 @@
 
 using namespace libLDF;
 
-extern "C" LIBLDF_API IDashboardLayout* get_LDF()
+IDashboardLayout* LayoutInstanceFactory::GetDashboardLayoutInst()
 {
-	//try {
-	IDashboardLayout* p = (IDashboardLayout*)new CDashboard();
-	return p;
-	//}
-	//catch (...)
-	//{
-	//	throw;
-	//	return nullptr;
-	//}
+	IDashboardLayout* ptr = nullptr;
+
+	try {
+		ptr = static_cast<IDashboardLayout*>(new CDashboard());
+	}
+	catch (std::exception e)
+	{
+		throw e;
+	}
+
+	return ptr;
 }
 
-
-extern "C" LIBLDF_API void release_LDF(void* inst)
+void LayoutInstanceFactory::ReleaseDashboardLayoutInstance(IDashboardLayout* inst)
 {
-	if (inst != nullptr)
-		delete inst;
+	CDashboard* ptr = static_cast<CDashboard*>(inst);
+
+	if (ptr != nullptr)
+	{
+		delete ptr;
+		ptr = nullptr;
+	}
 }

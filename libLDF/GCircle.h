@@ -1,6 +1,6 @@
 #pragma once
 #ifndef _GCIRCLE_H_
-#define GCIRCLE_H_
+#define _GCIRCLE_H_
 ///////////////////////////////////////////////////////////////////////////////
 //
 //	VideoDashboard
@@ -27,11 +27,11 @@ namespace libLDF
 		CGCircle();
 		virtual ~CGCircle();
 
-		virtual void Init() {}
+		virtual void Init();
 
 		// Renders the element into a bitmap with the data set by elements channel name
 		// and sample buffer index
-		virtual Gdiplus::Bitmap* Render(DataSample& sample, IGenericLogger& logger, bool renderBlank);
+		virtual ImageInfo Render(DataSample& sample, IGenericLogger* logger, bool renderBlank);
 
 		void SetDivisions(int i) { _divisions = i; }
 		int GetDivisions() { return _divisions; }
@@ -84,4 +84,4 @@ namespace libLDF
 
 }
 
-#endif // GCIRCLE_H_
+#endif // _GCIRCLE_H_

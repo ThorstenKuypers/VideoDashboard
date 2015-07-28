@@ -44,290 +44,281 @@ void CSlider::Init()
 			_cp.Y *= -1;
 	}
 
+	imgInfo.width = _rectangle.Width;
+	imgInfo.height = _rectangle.Height;
+	imgInfo.stride = imgInfo.width * sizeof(int);
 
+	_pixBufLen = imgInfo.stride * imgInfo.height;
+	_pixBuf = std::shared_ptr<BYTE>(new BYTE[_pixBufLen]);
+	imgInfo.pixbuf = _pixBuf.get();
 }
 
-Gdiplus::Bitmap* CSlider::Render(DataSample& sample, IGenericLogger& logger, bool renderBlank)
+ImageInfo CSlider::Render(DataSample& sample, IGenericLogger* logger, bool renderBlank)
 {
-	Graphics* gfx = NULL;
+	Graphics* gfx = nullptr;
 	int min = std::get<0>(_range), max = std::get<1>(_range);
 	float w = 0, h = 0;
 	RectF rc = RectF(0, 0, 0, 0);
 	Brush* br = nullptr;
 	float val = 0;
 
-	Bitmap* bmp = new Bitmap(_rectangle.Width, _rectangle.Height, PixelFormat32bppARGB);
-	if (bmp != NULL)
-	{
-		gfx = Graphics::FromImage(bmp);
-		if (gfx != NULL)
-		{
-			if (!renderBlank) {
-				try {
-					CDataChannel& ch = std::move(logger.GetChannel(_channel));
-					SampleValue sv = CDataChannel::GetSampleData(logger, sample, ch);
+	memset(_pixBuf.get(), 0, _pixBufLen);
 
-					switch (sv.type())
-					{
-					case irsdk_float:
-						val = sv.get_value<float>();
-						break;
-					case irsdk_double:
-						val = static_cast<float>(sv.get_value<double>());
-						break;
-					case irsdk_int:
-						val = static_cast<float>(sv.get_value<int>());
-						break;
-					case irsdk_char:
-						val = static_cast<float>(sv.get_value<char>());
-						break;
-					default:
-						val = 0;
-						break;
-					}
-				}
-				catch (std::exception)
+	Bitmap bmp(imgInfo.width, imgInfo.height, imgInfo.stride, imgInfo.pixelFormat, static_cast<BYTE*>(imgInfo.pixbuf));
+	gfx = Graphics::FromImage(&bmp);
+	if (gfx != NULL)
+	{
+		if (!renderBlank) {
+			try {
+				CDataChannel& ch = std::move(logger->GetChannel(_channel));
+				SampleValue sv = CDataChannel::GetSampleData(*logger, sample, ch);
+
+				switch (sv.type())
 				{
-					throw;
+				case irsdk_float:
+					val = sv.get_value<float>();
+					break;
+				case irsdk_double:
+					val = static_cast<float>(sv.get_value<double>());
+					break;
+				case irsdk_int:
+					val = static_cast<float>(sv.get_value<int>());
+					break;
+				case irsdk_char:
+					val = static_cast<float>(sv.get_value<char>());
+					break;
+				default:
+					val = 0;
+					break;
 				}
 			}
+			catch (std::exception)
+			{
+				throw;
+			}
+		}
 
 #pragma region "Center 0 Slider rendering (min->0->max)"
 
-			if (min != 0 && max != 0)
-			{
-				if (_orientation == SliderOrientation::horizontal) {
+		if (min != 0 && max != 0)
+		{
+			if (_orientation == SliderOrientation::horizontal) {
 
-					w = val / _valStep;
+				w = val / _valStep;
 
-					// render from min to max with 0 in center
-					if (val < 0) {
+				// render from min to max with 0 in center
+				if (val < 0) {
 
-						br = new SolidBrush(_rgbNegative);
+					br = new SolidBrush(_rgbNegative);
 
-						if (min < 0) {
-							rc.X = _cp.X + w;
-							rc.Y = 0;
-							rc.Height = (float)_rectangle.Height;
-							if (w < 0)
-								w *= -1;
-							rc.Width = w;
-						}
-						else {
-							rc.X = _cp.X;
-							rc.Y = 0;
-							rc.Height = (float)_rectangle.Height;
-							if (w < 0)
-								w *= -1;
-							rc.Width = w;
-
-						}
+					if (min < 0) {
+						rc.X = _cp.X + w;
+						rc.Y = 0;
+						rc.Height = (float)_rectangle.Height;
+						if (w < 0)
+							w *= -1;
+						rc.Width = w;
 					}
 					else {
+						rc.X = _cp.X;
+						rc.Y = 0;
+						rc.Height = (float)_rectangle.Height;
+						if (w < 0)
+							w *= -1;
+						rc.Width = w;
 
-						br = new SolidBrush(_rgbPositive);
-
-						if (max > 0) {
-							rc.X = _cp.X;
-							rc.Y = 0;
-							rc.Height = (float)_rectangle.Height;
-							rc.Width = w;
-						}
-						else {
-							rc.X = _cp.X - w;
-							rc.Y = 0;
-							rc.Height = (float)_rectangle.Height;
-							rc.Width = w;
-						}
 					}
 				}
+				else {
 
-				if (_orientation == SliderOrientation::vertical) {
+					br = new SolidBrush(_rgbPositive);
 
-					h = val / _valStep;
-
-					if (val < 0) {
-
-						br = new SolidBrush(_rgbNegative);
-
-						if (min < 0) {
-
-							rc.X = 0;
-							rc.Y = _cp.Y;
-							rc.Width = (float)_rectangle.Width;
-							if (h < 0)
-								h *= -1;
-							rc.Height = h;
-						}
-						else {
-
-							rc.X = 0;
-							rc.Y = _cp.Y + h;
-							rc.Width = (float)_rectangle.Width;
-							if (h < 0)
-								h *= -1;
-							rc.Height = h;
-						}
+					if (max > 0) {
+						rc.X = _cp.X;
+						rc.Y = 0;
+						rc.Height = (float)_rectangle.Height;
+						rc.Width = w;
 					}
 					else {
-
-						br = new SolidBrush(_rgbPositive);
-
-						if (max > 0) {
-
-							rc.X = 0;
-							rc.Y = _cp.Y - h;
-							rc.Width = (float)_rectangle.Width;
-							if (h < 0)
-								h *= -1;
-							rc.Height = h;
-						}
-						else {
-
-							rc.X = 0;
-							rc.Y = _cp.Y;
-							rc.Width = (float)_rectangle.Width;
-							if (h < 0)
-								h *= -1;
-							rc.Height = h;
-
-						}
+						rc.X = _cp.X - w;
+						rc.Y = 0;
+						rc.Height = (float)_rectangle.Height;
+						rc.Width = w;
 					}
 				}
 			}
+
+			if (_orientation == SliderOrientation::vertical) {
+
+				h = val / _valStep;
+
+				if (val < 0) {
+
+					br = new SolidBrush(_rgbNegative);
+
+					if (min < 0) {
+
+						rc.X = 0;
+						rc.Y = _cp.Y;
+						rc.Width = (float)_rectangle.Width;
+						if (h < 0)
+							h *= -1;
+						rc.Height = h;
+					}
+					else {
+
+						rc.X = 0;
+						rc.Y = _cp.Y + h;
+						rc.Width = (float)_rectangle.Width;
+						if (h < 0)
+							h *= -1;
+						rc.Height = h;
+					}
+				}
+				else {
+
+					br = new SolidBrush(_rgbPositive);
+
+					if (max > 0) {
+
+						rc.X = 0;
+						rc.Y = _cp.Y - h;
+						rc.Width = (float)_rectangle.Width;
+						if (h < 0)
+							h *= -1;
+						rc.Height = h;
+					}
+					else {
+
+						rc.X = 0;
+						rc.Y = _cp.Y;
+						rc.Width = (float)_rectangle.Width;
+						if (h < 0)
+							h *= -1;
+						rc.Height = h;
+
+					}
+				}
+			}
+		}
 #pragma endregion
 
 #pragma region "<0,+x> ; <0,-x> ; <+x,0> ; <-x,0>"
 
-			else if (min == 0 || max == 0)
+		else if (min == 0 || max == 0)
+		{
+			if (_orientation == SliderOrientation::horizontal)
 			{
-				if (_orientation == SliderOrientation::horizontal)
-				{
-					w = val / _valStep;
+				w = val / _valStep;
 
-					if (val < 0) {
+				if (val < 0) {
 
-						br = new SolidBrush(_rgbNegative);
-						if (w < 0)
-							w *= -1;
+					br = new SolidBrush(_rgbNegative);
+					if (w < 0)
+						w *= -1;
 
-						if (max < 0)
-						{
-							rc.X = 0;
-							rc.Y = 0;
-							rc.Width = w;
-							rc.Height = (float)_rectangle.Height;
+					if (max < 0)
+					{
+						rc.X = 0;
+						rc.Y = 0;
+						rc.Width = w;
+						rc.Height = (float)_rectangle.Height;
 
-						}
-						else if (min < 0) {
-
-							rc.X = (float)_rectangle.Width - w;
-							rc.Y = 0;
-							rc.Width = w;
-							rc.Height = (float)_rectangle.Height;
-
-						}
 					}
-					else {
+					else if (min < 0) {
 
-						br = new SolidBrush(_rgbPositive);
+						rc.X = (float)_rectangle.Width - w;
+						rc.Y = 0;
+						rc.Width = w;
+						rc.Height = (float)_rectangle.Height;
 
-						if (max > 0)
-						{
-							rc.X = 0;
-							rc.Y = 0;
-							rc.Width = w;
-							rc.Height = (float)_rectangle.Height;
-
-						}
-						else if (min > 0) {
-
-							rc.X = (float)_rectangle.Width - w;
-							rc.Y = 0;
-							rc.Width = w;
-							rc.Height = (float)_rectangle.Height;
-
-						}
 					}
 				}
+				else {
 
-				if (_orientation == SliderOrientation::vertical)
-				{
-					h = val / _valStep;
+					br = new SolidBrush(_rgbPositive);
 
-					if (val < 0) {
+					if (max > 0)
+					{
+						rc.X = 0;
+						rc.Y = 0;
+						rc.Width = w;
+						rc.Height = (float)_rectangle.Height;
 
-						br = new SolidBrush(_rgbNegative);
-
-						if (h < 0)
-							h *= -1;
-
-						if (min < 0)
-						{
-							rc.X = 0;
-							rc.Y = 0;
-							rc.Width = (float)_rectangle.Height;
-							rc.Height = h;
-						}
-						else if (max < 0) {
-
-							rc.X = 0;
-							rc.Y = (float)_rectangle.Height - h;
-							rc.Width = (float)_rectangle.Width;
-							rc.Height = h;
-						}
 					}
-					else {
+					else if (min > 0) {
 
-						br = new SolidBrush(_rgbPositive);
+						rc.X = (float)_rectangle.Width - w;
+						rc.Y = 0;
+						rc.Width = w;
+						rc.Height = (float)_rectangle.Height;
 
-						if (min > 0)
-						{
-
-							rc.X = 0;
-							rc.Y = 0;
-							rc.Width = (float)_rectangle.Height;
-							rc.Height = h;
-						}
-						else if (max > 0) {
-
-							rc.X = 0;
-							rc.Y = (float)_rectangle.Height - h;
-							rc.Width = (float)_rectangle.Width;
-							rc.Height = h;
-
-						}
 					}
 				}
 			}
+
+			if (_orientation == SliderOrientation::vertical)
+			{
+				h = val / _valStep;
+
+				if (val < 0) {
+
+					br = new SolidBrush(_rgbNegative);
+
+					if (h < 0)
+						h *= -1;
+
+					if (min < 0)
+					{
+						rc.X = 0;
+						rc.Y = 0;
+						rc.Width = (float)_rectangle.Height;
+						rc.Height = h;
+					}
+					else if (max < 0) {
+
+						rc.X = 0;
+						rc.Y = (float)_rectangle.Height - h;
+						rc.Width = (float)_rectangle.Width;
+						rc.Height = h;
+					}
+				}
+				else {
+
+					br = new SolidBrush(_rgbPositive);
+
+					if (min > 0)
+					{
+
+						rc.X = 0;
+						rc.Y = 0;
+						rc.Width = (float)_rectangle.Height;
+						rc.Height = h;
+					}
+					else if (max > 0) {
+
+						rc.X = 0;
+						rc.Y = (float)_rectangle.Height - h;
+						rc.Width = (float)_rectangle.Width;
+						rc.Height = h;
+
+					}
+				}
+			}
+		}
 #pragma endregion
 
-			//Pen& pen = Pen(Color(Color::Black), 1.0f);
-			gfx->FillRectangle(br, rc);
-			//gfx->DrawRectangle(&pen, 0, 0, _rectangle.Width, _rectangle.Height);
+		gfx->FillRectangle(br, rc);
 
-			//if (_ruler != nullptr) {
+		delete br;
+		br = nullptr;
 
-			//	Bitmap* rulerImg = ((CRuler*)_ruler)->Render(bmp, _layer);
-			//	if (rulerImg != nullptr) {
+		delete gfx;
+		gfx = NULL;
 
-			//		delete gfx;
-			//		delete bmp;
-			//		bmp = rulerImg;
-			//		gfx = Graphics::FromImage(bmp);
-			//	}
-			//}
-
-			delete br;
-			br = nullptr;
-
-			delete gfx;
-			gfx = NULL;
-
-		}
 	}
 
-	return bmp;
+	return ImageInfo{ imgInfo.width, imgInfo.height, imgInfo.stride, imgInfo.pixelFormat, _pixBuf.get() };
 }
 
 void CSlider::SetRange(string& s)

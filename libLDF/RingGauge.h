@@ -25,14 +25,13 @@ namespace libLDF
 		CRingGauge();
 		~CRingGauge();
 
-		virtual Gdiplus::Bitmap* Render(DataSample& sample, IGenericLogger& logger, bool renderBlank);
+		virtual ImageInfo Render(DataSample& sample, IGenericLogger* logger, bool renderBlank);
 		virtual void Init();
 		virtual void SetRuler(CRuler& r);
 
 		void SetID(std::string& id) { _id = id; }
 		std::string GetID() { return _id; }
 
-		//void SetRectangle(string& s);
 		virtual Rect GetRectangle() { return _rectangle; }
 
 		void SetRange(string& s);
@@ -44,8 +43,6 @@ namespace libLDF
 		std::tuple<int, int>& GetSweep() { return _sweep; }
 
 		void SetRotation(string& s);
-
-		//void SetForegroundColor(string& s);
 
 		void SetShaded(bool b) { _shaded = b; }
 

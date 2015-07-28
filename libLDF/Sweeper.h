@@ -28,16 +28,6 @@ namespace libLDF
 	};
 	typedef libLDF::_shapeType_Sweeper shapeType_Sweeper;
 
-	//enum _renderDir_Sweeper
-	//{
-	//	cw = 0,
-	//	ccw,
-	//	left_right,
-	//	right_left,
-	//	top_bottom,
-	//	bottom_top
-	//};
-
 	// This structure holds all of the precalculated values which are used at render time
 	typedef struct _sweeper_info {
 
@@ -81,7 +71,7 @@ namespace libLDF
 
 		// Renders the element into a bitmap with the data set by elements channel name
 		// and sample buffer index
-		virtual Gdiplus::Bitmap* Render(DataSample& sample, IGenericLogger& logger, bool renderBlank);
+		virtual ImageInfo Render(DataSample& sample, IGenericLogger* logger, bool renderBlank);
 
 		void SetPathType(string& s);
 
@@ -115,7 +105,7 @@ namespace libLDF
 
 		virtual void SetRuler(CRuler& r);
 
-		virtual Gdiplus::Rect GetRectangle(); // { return Rect(_rect.X - _extend, _rect.Y - _extend, _rect.Width, _rect.Height); }
+		virtual Gdiplus::Rect GetRectangle(); 
 
 	private:
 
@@ -177,9 +167,7 @@ namespace libLDF
 
 		// original rectangle without ruler size modification
 		Rect _origRect;
-
 	};
-
 }
 
 #endif // _SWEEPER_H_

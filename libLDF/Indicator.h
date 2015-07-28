@@ -42,7 +42,7 @@ namespace libLDF
 
 		// Renders the element into a bitmap with the data set by elements channel name
 		// and sample buffer index
-		virtual Gdiplus::Bitmap* Render(DataSample& sample, IGenericLogger& logger, bool renderBlank);
+		virtual ImageInfo Render(DataSample& sample, IGenericLogger* logger, bool renderBlank);
 
 
 		void SetColorON(string& s);

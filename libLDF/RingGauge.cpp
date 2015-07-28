@@ -22,105 +22,98 @@ CRingGauge::~CRingGauge()
 }
 
 
-Gdiplus::Bitmap* CRingGauge::Render(DataSample& sample, IGenericLogger& logger, bool renderBlank)
+ImageInfo CRingGauge::Render(DataSample& sample, IGenericLogger* logger, bool renderBlank)
 {
-	Bitmap* bmp = new Bitmap(_rectangle.Width, _rectangle.Height, PixelFormat32bppARGB);
-	if (bmp != nullptr) {
+	memset(_pixBuf.get(), 0, _pixBufLen);
 
-		Graphics* gfx = Graphics::FromImage(bmp);
-		if (gfx != nullptr) {
-			gfx->SetInterpolationMode(InterpolationMode::InterpolationModeHighQualityBicubic);
-			gfx->SetSmoothingMode(SmoothingMode::SmoothingModeAntiAlias);
-			gfx->SetTextRenderingHint(TextRenderingHint::TextRenderingHintClearTypeGridFit);
+	Bitmap bmp(imgInfo.width, imgInfo.height, imgInfo.stride, imgInfo.pixelFormat, static_cast<BYTE*>(imgInfo.pixbuf));
+	Graphics* gfx = Graphics::FromImage(&bmp);
+	if (gfx != nullptr) {
+		gfx->SetInterpolationMode(InterpolationMode::InterpolationModeHighQualityBicubic);
+		gfx->SetSmoothingMode(SmoothingMode::SmoothingModeAntiAlias);
+		gfx->SetTextRenderingHint(TextRenderingHint::TextRenderingHintClearTypeGridFit);
 
-			float sweep = (float)(std::get<1>(_sweep) -std::get<0>(_sweep));
-			//if (sweep < 0)
-			if (_rotation == RotationType::cw) {
-				sweep *= -1;
-				sweep = 360.0f - sweep;
-			}
-			else
-				sweep -= 360.0f;
-
-			if (sweep >= 360.0f)
-				sweep -= 360.0f;
-			if (sweep <= -360.0f)
-				sweep += 360.0f;
-
-			float maxVal = (float)std::get<1>(_range) * (float)_scale;
-			float minVal = (float)std::get<0>(_range) * (float)_scale;
-			float stepping = sweep / (maxVal - (float)std::get<0>(_range)); // degrees per channel value step
-
-			float val = 0;
-
-			if (!renderBlank) {
-				try {
-					CDataChannel& ch = std::move(logger.GetChannel(_channel));
-					SampleValue sv = CDataChannel::GetSampleData(logger, sample, ch);
-
-					switch (sv.type())
-					{
-					case irsdk_float:
-						val = sv.get_value<float>();
-						break;
-					case irsdk_double:
-						val = static_cast<float>(sv.get_value<double>());
-						break;
-					case irsdk_int:
-						val = static_cast<float>(sv.get_value<int>());
-						break;
-					case irsdk_char:
-						val = static_cast<float>(sv.get_value<char>());
-						break;
-					default:
-						val = 0;
-						break;
-					}
-				}
-				catch (std::exception)
-				{
-					throw;
-				}
-
-				// scale channel value
-				val *= (float)_scale;
-			}
-
-			// is current value lower than minumum value defined by range attribute?
-			if (val < minVal)
-				val = 0;
-			else
-				val -= minVal;
-
-			float rot = (val*stepping); // +std::get<0>(_sweep); // needle rotation angle
-
-			Gdiplus::Pen* pen = new Gdiplus::Pen(_foreground, (float)_width);
-			gfx->DrawArc(pen, (int)((float)_width / 2), (int)((float)_width / 2), _rectangle.Width - _width, _rectangle.Height - _width, (float)std::get<0>(_sweep), rot);
-
-			delete pen;
-			pen = nullptr;
-
-			//if (_ruler != nullptr) {
-
-			//	Bitmap* rulerImg = ((CRuler*)_ruler)->Render(bmp, _layer);
-			//	if (rulerImg != nullptr) {
-
-			//		delete gfx;
-			//		delete bmp;
-			//		bmp = rulerImg;
-			//		gfx = Graphics::FromImage(bmp);
-			//	}
-			//}
-
-			delete gfx;
+		float sweep = (float)(std::get<1>(_sweep) -std::get<0>(_sweep));
+		if (_rotation == RotationType::cw) {
+			sweep *= -1;
+			sweep = 360.0f - sweep;
 		}
+		else
+			sweep -= 360.0f;
+
+		if (sweep >= 360.0f)
+			sweep -= 360.0f;
+		if (sweep <= -360.0f)
+			sweep += 360.0f;
+
+		float maxVal = (float)std::get<1>(_range) * (float)_scale;
+		float minVal = (float)std::get<0>(_range) * (float)_scale;
+		float stepping = sweep / (maxVal - (float)std::get<0>(_range)); // degrees per channel value step
+
+		float val = 0;
+
+		if (!renderBlank) {
+			try {
+				CDataChannel& ch = std::move(logger->GetChannel(_channel));
+				SampleValue sv = CDataChannel::GetSampleData(*logger, sample, ch);
+
+				switch (sv.type())
+				{
+				case irsdk_float:
+					val = sv.get_value<float>();
+					break;
+				case irsdk_double:
+					val = static_cast<float>(sv.get_value<double>());
+					break;
+				case irsdk_int:
+					val = static_cast<float>(sv.get_value<int>());
+					break;
+				case irsdk_char:
+					val = static_cast<float>(sv.get_value<char>());
+					break;
+				default:
+					val = 0;
+					break;
+				}
+			}
+			catch (std::exception)
+			{
+				throw;
+			}
+
+			// scale channel value
+			val *= (float)_scale;
+		}
+
+		// is current value lower than minumum value defined by range attribute?
+		if (val < minVal)
+			val = 0;
+		else
+			val -= minVal;
+
+		float rot = (val*stepping);
+
+		Gdiplus::Pen* pen = new Gdiplus::Pen(_foreground, (float)_width);
+		gfx->DrawArc(pen, (int)((float)_width / 2), (int)((float)_width / 2), _rectangle.Width - _width, _rectangle.Height - _width, (float)std::get<0>(_sweep), rot);
+
+		delete pen;
+		pen = nullptr;
+
+		delete gfx;
 	}
-	return bmp;
+
+	return ImageInfo{ imgInfo.width, imgInfo.height, imgInfo.stride, imgInfo.pixelFormat, _pixBuf.get() };
 }
 
 void CRingGauge::Init()
 {
+	imgInfo.width = _rectangle.Width;
+	imgInfo.height = _rectangle.Height;
+	imgInfo.stride = imgInfo.width * sizeof(int);
 
+	_pixBufLen = imgInfo.stride * imgInfo.height;
+	_pixBuf = std::shared_ptr<BYTE>(new BYTE[_pixBufLen]);
+	imgInfo.pixbuf = _pixBuf.get();
 }
 
 void CRingGauge::SetRange(std::string& s)

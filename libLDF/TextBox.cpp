@@ -12,6 +12,7 @@ _signed(false),
 _precision(1)
 {
 	type = DashboardElementType::textbox;
+
 }
 
 
@@ -19,19 +20,26 @@ CTextBox::~CTextBox()
 {
 }
 
-Gdiplus::Bitmap* CTextBox::Render(DataSample& sample, IGenericLogger& logger, bool renderBlank)
+void CTextBox::Init()
 {
-	Bitmap* bmp = new Bitmap(_rectangle.Width, _rectangle.Height, PixelFormat32bppARGB);
-	if (bmp == nullptr)
-		throw - 1;
+	imgInfo.width = _rectangle.Width;
+	imgInfo.height = _rectangle.Height;
+	imgInfo.stride = imgInfo.width * sizeof(int);
 
-	Graphics* gfx = Graphics::FromImage(bmp);
+	_pixBufLen = imgInfo.stride * imgInfo.height;
+	_pixBuf = std::shared_ptr<BYTE>(new BYTE[_pixBufLen]);
+	imgInfo.pixbuf = _pixBuf.get();
+}
+
+ImageInfo CTextBox::Render(DataSample& sample, IGenericLogger* logger, bool renderBlank)
+{
+	memset(_pixBuf.get(), 0, _pixBufLen);
+
+	Bitmap bmp(imgInfo.width, imgInfo.height, imgInfo.stride, imgInfo.pixelFormat, static_cast<BYTE*>(imgInfo.pixbuf));
+	Graphics* gfx = Graphics::FromImage(&bmp);
 	if (gfx == nullptr) {
 
-		delete bmp;
-		bmp = nullptr;
-
-		throw - 1;
+		throw std::exception("can't acquire GDI+ device context! -> CTextBox::Render");
 	}
 
 	SolidBrush textColor(_foreground);
@@ -43,10 +51,7 @@ Gdiplus::Bitmap* CTextBox::Render(DataSample& sample, IGenericLogger& logger, bo
 	int fh = 0;
 
 	if (!_fontname.empty()) {
-		/*wstringstream wss;
-		wss << _fontname.c_str();*/
 		wFontname = std::wstring(_fontname.begin(), _fontname.end());
-
 	}
 
 	if (_fontheight != 0 && _fontheight != -1) {
@@ -68,8 +73,8 @@ Gdiplus::Bitmap* CTextBox::Render(DataSample& sample, IGenericLogger& logger, bo
 			SampleValue sv;
 
 			if (!renderBlank) {
-				CDataChannel& ch = std::move(logger.GetChannel(_channel));
-				sv = CDataChannel::GetSampleData(logger, sample, ch);
+				CDataChannel& ch = std::move(logger->GetChannel(_channel));
+				sv = CDataChannel::GetSampleData(*logger, sample, ch);
 			}
 
 			switch (_format) {
@@ -219,14 +224,13 @@ Gdiplus::Bitmap* CTextBox::Render(DataSample& sample, IGenericLogger& logger, bo
 	wstring wlbl = wstring(str.begin(), str.end());
 	WCHAR* wc = (WCHAR*)wlbl.c_str();
 
-	//gfx->DrawRectangle(&Pen(Color(255, 255, 0, 0), 2.0f), rc);
 	gfx->FillRectangle(&back, 0, 0, _rectangle.Width, _rectangle.Height);
 	gfx->DrawString(wc, len, ft, rc, &sf, &textColor);
 
 	delete ft;
 	delete gfx;
 
-	return bmp;
+	return ImageInfo{ imgInfo.width, imgInfo.height, imgInfo.stride, imgInfo.pixelFormat, _pixBuf.get() };
 }
 
 void CTextBox::SetSigned(string& s)

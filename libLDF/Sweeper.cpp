@@ -44,135 +44,116 @@ void CSweeper::SetRuler(CRuler& r)
 		r.SetScalingFactor(_scale);
 }
 
-Gdiplus::Bitmap* CSweeper::Render(DataSample& sample, IGenericLogger& logger, bool renderBlank)
+ImageInfo CSweeper::Render(DataSample& sample, IGenericLogger* logger, bool renderBlank)
 {
 	int w = _sweeperInfo.width;
 	int h = _sweeperInfo.height + 2;
 
-	//_rectangle = Rect(_rect.X, _rect.Y, w, h);
-	Bitmap* bmp = new Bitmap(w, h, PixelFormat32bppARGB);
-	if (bmp != nullptr) {
+	memset(_pixBuf.get(), 0, _pixBufLen);
 
-		Graphics* gfx = Graphics::FromImage(bmp);
-		if (gfx != nullptr) {
+	Bitmap bmp(imgInfo.width, imgInfo.height, imgInfo.stride, imgInfo.pixelFormat, static_cast<BYTE*>(imgInfo.pixbuf));
 
-			gfx->SetInterpolationMode(InterpolationModeHighQualityBicubic);
-			gfx->SetSmoothingMode(SmoothingModeAntiAlias);
+	Graphics* gfx = Graphics::FromImage(&bmp);
+	if (gfx != nullptr) {
 
-			// TODO: FixMe***
-			// check for correct data type!
-			float val = 0;
+		gfx->SetInterpolationMode(InterpolationModeHighQualityBicubic);
+		gfx->SetSmoothingMode(SmoothingModeAntiAlias);
 
-			if (!renderBlank) {
-				try {
-					CDataChannel& ch = std::move(logger.GetChannel(_channel));
-					SampleValue sv = CDataChannel::GetSampleData(logger, sample, ch);
+		float val = 0;
 
-					switch (sv.type())
-					{
-					case irsdk_float:
-						val = sv.get_value<float>();
-						break;
-					case irsdk_double:
-						val = static_cast<float>(sv.get_value<double>());
-						break;
-					case irsdk_int:
-						val = static_cast<float>(sv.get_value<int>());
-						break;
-					case irsdk_char:
-						val = static_cast<float>(sv.get_value<char>());
-						break;
-					default:
-						val = 0;
-						break;
-					}
-				}
-				catch (std::exception)
+		if (!renderBlank) {
+			try {
+				CDataChannel& ch = std::move(logger->GetChannel(_channel));
+				SampleValue sv = CDataChannel::GetSampleData(*logger, sample, ch);
+
+				switch (sv.type())
 				{
-					throw;
-				}
-			}
-
-			if (_scale != 0)
-				val *= (float)_scale;
-			float minVal = (std::get<0>(_range) * (float)_scale);
-
-			if (val < minVal)
-				val = 0;
-			else
-				val -= minVal;
-
-			size_t activeDivs = (size_t)round(val / _sweeperInfo.divStep); // number of active indicators for current value
-
-			Pen* pen = new Pen(_rgbOn, (float)_thickness);
-			PointF sp, ep;
-			SizeF sz;
-			float x = 0, y = 0;
-
-			for (size_t i = 0; i < activeDivs && i < _sweeperInfo.indicators.size(); i++) {
-
-				switch (_shape)
-				{
-				case shapeType_line:
-					sp = PointF(_sweeperInfo.indicators[i].X, _sweeperInfo.indicators[i].Y);
-					ep = PointF(_sweeperInfo.indicators[i].Width, _sweeperInfo.indicators[i].Height);
-
-					// draw line indicator
-					gfx->DrawLine(pen, sp, ep);
-
+				case irsdk_float:
+					val = sv.get_value<float>();
 					break;
-
-				case shapeType_ellipse:
-
-					// calculate center point of circle indicator 
-					// (center of inner/outer radius from indicator line)
-					x = ((_sweeperInfo.indicators[i].X + _sweeperInfo.indicators[i].Width) / 2);
-					y = ((_sweeperInfo.indicators[i].Y + _sweeperInfo.indicators[i].Height) / 2);
-					sp = PointF(x - ((float)_extend / 2), y - ((float)_extend / 2));
-					sz = SizeF((float)_extend, (float)_extend);
-
-					gfx->FillEllipse(&SolidBrush(_rgbOn), RectF(sp.X, sp.Y, sz.Width, sz.Height));
-
+				case irsdk_double:
+					val = static_cast<float>(sv.get_value<double>());
 					break;
-
-				case shapeType_rectangle:
-
-					// calculate center point of rectangle indicator 
-					// (center of inner/outer radius from indicator line)
-					x = ((_sweeperInfo.indicators[i].X + _sweeperInfo.indicators[i].Width) / 2);
-					y = ((_sweeperInfo.indicators[i].Y + _sweeperInfo.indicators[i].Height) / 2);
-					sp = PointF(x - ((float)_extend / 2), y - ((float)_extend / 2));
-					sz = SizeF((float)_extend, (float)_extend);
-
-					gfx->FillRectangle(&SolidBrush(_rgbOn), RectF(sp.X, sp.Y, sz.Width, sz.Height));
-
+				case irsdk_int:
+					val = static_cast<float>(sv.get_value<int>());
+					break;
+				case irsdk_char:
+					val = static_cast<float>(sv.get_value<char>());
+					break;
+				default:
+					val = 0;
 					break;
 				}
 			}
-			// NEW
-			// ruler element is now drawn in its own image and rendered to
-			// the dashboard in the dashboards render method just like all 
-			// other elements!
-
-			//if (_ruler != NULL) {
-
-			//	Bitmap* rulerImg = _ruler->Render(bmp, _layer);
-			//	if (rulerImg != nullptr) {
-
-			//		delete gfx;
-			//		delete bmp;
-			//		bmp = rulerImg;
-			//		gfx = Graphics::FromImage(bmp);
-			//	}
-			//}
-
-			delete pen;
-
-			delete gfx;
+			catch (std::exception)
+			{
+				throw;
+			}
 		}
+
+		if (_scale != 0)
+			val *= (float)_scale;
+		float minVal = (std::get<0>(_range) * (float)_scale);
+
+		if (val < minVal)
+			val = 0;
+		else
+			val -= minVal;
+
+		size_t activeDivs = (size_t)round(val / _sweeperInfo.divStep); // number of active indicators for current value
+
+		Pen* pen = new Pen(_rgbOn, (float)_thickness);
+		PointF sp, ep;
+		SizeF sz;
+		float x = 0, y = 0;
+
+		for (size_t i = 0; i < activeDivs && i < _sweeperInfo.indicators.size(); i++) {
+
+			switch (_shape)
+			{
+			case shapeType_line:
+				sp = PointF(_sweeperInfo.indicators[i].X, _sweeperInfo.indicators[i].Y);
+				ep = PointF(_sweeperInfo.indicators[i].Width, _sweeperInfo.indicators[i].Height);
+
+				// draw line indicator
+				gfx->DrawLine(pen, sp, ep);
+
+				break;
+
+			case shapeType_ellipse:
+
+				// calculate center point of circle indicator 
+				// (center of inner/outer radius from indicator line)
+				x = ((_sweeperInfo.indicators[i].X + _sweeperInfo.indicators[i].Width) / 2);
+				y = ((_sweeperInfo.indicators[i].Y + _sweeperInfo.indicators[i].Height) / 2);
+				sp = PointF(x - ((float)_extend / 2), y - ((float)_extend / 2));
+				sz = SizeF((float)_extend, (float)_extend);
+
+				gfx->FillEllipse(&SolidBrush(_rgbOn), RectF(sp.X, sp.Y, sz.Width, sz.Height));
+
+				break;
+
+			case shapeType_rectangle:
+
+				// calculate center point of rectangle indicator 
+				// (center of inner/outer radius from indicator line)
+				x = ((_sweeperInfo.indicators[i].X + _sweeperInfo.indicators[i].Width) / 2);
+				y = ((_sweeperInfo.indicators[i].Y + _sweeperInfo.indicators[i].Height) / 2);
+				sp = PointF(x - ((float)_extend / 2), y - ((float)_extend / 2));
+				sz = SizeF((float)_extend, (float)_extend);
+
+				gfx->FillRectangle(&SolidBrush(_rgbOn), RectF(sp.X, sp.Y, sz.Width, sz.Height));
+
+				break;
+			}
+		}
+
+		delete pen;
+
+		delete gfx;
 	}
 
-	return bmp;
+	return ImageInfo{ imgInfo.width, imgInfo.height, imgInfo.stride, imgInfo.pixelFormat, _pixBuf.get() };
 }
 
 /******************************************************************************
@@ -434,6 +415,14 @@ void CSweeper::Precalculate()
 		calculateLinePath();
 		break;
 	}
+
+	imgInfo.width = _sweeperInfo.width;
+	imgInfo.height = _sweeperInfo.height + 2;
+	imgInfo.stride = imgInfo.width * sizeof(int);
+
+	_pixBufLen = imgInfo.stride * imgInfo.height;
+	_pixBuf = std::shared_ptr<BYTE>(new BYTE[_pixBufLen]);
+	imgInfo.pixbuf = _pixBuf.get();
 
 }
 
