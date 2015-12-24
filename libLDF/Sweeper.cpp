@@ -561,14 +561,15 @@ void CSweeper::SetColorON(string& s)
 		return;
 	}
 
-	std::vector<int> c;
+	Color c;
 
 	try {
-		getColorFromString(s, &c);
-		if (c.size() == 1)
-			_rgbOn = Color((255) | c[0]);
-		if (c.size() == 3)
-			_rgbOn = Color((BYTE)c[0], (BYTE)c[1], (BYTE)c[2]);
+		getColorFromString(s, c);
+		//if (c.size() == 1)
+		//	_rgbOn = Color((255) | c[0]);
+		//if (c.size() == 3)
+		//	_rgbOn = Color((BYTE)c[0], (BYTE)c[1], (BYTE)c[2]);
+		_rgbOn = c;
 	}
 	catch (parsing_error& ec)
 	{
@@ -584,14 +585,15 @@ void CSweeper::SetColorOFF(string& s)
 		return;
 	}
 
-	std::vector<int> c;
+	Color c;
 
 	try {
-		getColorFromString(s, &c);
-		if (c.size() == 1)
-			_rgbOff = Color((255) | c[0]);
-		if (c.size() == 3)
-			_rgbOff = Color((BYTE)c[0], (BYTE)c[1], (BYTE)c[2]);
+		getColorFromString(s, c);
+		//if (c.size() == 1
+		//	_rgbOff = Color((255) | c[0]);
+		//if (c.size() == 3)
+		//	_rgbOff = Color((BYTE)c[0], (BYTE)c[1], (BYTE)c[2]);
+		_rgbOff = c;
 	}
 	catch (parsing_error& ec)
 	{

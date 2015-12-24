@@ -117,15 +117,16 @@ ImageInfo CGCircle::Render(DataSample& sample, IGenericLogger* logger, bool rend
 
 void CGCircle::SetPointerColor(string& s)
 {
-	std::vector<int> c;
+	Color c;
 
 	try {
 
-		getColorFromString(s, &c);
-		if (c.size() == 1)
-			_pointerColor = Gdiplus::Color((255) | c[0]);
-		if (c.size() == 3)
-			_pointerColor = Gdiplus::Color((BYTE)c[0], (BYTE)c[1], (BYTE)c[2]);
+		getColorFromString(s, c);
+		//if (c.size() == 1)
+		//	_pointerColor = Gdiplus::Color((255) | c[0]);
+		//if (c.size() == 3)
+		//	_pointerColor = Gdiplus::Color((BYTE)c[0], (BYTE)c[1], (BYTE)c[2]);
+		_pointerColor = c;
 	}
 	catch (parsing_error& ec)
 	{

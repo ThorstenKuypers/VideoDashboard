@@ -110,7 +110,7 @@ void libLDF::removeChar(string& s, const char c)
 	}
 }
 
-void libLDF::getColorFromString(string& s, std::vector<int>* color)
+void libLDF::getColorFromString(string& s, Gdiplus::Color& color)
 {
 	std::vector<string> toks;
 	//int* v = new int[3];
@@ -123,18 +123,28 @@ void libLDF::getColorFromString(string& s, std::vector<int>* color)
 		for (int i = 0; i < 3; i++)
 		{
 			string c = s.substr((i * 2) + 1, 2);
-			color->push_back(stoi(c, nullptr, 16));
+			//color->push_back(stoi(c, nullptr, 16));
+			color = Gdiplus::Color(stoi(c, nullptr, 16));
 		}
 	}
-	else {
+	else if (s[0] == '<') { // or if RGB tuple
 
 		splitTuple(s, toks, ec);
 		if (ec != parsing_error::ok)
 			throw ec;
 
-		color->push_back(stoi(toks[0]));
-		color->push_back(stoi(toks[1]));
-		color->push_back(stoi(toks[2]));
+		color = Gdiplus::Color(stoi(toks[0]), stoi(toks[1]), stoi(toks[2]));
+
+		//color->push_back(stoi(toks[0]));
+		//color->push_back(stoi(toks[1]));
+		//color->push_back(stoi(toks[2]));
+	}
+	else { // otherwise assume X11 color name
+
+		if (!s.empty())
+		{
+			X11Colors::Get(s, color);
+		}
 	}
 }
 

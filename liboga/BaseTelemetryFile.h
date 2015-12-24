@@ -28,40 +28,19 @@ namespace libOGA {
 			CBaseTelemetryFile(const std::wstring& logfile);
 			virtual ~CBaseTelemetryFile();
 
+			// IDataLogFile
 			virtual int GetSampleCount();
-
 			virtual int GetSessionLapCount();
 			virtual LAPINFO& GetLapInfo(int lap);
 			virtual FASTEST_LAP_INFO& GetFastLapInfo();
 
+			// IGenericLogger
+			virtual CDataChannel& GetChannel(std::string& name);
+			virtual vector<std::string> GetExportedChannels();
+			virtual vector<std::string> GetSpecialChannelNames();
 			virtual int GetSampleTickRate() = 0;
-
 			virtual int ShiftRpm();
 			virtual int RedlineRpm();
-
-			virtual CDataChannel& GetChannel(std::string& name);
-
-			virtual vector<std::string> GetExportedChannels()
-			{
-				vector<std::string> v;
-
-				for (auto c : channels) {
-					v.emplace_back(c.second.get_Name());
-				}
-
-				return std::move(v);
-			}
-
-			virtual vector<std::string> GetSpecialChannelNames()
-			{
-				vector<std::string> v;
-
-				for (auto c : mathChannels) {
-					v.emplace_back(c.second.get_Name());
-				}
-
-				return std::move(v);
-			}
 
 		protected:
 			virtual void processDataFile() = 0;

@@ -102,9 +102,19 @@ void CLiveDataLogger::Stop()
 	}
 }
 
-int CLiveDataLogger::GetLoggerSampleRate()
+int CLiveDataLogger::GetSampleTickRate()
 {
 	return irsdkHeader->tickRate;
+}
+
+int CLiveDataLogger::ShiftRpm()
+{
+	return 0;
+}
+
+int CLiveDataLogger::RedlineRpm()
+{
+	return 0;
 }
 
 void CLiveDataLogger::dataLoop()

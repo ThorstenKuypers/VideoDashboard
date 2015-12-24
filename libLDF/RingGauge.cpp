@@ -172,14 +172,15 @@ void CRingGauge::SetMarkerWidth(string& s)
 
 void CRingGauge::SetMarkerColor(string& s)
 {
-	std::vector<int> c;
+	Color c;
 
 	try {
-		getColorFromString(s, &c);
-		if (c.size() == 1)
-			_markerColor = Color((255) | c[0]);
-		if (c.size() == 3)
-			_markerColor = Color((BYTE)c[0], (BYTE)c[1], (BYTE)c[2]);
+		getColorFromString(s, c);
+		//if (c.size() == 1)
+		//	_markerColor = Color((255) | c[0]);
+		//if (c.size() == 3)
+		//	_markerColor = Color((BYTE)c[0], (BYTE)c[1], (BYTE)c[2]);
+		_markerColor = c;
 	}
 	catch (parsing_error& ec)
 	{

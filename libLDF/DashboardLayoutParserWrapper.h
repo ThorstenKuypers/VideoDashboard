@@ -1,6 +1,6 @@
 #pragma once
 
-#include "DashboardLayout.h"
+#include "Dashboard.h"
 
 
 namespace libLDFWrapper {
@@ -13,6 +13,8 @@ namespace libLDFWrapper {
 	using namespace System::Drawing::Imaging;
 
 	using namespace libLDF;
+	using namespace libOGA;
+	using namespace libOGA::FileLogs;
 
 	public ref class DashboardLayout {
 

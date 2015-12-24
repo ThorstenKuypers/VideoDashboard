@@ -182,14 +182,15 @@ void CRuler::Init()
 
 void CRuler::SetBackgroundColor(std::string& s)
 {
-	std::vector<int> c;
+	Color c;
 
 	try {
-		getColorFromString(s, &c);
-		if (c.size() == 1)
-			_background = Color((255) | c[0]);
-		if (c.size() == 3)
-			_background = Color((BYTE)c[0], (BYTE)c[1], (BYTE)c[2]);
+		getColorFromString(s, c);
+		//if (c.size() == 1)
+		//	_background = Color((255) | c[0]);
+		//if (c.size() == 3)
+		//	_background = Color((BYTE)c[0], (BYTE)c[1], (BYTE)c[2]);
+		_background = c;
 	}
 	catch (parsing_error& ec)
 	{
@@ -200,14 +201,15 @@ void CRuler::SetBackgroundColor(std::string& s)
 
 void CRuler::SetForegroundColor(std::string& s)
 {
-	std::vector<int> c;
+	Color c;
 
 	try {
-		getColorFromString(s, &c);
-		if (c.size() == 1)
-			_foreground = Color((255) | c[0]);
-		if (c.size() == 3)
-			_foreground = Color((BYTE)c[0], (BYTE)c[1], (BYTE)c[2]);
+		getColorFromString(s, c);
+		//if (c.size() == 1)
+		//	_foreground = Color((255) | c[0]);
+		//if (c.size() == 3)
+		//	_foreground = Color((BYTE)c[0], (BYTE)c[1], (BYTE)c[2]);
+		_foreground = c;
 	}
 	catch (parsing_error& ec)
 	{
@@ -813,14 +815,15 @@ void CRuler::SetPathType(PathType type)
 
 void CRuler::SetPathColor(string& s)
 {
-	std::vector<int> c;
+	Color c;
 
 	try {
-		getColorFromString(s, &c);
-		if (c.size() == 1)
-			_pathColor = Color((255) | c[0]);
-		if (c.size() == 3)
-			_pathColor = Color((BYTE)c[0], (BYTE)c[1], (BYTE)c[2]);
+		getColorFromString(s, c);
+		//if (c.size() == 1)
+		//	_pathColor = Color((255) | c[0]);
+		//if (c.size() == 3)
+		//	_pathColor = Color((BYTE)c[0], (BYTE)c[1], (BYTE)c[2]);
+		_pathColor = c;
 	}
 	catch (parsing_error& ec)
 	{
@@ -848,14 +851,15 @@ void CRuler::SetPathPosition(string& s)
 
 void CRuler::SetMajorColor(string& s)
 {
-	std::vector<int> c;
+	Color c;
 
 	try {
-		getColorFromString(s, &c);
-		if (c.size() == 1)
-			_mjColor = Color((255) | c[0]);
-		if (c.size() == 3)
-			_mjColor = Color((BYTE)c[0], (BYTE)c[1], (BYTE)c[2]);
+		getColorFromString(s, c);
+		//if (c.size() == 1)
+		//	_mjColor = Color((255) | c[0]);
+		//if (c.size() == 3)
+		//	_mjColor = Color((BYTE)c[0], (BYTE)c[1], (BYTE)c[2]);
+		_mjColor = c;
 	}
 	catch (parsing_error& ec)
 	{
@@ -873,14 +877,15 @@ void CRuler::SetMajorShape(string& s)
 
 void CRuler::SetMinorColor(string& s)
 {
-	std::vector<int> c;
+	Color c;
 
 	try {
-		getColorFromString(s, &c);
-		if (c.size() == 1)
-			_mnColor = Color((255) | c[0]);
-		if (c.size() == 3)
-			_mnColor = Color((BYTE)c[0], (BYTE)c[1], (BYTE)c[2]);
+		getColorFromString(s, c);
+		//if (c.size() == 1)
+		//	_mnColor = Color((255) | c[0]);
+		//if (c.size() == 3)
+		//	_mnColor = Color((BYTE)c[0], (BYTE)c[1], (BYTE)c[2]);
+		_mnColor = c;
 	}
 	catch (parsing_error& ec)
 	{

@@ -100,14 +100,16 @@ namespace libOGA {
 					Stop();
 			}
 
-			virtual int GetLoggerSampleRate();
 			virtual void Start();
 			virtual void Stop();
 
+			// IGenericLogger
 			virtual bool GetSample(DataSample& s);
 			virtual bool GetSample(DataSample& s, size_t idx) { return false; }
-
 			virtual CDataChannel& GetChannel(std::string& name);
+			virtual int GetSampleTickRate();
+			virtual int ShiftRpm();
+			virtual int RedlineRpm();
 
 		private:
 

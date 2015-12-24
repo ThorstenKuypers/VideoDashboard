@@ -27,6 +27,8 @@
 #include "RingGauge.h"
 #include "Ruler.h"
 
+#include "liboga.h"
+
 #define MAX_LAYERS	16 // maximum number of supported layers
 
 

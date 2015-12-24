@@ -340,6 +340,10 @@ namespace libOGA {
 	};
 
 	struct IGenericLogger {
+
+		virtual int GetSampleTickRate() = 0;
+		virtual int ShiftRpm() = 0;
+		virtual int RedlineRpm() = 0;
 		virtual bool GetSample(DataSample&, size_t idx) = 0;
 		virtual bool GetSample(DataSample& s) = 0;
 		virtual CDataChannel& GetChannel(std::string& name) = 0;
@@ -360,9 +364,9 @@ namespace libOGA {
 			virtual int GetSessionLapCount() = 0;
 			virtual LAPINFO& GetLapInfo(int lap) = 0;
 			virtual FASTEST_LAP_INFO& GetFastLapInfo() = 0;
-			virtual int GetSampleTickRate() = 0;
-			virtual int ShiftRpm() = 0;
-			virtual int RedlineRpm() = 0;
+			//virtual int GetSampleTickRate() = 0;
+			//virtual int ShiftRpm() = 0;
+			//virtual int RedlineRpm() = 0;
 			virtual std::vector<std::string> GetSpecialChannelNames() = 0;
 			virtual std::vector<std::string> GetExportedChannels() = 0;
 
@@ -386,7 +390,6 @@ namespace libOGA {
 
 		struct ILiveDataLogger : IGenericLogger
 		{
-			virtual int GetLoggerSampleRate() = 0;
 			virtual void Start() = 0;
 			virtual void Stop() = 0;
 

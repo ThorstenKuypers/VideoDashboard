@@ -55,6 +55,9 @@ void CDashboard::Parse()
 	std::vector<std::string> lines;
 	std::vector<ldf_line> _lines;
 
+	// clear previous dashboard element
+	clear();
+
 	extractDashboardFilePath();
 
 	std::string line;
@@ -168,9 +171,6 @@ void CDashboard::Parse()
 		}
 	}
 
-	// clear previous dashboard element
-	clear();
-
 	// 3. step -> split sections and extract raw information from it
 	//for (unsigned int i = 0; i < sections.size(); i++) {
 	for (auto sec : sections) {
@@ -233,7 +233,7 @@ void CDashboard::Parse()
 	}
 
 	if (!_imagefile.empty()){
-		std::string fn = _dashboardFilePath + _imagefile;
+		std::string fn = _imagefile;
 		wstring ws = wstring(fn.begin(), fn.end());
 #ifdef _DEBUG
 		WCHAR* f = (WCHAR*)ws.c_str();
@@ -403,14 +403,15 @@ ImageInfo CDashboard::RenderToImage(libOGA::DataSample& sample, IGenericLogger* 
 
 void CDashboard::SetBackgroundColor(std::string& s)
 {
-	std::vector<int> c;
+	Color c;
 
 	try {
-		getColorFromString(s, &c);
-		if (c.size() == 1)
-			_background = Color((255) | c[0]);
-		if (c.size() == 3)
-			_background = Color((BYTE)c[0], (BYTE)c[1], (BYTE)c[2]);
+		getColorFromString(s, c);
+		//if (c.size() == 1)
+		//	_background = Color((255) | c[0]);
+		//if (c.size() == 3)
+		//	_background = Color((BYTE)c[0], (BYTE)c[1], (BYTE)c[2]);
+		_background = c;
 	}
 	catch (parsing_error& ec)
 	{
@@ -420,14 +421,15 @@ void CDashboard::SetBackgroundColor(std::string& s)
 
 void CDashboard::SetForegroundColor(std::string& s)
 {
-	std::vector<int> c;
+	Color c;
 
 	try {
-		getColorFromString(s, &c);
-		if (c.size() == 1)
-			_foreground = Color((255) | c[0]);
-		if (c.size() == 3)
-			_foreground = Color((BYTE)c[0], (BYTE)c[1], (BYTE)c[2]);
+		getColorFromString(s, c);
+		//if (c.size() == 1)
+		//	_foreground = Color((255) | c[0]);
+		//if (c.size() == 3)
+		//	_foreground = Color((BYTE)c[0], (BYTE)c[1], (BYTE)c[2]);
+		_foreground = c;
 	}
 	catch (parsing_error& ec)
 	{

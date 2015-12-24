@@ -21,11 +21,45 @@
 #include <Windows.h>
 #include <gdiplus.h>
 #include <string>
+#include <algorithm>
 
 #include "../../../Projects/VideoDashboard/liboga/liboga.h"
 
 namespace libLDF
 {
+	using namespace libOGA;
+	using namespace libOGA::FileLogs;
+
+	typedef  std::pair<std::string, Gdiplus::Color> x11Color;
+
+	struct X11Colors
+	{		
+		static void Get(std::string str, Gdiplus::Color& color)
+		{
+			try {
+				for (auto it : colors)
+				{
+					std::string _s = it.first;
+					std::transform(_s.begin(), _s.end(), _s.begin(), ::tolower);
+
+					std::transform(str.begin(), str.end(), str.begin(), ::tolower);
+
+					if (str == _s) {
+						color = it.second;
+						break;
+					}
+				}
+			}
+			catch (std::exception e)
+			{
+				throw e;
+			}
+		}
+
+	private:
+		static const std::map<std::string, Gdiplus::Color> colors;
+	};
+
 	struct ImageInfo
 	{
 		ImageInfo() : 

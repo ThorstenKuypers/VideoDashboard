@@ -32,22 +32,6 @@ m_carDataInfo()
 
 CBaseTelemetryFile::~CBaseTelemetryFile()
 {
-	//if (this->m_fastLapInfo) {
-	//	delete this->m_fastLapInfo;
-	//	this->m_fastLapInfo =NULL;
-	//}
-
-	//if (this->m_lapInfo) {
-	//	for (int i =0; i < this->m_lapCnt; i++) {
-	//		if (this->m_lapInfo[i] !=NULL) {
-	//			delete this->m_lapInfo[i];
-	//			this->m_lapInfo[i] =NULL;
-	//		}
-	//	}
-	//	delete this->m_lapInfo;
-	//	this->m_lapInfo =NULL;
-	//}
-
 	CloseFile();
 }
 
@@ -138,3 +122,25 @@ CDataChannel& CBaseTelemetryFile::GetChannel(std::string& name)
 	}
 
 }
+
+vector<std::string> CBaseTelemetryFile::GetExportedChannels()
+{
+	vector<std::string> v;
+
+	for (auto c : channels) {
+		v.emplace_back(c.second.get_Name());
+	}
+
+	return std::move(v);
+}
+vector<std::string> CBaseTelemetryFile::GetSpecialChannelNames()
+{
+	vector<std::string> v;
+
+	for (auto c : mathChannels) {
+		v.emplace_back(c.second.get_Name());
+	}
+
+	return std::move(v);
+}
+

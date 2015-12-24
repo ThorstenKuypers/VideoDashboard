@@ -339,14 +339,15 @@ void CSlider::SetRange(string& s)
 
 void CSlider::SetColorPositive(string& s)
 {
-	std::vector<int> c;
+	Color c;
 
 	try {
-		getColorFromString(s, &c);
-		if (c.size() == 1)
-			_rgbPositive = Color((255) | c[0]);
-		if (c.size() == 3)
-			_rgbPositive = Color((BYTE)c[0], (BYTE)c[1], (BYTE)c[2]);
+		getColorFromString(s, c);
+		//if (c.size() == 1)
+		//	_rgbPositive = Color((255) | c[0]);
+		//if (c.size() == 3)
+		//	_rgbPositive = Color((BYTE)c[0], (BYTE)c[1], (BYTE)c[2]);
+		_rgbPositive = c;
 	}
 	catch (parsing_error& ec)
 	{
@@ -356,14 +357,15 @@ void CSlider::SetColorPositive(string& s)
 
 void CSlider::SetColorNegative(string& s)
 {
-	std::vector<int> c;
+	Color c;
 
 	try {
-		getColorFromString(s, &c);
-		if (c.size() == 1)
-			_rgbNegative = Color((255) | c[0]);
-		if (c.size() == 3)
-			_rgbNegative = Color((BYTE)c[0], (BYTE)c[1], (BYTE)c[2]);
+		getColorFromString(s, c);
+		//if (c.size() == 1)
+		//	_rgbNegative = Color((255) | c[0]);
+		//if (c.size() == 3)
+		//	_rgbNegative = Color((BYTE)c[0], (BYTE)c[1], (BYTE)c[2]);
+		_rgbNegative = c;
 	}
 	catch (parsing_error& ec)
 	{

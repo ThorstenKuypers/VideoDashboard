@@ -38,14 +38,15 @@ void CDashboardElement::SetPosition(std::string& s)
 
 void CDashboardElement::SetBackgroundColor(std::string& s)
 {
-	std::vector<int> c;
+	Color c;
 
 	try {
-		getColorFromString(s, &c);
-		if (c.size() == 1)
-			_background = Color((255) | c[0]);
-		if (c.size() == 3)
-			_background = Color((BYTE)c[0], (BYTE)c[1], (BYTE)c[2]);
+		getColorFromString(s, c);
+		//if (c.size() == 1)
+		//	_background = Color((255) | c[0]);
+		//if (c.size() == 3)
+		//	_background = Color((BYTE)c[0], (BYTE)c[1], (BYTE)c[2]);
+		_background = c;
 	}
 	catch (parsing_error& ec)
 	{
@@ -56,14 +57,15 @@ void CDashboardElement::SetBackgroundColor(std::string& s)
 
 void CDashboardElement::SetForegroundColor(std::string& s)
 {
-	std::vector<int> c;
+	Color c;
 
 	try {
-		getColorFromString(s, &c);
-		if (c.size() == 1)
-			_foreground = Color((255) | c[0]);
-		if (c.size() == 3)
-			_foreground = Color((BYTE)c[0], (BYTE)c[1], (BYTE)c[2]);
+		getColorFromString(s, c);
+		//if (c.size() == 1)
+		//	_foreground = Color((255) | c[0]);
+		//if (c.size() == 3)
+		//	_foreground = Color((BYTE)c[0], (BYTE)c[1], (BYTE)c[2]);
+		_foreground = c;
 	}
 	catch (parsing_error& ec)
 	{

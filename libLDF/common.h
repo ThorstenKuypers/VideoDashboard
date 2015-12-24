@@ -18,16 +18,11 @@
 #include <vector>
 #include <algorithm>
 
+#include "libLDF.h"
 #include "errex.h"
-#include "liboga.h"
 
 namespace libLDF
 {
-
-	using namespace libOGA;
-	using namespace libOGA::FileLogs;
-	using namespace libOGA::LiveLogs;
-
 
 #define PI 3.141592653f
 #define RAD(x) ((PI / 180.0f) * x)
@@ -121,12 +116,11 @@ namespace libLDF
 	};
 	typedef libLDF::_slider_orientation SliderOrientation;
 
-
 	std::string trim(std::string& str, const std::string& trimChars);
 	void splitTuple(std::string& tpl, std::vector<std::string>& toks, parsing_error& ec);
 	void splitTuple2(std::string& tpl, std::vector<std::string>& tuples);
 	void removeChar(std::string& str, const char c);
-	void getColorFromString(std::string& s, std::vector<int>* color);
+	void getColorFromString(std::string& s, Gdiplus::Color& color);
 
 	void str_tolower(std::string str);
 
