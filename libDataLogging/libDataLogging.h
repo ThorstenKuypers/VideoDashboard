@@ -28,6 +28,7 @@
 
 #include "irsdk_defines.h"
 #include "errex.h"
+#include "Channel.h"
 
 typedef GUID LIBDATALOGGING_ID;
 typedef std::vector<BYTE> DataSample;

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -34,39 +34,39 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <UseOfMfc>false</UseOfMfc>
     <CharacterSet>Unicode</CharacterSet>
     <CLRSupport>false</CLRSupport>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Static_Test|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <UseOfMfc>false</UseOfMfc>
     <CharacterSet>Unicode</CharacterSet>
     <CLRSupport>false</CLRSupport>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <UseOfMfc>false</UseOfMfc>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Static_Test|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <UseOfMfc>false</UseOfMfc>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -134,7 +134,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>D:\Development\Projects\VideoDashboard\libDataLogging;D:\Development\Projects\VideoDashboard\libLDF;baseclasses;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\Development\Projects\VideoDashboard\libDataLogging;D:\Development\Projects\VideoDashboard\libLDF;D:\Development\Projects\VideoDashboard\baseclasses</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;UNICODE;_WINDOWS;_USRDLL;TRANSFORMFILTER_EXPORTS;FILTERDLL_LIB;__BETA;_DEBUG</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
@@ -146,8 +146,9 @@
     <Link>
       <AdditionalDependencies>libLDF.lib;winmm.lib;strmiids.lib;gdiplus.lib;strmbasd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(TargetPath)</OutputFile>
-      <AdditionalLibraryDirectories>$(OutDir)</AdditionalLibraryDirectories>
-      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <AdditionalLibraryDirectories>$(SolutionDir)baseclasses\bin\Debug\Win32</AdditionalLibraryDirectories>
+      <IgnoreAllDefaultLibraries>
+      </IgnoreAllDefaultLibraries>
       <ModuleDefinitionFile>filter.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
@@ -162,7 +163,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Static_Test|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>D:\Development\Projects\VideoDashboard\libDataLogging;D:\Development\Projects\VideoDashboard\libLDF;baseclasses;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\Development\Projects\VideoDashboard\libDataLogging;D:\Development\Projects\VideoDashboard\libLDF;D:\Development\Projects\VideoDashboard\baseclasses</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;UNICODE;_WINDOWS;_USRDLL;TRANSFORMFILTER_EXPORTS;FILTERDLL_LIB;__BETA;_DEBUG</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
@@ -191,7 +192,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>D:\Development\Projects\VideoDashboard\libDataLogging;D:\Development\Projects\VideoDashboard\libLDF;baseclasses;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\Development\Projects\VideoDashboard\libDataLogging;D:\Development\Projects\VideoDashboard\libLDF;D:\Development\Projects\VideoDashboard\baseclasses</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;UNICODE;_WINDOWS;_USRDLL;TRANSFORMFILTER_EXPORTS;FILTERDLL_LIB;__BETA;_DEBUG</PreprocessorDefinitions>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -202,7 +203,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>libLDF.lib;winmm.lib;strmiids.lib;gdiplus.lib;strmbasd.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(OutDir)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)baseclasses\bin\Debug\x64</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <ModuleDefinitionFile>filter.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -218,7 +219,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Static_Test|x64'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>D:\Development\Projects\VideoDashboard\libDataLogging;D:\Development\Projects\VideoDashboard\libLDF;baseclasses;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\Development\Projects\VideoDashboard\libDataLogging;D:\Development\Projects\VideoDashboard\libLDF;D:\Development\Projects\VideoDashboard\baseclasses</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;UNICODE;_WINDOWS;_USRDLL;TRANSFORMFILTER_EXPORTS;FILTERDLL_LIB;__BETA;_DEBUG</PreprocessorDefinitions>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -249,7 +250,7 @@
     <ClCompile>
       <Optimization>Full</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>D:\Development\Projects\VideoDashboard\libDataLogging;D:\Development\Projects\VideoDashboard\libLDF;baseclasses;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\Development\Projects\VideoDashboard\libDataLogging;D:\Development\Projects\VideoDashboard\libLDF;D:\Development\Projects\VideoDashboard\baseclasses</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;UNICODE;_WINDOWS;_USRDLL;TRANSFORMFILTER_EXPORTS;FILTERDLL_LIB;__BETA;</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -261,7 +262,7 @@
     <Link>
       <AdditionalDependencies>libLDF.lib;winmm.lib;strmiids.lib;gdiplus.lib;strmbase.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(TargetPath)</OutputFile>
-      <AdditionalLibraryDirectories>$(OutDir)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)baseclasses\bin\Release\Win32</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>filter.def</ModuleDefinitionFile>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
@@ -278,7 +279,7 @@
     <ClCompile>
       <Optimization>Full</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>D:\Development\Projects\VideoDashboard\libDataLogging;D:\Development\Projects\VideoDashboard\libLDF;baseclasses;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\Development\Projects\VideoDashboard\libDataLogging;D:\Development\Projects\VideoDashboard\libLDF;D:\Development\Projects\VideoDashboard\baseclasses</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;UNICODE;_WINDOWS;_USRDLL;TRANSFORMFILTER_EXPORTS;FILTERDLL_LIB;__BETA;</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -290,7 +291,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>libLDF.lib;winmm.lib;strmiids.lib;gdiplus.lib;strmbase.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(OutDir)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)baseclasses\bin\Release\x64</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>filter.def</ModuleDefinitionFile>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
@@ -326,10 +327,6 @@
   <ItemGroup>
     <ProjectReference Include="..\libLDF\libLDF.vcxproj">
       <Project>{fc46c657-4f91-4497-9bc8-4aba83b81f5e}</Project>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
-    <ProjectReference Include="baseclasses\baseclasses.vcxproj">
-      <Project>{e8a3f6fa-ae1c-4c8e-a0b6-9c8480324eaa}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
   </ItemGroup>

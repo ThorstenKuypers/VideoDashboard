@@ -308,14 +308,21 @@ _DllEntryPoint(
     	    // The platform identifier is used to work out whether
     	    // full unicode support is available or not.  Hence the
     	    // default will be the lowest common denominator - i.e. N/A
-                g_amPlatform = VER_PLATFORM_WIN32_WINDOWS; // win95 assumed in case GetVersionEx fails
+
+			// TODO: This change is just a small quick'n'dirty hack
+			// The proper way using GetFileVersionInfo should be implemented
+			// in the future
+			// For now just assume WinXP as platform!
+			// 12/30/2015 Thorsten Kuypers
+                //g_amPlatform = VER_PLATFORM_WIN32_WINDOWS; // win95 assumed in case GetVersionEx fails
+			g_amPlatform = VER_PLATFORM_WIN32_NT;
     
-                g_osInfo.dwOSVersionInfoSize = sizeof(g_osInfo);
-                if (GetVersionEx(&g_osInfo)) {
-            	g_amPlatform = g_osInfo.dwPlatformId;
-    	    } else {
-    		DbgLog((LOG_ERROR, 1, TEXT("Failed to get the OS platform, assuming Win95")));
-    	    }
+             //   g_osInfo.dwOSVersionInfoSize = sizeof(g_osInfo);
+             //   if (GetVersionEx(&g_osInfo)) {
+            	//g_amPlatform = g_osInfo.dwPlatformId;
+    	 //   } else {
+    		//DbgLog((LOG_ERROR, 1, TEXT("Failed to get the OS platform, assuming Win95")));
+    	 //   }
     	}
 
         g_hInst = hInstance;

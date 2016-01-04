@@ -54,7 +54,7 @@ CPreviewPlayerGraph::CPreviewPlayerGraph(HWND parentWindow, DShow::TVOFILTERCONF
 	m_canSeek =0;
 	m_duration =0;
 	this->m_avgTimePerFrame =avgTimePerFrame;
-
+	
 	m_filterCfg =filterCfg;
 	
 	try {

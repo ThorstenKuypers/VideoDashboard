@@ -2444,7 +2444,7 @@ HRESULT CImageDisplay::UpdateFormat(__inout VIDEOINFO *pVideoInfo)
 {
     ASSERT(pVideoInfo);
 
-    BITMAPINFOHEADER *pbmi = HEADER(pVideoInfo);
+//    BITMAPINFOHEADER *pbmi = HEADER(pVideoInfo);
     SetRectEmpty(&pVideoInfo->rcSource);
     SetRectEmpty(&pVideoInfo->rcTarget);
 
@@ -2676,7 +2676,7 @@ STDAPI ConvertVideoInfoToVideoInfo2(__inout AM_MEDIA_TYPE *pmt)
     if (NULL == pmt->pbFormat || pmt->cbFormat < sizeof(VIDEOINFOHEADER)) {
         return E_INVALIDARG;
     }
-    VIDEOINFO *pVideoInfo = (VIDEOINFO *)pmt->pbFormat;
+//    VIDEOINFO *pVideoInfo = reinterpret_cast<VIDEOINFO *>(pmt->pbFormat);
     DWORD dwNewSize;
     HRESULT hr = DWordAdd(pmt->cbFormat, sizeof(VIDEOINFOHEADER2) - sizeof(VIDEOINFOHEADER), &dwNewSize);
     if (FAILED(hr)) {

@@ -15,7 +15,6 @@
 #include "ITVOFilterConfig.h"
 #include "ProgressCallback.h"
 #include "libDataLogging.h"
-#include "DashboardLayout.h"
 #include "libLDF.h"
 
 //using namespace std;

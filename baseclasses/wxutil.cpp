@@ -7,7 +7,8 @@
 // Copyright (c) 1992-2001 Microsoft Corporation.  All rights reserved.
 //------------------------------------------------------------------------------
 
-
+#include <Windows.h>
+#include <VersionHelpers.h>
 #include <streams.h>
 #define STRSAFE_NO_DEPRECATE
 #include <strsafe.h>
@@ -55,7 +56,7 @@ BOOL CAMMsgEvent::WaitMsg(DWORD dwTimeout)
     // timeout (in MS) to expire.  allow SENT messages
     // to be processed while we wait
     DWORD dwWait;
-    DWORD dwStartTime;
+	DWORD dwStartTime = 0;
 
     // set the waiting period.
     DWORD dwWaitTime = dwTimeout;
@@ -748,22 +749,27 @@ MMRESULT CompatibleTimeSetEvent( UINT uDelay, UINT uResolution, __in LPTIMECALLB
 
 bool TimeKillSynchronousFlagAvailable( void )
 {
-    OSVERSIONINFO osverinfo;
+	// NOTE: since GetVersionEx is deprecated since Windows 8.1
+	// I have replaced this check with the new version helper APIs
+	// Thosten Kuypers 12/30/2015
+	return IsWindowsXPSP1OrGreater();
 
-    osverinfo.dwOSVersionInfoSize = sizeof(osverinfo);
+    //OSVERSIONINFO osverinfo;
 
-    if( GetVersionEx( &osverinfo ) ) {
-        
-        // Windows XP's major version is 5 and its' minor version is 1.
-        // timeSetEvent() started supporting the TIME_KILL_SYNCHRONOUS flag
-        // in Windows XP.
-        if( (osverinfo.dwMajorVersion > 5) || 
-            ( (osverinfo.dwMajorVersion == 5) && (osverinfo.dwMinorVersion >= 1) ) ) {
-            return true;
-        }
-    }
+    //osverinfo.dwOSVersionInfoSize = sizeof(osverinfo);
 
-    return false;
+    //if( GetVersionEx( &osverinfo ) ) {
+    //    
+    //    // Windows XP's major version is 5 and its' minor version is 1.
+    //    // timeSetEvent() started supporting the TIME_KILL_SYNCHRONOUS flag
+    //    // in Windows XP.
+    //    if( (osverinfo.dwMajorVersion > 5) || 
+    //        ( (osverinfo.dwMajorVersion == 5) && (osverinfo.dwMinorVersion >= 1) ) ) {
+    //        return true;
+    //    }
+    //}
+
+    //return false;
 }
 
 

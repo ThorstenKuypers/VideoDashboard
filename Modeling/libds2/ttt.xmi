@@ -1,0 +1,515 @@
+<?xml version = '1.0' encoding = 'UTF-8' ?>
+<XMI xmi.version = '1.2' xmlns:UML = 'org.omg.xmi.namespace.UML' timestamp = 'Fri Jan 01 01:36:22 CET 2016'>
+  <XMI.header>    <XMI.documentation>
+      <XMI.exporter>ArgoUML (using Netbeans XMI Writer version 1.0)</XMI.exporter>
+      <XMI.exporterVersion>0.34(6) revised on $Date: 2010-01-11 22:20:14 +0100 (Mon, 11 Jan 2010) $ </XMI.exporterVersion>
+    </XMI.documentation>
+    <XMI.metamodel xmi.name="UML" xmi.version="1.4"/></XMI.header>
+  <XMI.content>
+    <UML:Parameter xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000AC0'
+      name = 'T' isSpecification = 'false'/>
+    <UML:Parameter xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:000000000000113C'
+      name = 'AM_MEDIA_TYPE' isSpecification = 'false'>
+      <UML:Parameter.type>
+        <UML:DataType href = 'http://argouml-cpp.tigris.org/profile/CppUmlProfile.xmi#.:00000000000008A3'/>
+      </UML:Parameter.type>
+    </UML:Parameter>
+    <UML:Model xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A0C'
+      name = 'libds' isSpecification = 'false' isRoot = 'false' isLeaf = 'false'
+      isAbstract = 'false'>
+      <UML:Namespace.ownedElement>
+        <UML:Class xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A0D'
+          name = 'CBaseGraph' visibility = 'public' isSpecification = 'false' isRoot = 'false'
+          isLeaf = 'false' isAbstract = 'true' isActive = 'false'>
+          <UML:ModelElement.taggedValue>
+            <UML:TaggedValue xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A11'
+              isSpecification = 'false'>
+              <UML:TaggedValue.dataValue>CBaseGraph class is the base abstract class for all other DirectShow graph classes</UML:TaggedValue.dataValue>
+              <UML:TaggedValue.type>
+                <UML:TagDefinition xmi.idref = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A0E'/>
+              </UML:TaggedValue.type>
+            </UML:TaggedValue>
+            <UML:TaggedValue xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000AA1'
+              isSpecification = 'false'>
+              <UML:TaggedValue.dataValue>Thorsten Kuypers</UML:TaggedValue.dataValue>
+              <UML:TaggedValue.type>
+                <UML:TagDefinition xmi.idref = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A99'/>
+              </UML:TaggedValue.type>
+            </UML:TaggedValue>
+            <UML:TaggedValue xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000AA2'
+              isSpecification = 'false'>
+              <UML:TaggedValue.dataValue>1.0</UML:TaggedValue.dataValue>
+              <UML:TaggedValue.type>
+                <UML:TagDefinition xmi.idref = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A9D'/>
+              </UML:TaggedValue.type>
+            </UML:TaggedValue>
+          </UML:ModelElement.taggedValue>
+          <UML:Classifier.feature>
+            <UML:Attribute xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A12'
+              name = 'filterGraph' visibility = 'protected' isSpecification = 'false'
+              ownerScope = 'instance' changeability = 'changeable' targetScope = 'instance'>
+              <UML:StructuralFeature.multiplicity>
+                <UML:Multiplicity xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A13'>
+                  <UML:Multiplicity.range>
+                    <UML:MultiplicityRange xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A14'
+                      lower = '1' upper = '1'/>
+                  </UML:Multiplicity.range>
+                </UML:Multiplicity>
+              </UML:StructuralFeature.multiplicity>
+              <UML:StructuralFeature.type>
+                <UML:DataType xmi.idref = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A3A'/>
+              </UML:StructuralFeature.type>
+            </UML:Attribute>
+            <UML:Operation xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A38'
+              name = 'CBaseGraph' visibility = 'public' isSpecification = 'false' ownerScope = 'instance'
+              isQuery = 'false' concurrency = 'sequential' isRoot = 'false' isLeaf = 'false'
+              isAbstract = 'false'>
+              <UML:ModelElement.stereotype>
+                <UML:Stereotype href = 'http://argouml.org/profiles/uml14/default-uml14.xmi#.:000000000000082B'/>
+              </UML:ModelElement.stereotype>
+            </UML:Operation>
+            <UML:Attribute xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A46'
+              name = 'mediaControl' visibility = 'protected' isSpecification = 'false'
+              ownerScope = 'instance' changeability = 'changeable' targetScope = 'instance'>
+              <UML:StructuralFeature.multiplicity>
+                <UML:Multiplicity xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A47'>
+                  <UML:Multiplicity.range>
+                    <UML:MultiplicityRange xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A48'
+                      lower = '1' upper = '1'/>
+                  </UML:Multiplicity.range>
+                </UML:Multiplicity>
+              </UML:StructuralFeature.multiplicity>
+              <UML:StructuralFeature.type>
+                <UML:DataType xmi.idref = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A49'/>
+              </UML:StructuralFeature.type>
+            </UML:Attribute>
+            <UML:Attribute xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A50'
+              name = 'mediaEvent' visibility = 'protected' isSpecification = 'false' ownerScope = 'instance'
+              changeability = 'changeable' targetScope = 'instance'>
+              <UML:StructuralFeature.multiplicity>
+                <UML:Multiplicity xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A51'>
+                  <UML:Multiplicity.range>
+                    <UML:MultiplicityRange xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A52'
+                      lower = '1' upper = '1'/>
+                  </UML:Multiplicity.range>
+                </UML:Multiplicity>
+              </UML:StructuralFeature.multiplicity>
+              <UML:StructuralFeature.type>
+                <UML:DataType xmi.idref = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A4B'/>
+              </UML:StructuralFeature.type>
+            </UML:Attribute>
+            <UML:Attribute xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A53'
+              name = 'mediaSeek' visibility = 'protected' isSpecification = 'false' ownerScope = 'instance'
+              changeability = 'changeable' targetScope = 'instance'>
+              <UML:StructuralFeature.multiplicity>
+                <UML:Multiplicity xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A54'>
+                  <UML:Multiplicity.range>
+                    <UML:MultiplicityRange xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A55'
+                      lower = '1' upper = '1'/>
+                  </UML:Multiplicity.range>
+                </UML:Multiplicity>
+              </UML:StructuralFeature.multiplicity>
+              <UML:ModelElement.stereotype>
+                <UML:Stereotype href = 'http://argouml-cpp.tigris.org/profile/CppUmlProfile.xmi#.:000000000000088F'/>
+              </UML:ModelElement.stereotype>
+              <UML:StructuralFeature.type>
+                <UML:DataType xmi.idref = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A4C'/>
+              </UML:StructuralFeature.type>
+            </UML:Attribute>
+            <UML:Attribute xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A56'
+              name = 'filters' visibility = 'protected' isSpecification = 'false' ownerScope = 'instance'
+              changeability = 'changeable' targetScope = 'instance'>
+              <UML:StructuralFeature.multiplicity>
+                <UML:Multiplicity xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000001102'>
+                  <UML:Multiplicity.range>
+                    <UML:MultiplicityRange xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000001101'
+                      lower = '1' upper = '-1'/>
+                  </UML:Multiplicity.range>
+                </UML:Multiplicity>
+              </UML:StructuralFeature.multiplicity>
+              <UML:StructuralFeature.type>
+                <UML:DataType xmi.idref = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A4D'/>
+              </UML:StructuralFeature.type>
+            </UML:Attribute>
+            <UML:Operation xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A5B'
+              name = 'Build' visibility = 'public' isSpecification = 'false' ownerScope = 'instance'
+              isQuery = 'false' concurrency = 'sequential' isRoot = 'false' isLeaf = 'false'
+              isAbstract = 'true'>
+              <UML:ModelElement.taggedValue>
+                <UML:TaggedValue xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000001139'
+                  isSpecification = 'false'>
+                  <UML:TaggedValue.dataValue>builds the filter graph using DirectShow DynamicBuild </UML:TaggedValue.dataValue>
+                  <UML:TaggedValue.type>
+                    <UML:TagDefinition xmi.idref = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A0E'/>
+                  </UML:TaggedValue.type>
+                </UML:TaggedValue>
+              </UML:ModelElement.taggedValue>
+              <UML:BehavioralFeature.parameter>
+                <UML:Parameter xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A5C'
+                  name = 'return' isSpecification = 'false' kind = 'return'/>
+              </UML:BehavioralFeature.parameter>
+            </UML:Operation>
+            <UML:Operation xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A5E'
+              name = 'Configure' visibility = 'public' isSpecification = 'false' ownerScope = 'instance'
+              isQuery = 'false' concurrency = 'sequential' isRoot = 'false' isLeaf = 'false'
+              isAbstract = 'true'>
+              <UML:ModelElement.taggedValue>
+                <UML:TaggedValue xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:000000000000113A'
+                  isSpecification = 'false'>
+                  <UML:TaggedValue.dataValue></UML:TaggedValue.dataValue>
+                  <UML:TaggedValue.type>
+                    <UML:TagDefinition xmi.idref = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A0E'/>
+                  </UML:TaggedValue.type>
+                </UML:TaggedValue>
+              </UML:ModelElement.taggedValue>
+              <UML:BehavioralFeature.parameter>
+                <UML:Parameter xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A61'
+                  name = 'return' isSpecification = 'false' kind = 'return'/>
+              </UML:BehavioralFeature.parameter>
+            </UML:Operation>
+            <UML:Operation xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A62'
+              name = 'Release' visibility = 'public' isSpecification = 'false' ownerScope = 'instance'
+              isQuery = 'false' concurrency = 'sequential' isRoot = 'false' isLeaf = 'false'
+              isAbstract = 'true'>
+              <UML:BehavioralFeature.parameter>
+                <UML:Parameter xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A63'
+                  name = 'return' isSpecification = 'false' kind = 'return'/>
+              </UML:BehavioralFeature.parameter>
+            </UML:Operation>
+            <UML:Operation xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A64'
+              name = 'GetPin' visibility = 'public' isSpecification = 'false' ownerScope = 'instance'
+              isQuery = 'false' concurrency = 'sequential' isRoot = 'false' isLeaf = 'false'
+              isAbstract = 'false'>
+              <UML:BehavioralFeature.parameter>
+                <UML:Parameter xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A65'
+                  name = 'return' isSpecification = 'false' kind = 'return'>
+                  <UML:Parameter.type>
+                    <UML:DataType href = 'http://argouml-cpp.tigris.org/profile/CppUmlProfile.xmi#10-0-1-4-8c436b:10bce9cf2cc:-8000:000000000000086E'/>
+                  </UML:Parameter.type>
+                </UML:Parameter>
+                <UML:Parameter xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A66'
+                  name = 'filter' isSpecification = 'false' kind = 'in'>
+                  <UML:Parameter.defaultValue>
+                    <UML:Expression xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A75'
+                      language = '' body = '&#10;'/>
+                  </UML:Parameter.defaultValue>
+                  <UML:Parameter.type>
+                    <UML:DataType xmi.idref = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A4D'/>
+                  </UML:Parameter.type>
+                </UML:Parameter>
+                <UML:Parameter xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A76'
+                  name = 'pinDirection' isSpecification = 'false' kind = 'in'>
+                  <UML:Parameter.type>
+                    <UML:DataType href = 'http://argouml-cpp.tigris.org/profile/CppUmlProfile.xmi#.:0000000000000873'/>
+                  </UML:Parameter.type>
+                </UML:Parameter>
+                <UML:Parameter xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A77'
+                  name = 'pinPtr' isSpecification = 'false' kind = 'out'>
+                  <UML:Parameter.type>
+                    <UML:DataType xmi.idref = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A78'/>
+                  </UML:Parameter.type>
+                </UML:Parameter>
+              </UML:BehavioralFeature.parameter>
+            </UML:Operation>
+            <UML:Operation xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A7C'
+              name = 'Play' visibility = 'public' isSpecification = 'false' ownerScope = 'instance'
+              isQuery = 'false' concurrency = 'sequential' isRoot = 'false' isLeaf = 'false'
+              isAbstract = 'false'>
+              <UML:BehavioralFeature.parameter>
+                <UML:Parameter xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A7D'
+                  name = 'return' isSpecification = 'false' kind = 'return'>
+                  <UML:Parameter.type>
+                    <UML:DataType href = 'http://argouml-cpp.tigris.org/profile/CppUmlProfile.xmi#.:0000000000000873'/>
+                  </UML:Parameter.type>
+                </UML:Parameter>
+              </UML:BehavioralFeature.parameter>
+            </UML:Operation>
+            <UML:Operation xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A7E'
+              name = 'Pause' visibility = 'public' isSpecification = 'false' ownerScope = 'instance'
+              isQuery = 'false' concurrency = 'sequential' isRoot = 'false' isLeaf = 'false'
+              isAbstract = 'false'>
+              <UML:BehavioralFeature.parameter>
+                <UML:Parameter xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A7F'
+                  name = 'return' isSpecification = 'false' kind = 'return'>
+                  <UML:Parameter.type>
+                    <UML:DataType href = 'http://argouml-cpp.tigris.org/profile/CppUmlProfile.xmi#.:0000000000000873'/>
+                  </UML:Parameter.type>
+                </UML:Parameter>
+              </UML:BehavioralFeature.parameter>
+            </UML:Operation>
+            <UML:Operation xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A80'
+              name = 'Stop' visibility = 'public' isSpecification = 'false' ownerScope = 'instance'
+              isQuery = 'false' concurrency = 'sequential' isRoot = 'false' isLeaf = 'false'
+              isAbstract = 'false'>
+              <UML:BehavioralFeature.parameter>
+                <UML:Parameter xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A81'
+                  name = 'return' isSpecification = 'false' kind = 'return'>
+                  <UML:Parameter.type>
+                    <UML:DataType href = 'http://argouml-cpp.tigris.org/profile/CppUmlProfile.xmi#.:0000000000000873'/>
+                  </UML:Parameter.type>
+                </UML:Parameter>
+              </UML:BehavioralFeature.parameter>
+            </UML:Operation>
+            <UML:Operation xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A82'
+              name = 'GetSourceFilter' visibility = 'public' isSpecification = 'false'
+              ownerScope = 'instance' isQuery = 'false' concurrency = 'sequential' isRoot = 'false'
+              isLeaf = 'false' isAbstract = 'false'>
+              <UML:BehavioralFeature.parameter>
+                <UML:Parameter xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A83'
+                  name = 'return' isSpecification = 'false' kind = 'return'>
+                  <UML:Parameter.type>
+                    <UML:DataType href = 'http://argouml-cpp.tigris.org/profile/CppUmlProfile.xmi#10-0-1-4-8c436b:10bce9cf2cc:-8000:000000000000086E'/>
+                  </UML:Parameter.type>
+                </UML:Parameter>
+                <UML:Parameter xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A84'
+                  name = 'filter' isSpecification = 'false' kind = 'out'>
+                  <UML:Parameter.type>
+                    <UML:DataType xmi.idref = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A4D'/>
+                  </UML:Parameter.type>
+                </UML:Parameter>
+              </UML:BehavioralFeature.parameter>
+            </UML:Operation>
+            <UML:Operation xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A85'
+              name = 'GetDirectShowEvent' visibility = 'public' isSpecification = 'false'
+              ownerScope = 'instance' isQuery = 'false' concurrency = 'sequential' isRoot = 'false'
+              isLeaf = 'true' isAbstract = 'false'>
+              <UML:BehavioralFeature.parameter>
+                <UML:Parameter xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A86'
+                  name = 'return' isSpecification = 'false' kind = 'return'>
+                  <UML:Parameter.type>
+                    <UML:DataType href = 'http://argouml-cpp.tigris.org/profile/CppUmlProfile.xmi#10-0-1-4-8c436b:10bce9cf2cc:-8000:000000000000086E'/>
+                  </UML:Parameter.type>
+                </UML:Parameter>
+                <UML:Parameter xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A87'
+                  name = 'param1' isSpecification = 'false' kind = 'out'>
+                  <UML:Parameter.type>
+                    <UML:DataType href = 'http://argouml-cpp.tigris.org/profile/CppUmlProfile.xmi#10-0-1-4-8c436b:10bce9cf2cc:-8000:000000000000086E'/>
+                  </UML:Parameter.type>
+                </UML:Parameter>
+                <UML:Parameter xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A88'
+                  name = 'param2' isSpecification = 'false' kind = 'out'>
+                  <UML:Parameter.type>
+                    <UML:DataType href = 'http://argouml-cpp.tigris.org/profile/CppUmlProfile.xmi#10-0-1-4-8c436b:10bce9cf2cc:-8000:000000000000086E'/>
+                  </UML:Parameter.type>
+                </UML:Parameter>
+              </UML:BehavioralFeature.parameter>
+            </UML:Operation>
+            <UML:Operation xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A8F'
+              name = 'FreeDirectShowEventParams' visibility = 'public' isSpecification = 'false'
+              ownerScope = 'instance' isQuery = 'false' concurrency = 'sequential' isRoot = 'false'
+              isLeaf = 'true' isAbstract = 'false'>
+              <UML:BehavioralFeature.parameter>
+                <UML:Parameter xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A90'
+                  name = 'return' isSpecification = 'false' kind = 'return'/>
+                <UML:Parameter xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A91'
+                  name = 'event' isSpecification = 'false' kind = 'in'>
+                  <UML:Parameter.type>
+                    <UML:DataType href = 'http://argouml-cpp.tigris.org/profile/CppUmlProfile.xmi#10-0-1-4-8c436b:10bce9cf2cc:-8000:000000000000086E'/>
+                  </UML:Parameter.type>
+                </UML:Parameter>
+                <UML:Parameter xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A92'
+                  name = 'param1' isSpecification = 'false' kind = 'in'>
+                  <UML:Parameter.type>
+                    <UML:DataType href = 'http://argouml-cpp.tigris.org/profile/CppUmlProfile.xmi#10-0-1-4-8c436b:10bce9cf2cc:-8000:000000000000086E'/>
+                  </UML:Parameter.type>
+                </UML:Parameter>
+                <UML:Parameter xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A93'
+                  name = 'param2' isSpecification = 'false' kind = 'in'>
+                  <UML:Parameter.type>
+                    <UML:DataType href = 'http://argouml-cpp.tigris.org/profile/CppUmlProfile.xmi#10-0-1-4-8c436b:10bce9cf2cc:-8000:000000000000086E'/>
+                  </UML:Parameter.type>
+                </UML:Parameter>
+              </UML:BehavioralFeature.parameter>
+            </UML:Operation>
+            <UML:Operation xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A94'
+              name = 'connect' visibility = 'public' isSpecification = 'false' ownerScope = 'instance'
+              isQuery = 'false' concurrency = 'sequential' isRoot = 'false' isLeaf = 'false'
+              isAbstract = 'true'>
+              <UML:BehavioralFeature.parameter>
+                <UML:Parameter xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A95'
+                  name = 'return' isSpecification = 'false' kind = 'return'/>
+              </UML:BehavioralFeature.parameter>
+            </UML:Operation>
+          </UML:Classifier.feature>
+        </UML:Class>
+        <UML:TagDefinition xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A0E'
+          name = 'documentation' isSpecification = 'false'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A10'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A0F'
+                  lower = '0' upper = '0'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:DataType xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A3A'
+          name = 'IGraphBuilderPtr' visibility = 'public' isSpecification = 'false'
+          isRoot = 'false' isLeaf = 'false' isAbstract = 'false'/>
+        <UML:DataType xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A49'
+          name = 'IMediaControlPtr' isSpecification = 'false' isRoot = 'false' isLeaf = 'false'
+          isAbstract = 'false'/>
+        <UML:DataType xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A4B'
+          name = 'IMediaEventPtr' isSpecification = 'false' isRoot = 'false' isLeaf = 'false'
+          isAbstract = 'false'/>
+        <UML:DataType xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A4C'
+          name = 'IMediaSeekingPtr' isSpecification = 'false' isRoot = 'false' isLeaf = 'false'
+          isAbstract = 'false'/>
+        <UML:DataType xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A4D'
+          name = 'IBaseFilterPtr' isSpecification = 'false' isRoot = 'false' isLeaf = 'false'
+          isAbstract = 'false'/>
+        <UML:DataType xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A4E'
+          name = 'IVMRWindowlessControl9Ptr' isSpecification = 'false' isRoot = 'false'
+          isLeaf = 'false' isAbstract = 'false'/>
+        <UML:DataType xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A4F'
+          name = 'IVMRFilterConfig9Ptr' isSpecification = 'false' isRoot = 'false'
+          isLeaf = 'false' isAbstract = 'false'/>
+        <UML:DataType xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A78'
+          name = 'IPinPtr' isSpecification = 'false' isRoot = 'false' isLeaf = 'false'
+          isAbstract = 'false'/>
+        <UML:TagDefinition xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A99'
+          name = 'author' isSpecification = 'false'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A9B'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A9A'
+                  lower = '0' upper = '0'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A9D'
+          name = 'version' isSpecification = 'false'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A9F'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A9E'
+                  lower = '0' upper = '0'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:TagDefinition xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000AAB'
+          name = 'src_path' isSpecification = 'false'>
+          <UML:TagDefinition.multiplicity>
+            <UML:Multiplicity xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000AAD'>
+              <UML:Multiplicity.range>
+                <UML:MultiplicityRange xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000AAC'
+                  lower = '0' upper = '0'/>
+              </UML:Multiplicity.range>
+            </UML:Multiplicity>
+          </UML:TagDefinition.multiplicity>
+        </UML:TagDefinition>
+        <UML:Class xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000AB1'
+          name = 'CVideoPlayerGraph' visibility = 'public' isSpecification = 'false'
+          isRoot = 'false' isLeaf = 'false' isAbstract = 'false' isActive = 'false'>
+          <UML:ModelElement.taggedValue>
+            <UML:TaggedValue xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000AB2'
+              isSpecification = 'false'>
+              <UML:TaggedValue.dataValue>This class is the implementation of a video playback graph. </UML:TaggedValue.dataValue>
+              <UML:TaggedValue.type>
+                <UML:TagDefinition xmi.idref = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A0E'/>
+              </UML:TaggedValue.type>
+            </UML:TaggedValue>
+            <UML:TaggedValue xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000AB3'
+              isSpecification = 'false'>
+              <UML:TaggedValue.dataValue>Thorsten Kuypers</UML:TaggedValue.dataValue>
+              <UML:TaggedValue.type>
+                <UML:TagDefinition xmi.idref = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A99'/>
+              </UML:TaggedValue.type>
+            </UML:TaggedValue>
+            <UML:TaggedValue xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000AB4'
+              isSpecification = 'false'>
+              <UML:TaggedValue.dataValue>1.0</UML:TaggedValue.dataValue>
+              <UML:TaggedValue.type>
+                <UML:TagDefinition xmi.idref = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A9D'/>
+              </UML:TaggedValue.type>
+            </UML:TaggedValue>
+          </UML:ModelElement.taggedValue>
+          <UML:GeneralizableElement.generalization>
+            <UML:Generalization xmi.idref = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000AB5'/>
+          </UML:GeneralizableElement.generalization>
+          <UML:Classifier.feature>
+            <UML:Operation xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000AB6'
+              name = 'CVideoPlayerGraph' visibility = 'public' isSpecification = 'false'
+              ownerScope = 'instance' isQuery = 'false' concurrency = 'sequential' isRoot = 'false'
+              isLeaf = 'false' isAbstract = 'false'>
+              <UML:ModelElement.stereotype>
+                <UML:Stereotype href = 'http://argouml.org/profiles/uml14/default-uml14.xmi#.:000000000000082B'/>
+              </UML:ModelElement.stereotype>
+            </UML:Operation>
+            <UML:Attribute xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000ABD'
+              name = 'sourceMediaType' visibility = 'public' isSpecification = 'false'
+              ownerScope = 'instance' changeability = 'changeable' targetScope = 'instance'>
+              <UML:StructuralFeature.multiplicity>
+                <UML:Multiplicity xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000ABE'>
+                  <UML:Multiplicity.range>
+                    <UML:MultiplicityRange xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000ABF'
+                      lower = '1' upper = '1'/>
+                  </UML:Multiplicity.range>
+                </UML:Multiplicity>
+              </UML:StructuralFeature.multiplicity>
+            </UML:Attribute>
+            <UML:Attribute xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000001131'
+              name = 'fileName' visibility = 'public' isSpecification = 'false' ownerScope = 'instance'
+              changeability = 'changeable' targetScope = 'instance'>
+              <UML:StructuralFeature.multiplicity>
+                <UML:Multiplicity xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000001132'>
+                  <UML:Multiplicity.range>
+                    <UML:MultiplicityRange xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000001133'
+                      lower = '1' upper = '1'/>
+                  </UML:Multiplicity.range>
+                </UML:Multiplicity>
+              </UML:StructuralFeature.multiplicity>
+              <UML:ModelElement.taggedValue>
+                <UML:TaggedValue xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000001137'
+                  isSpecification = 'false'>
+                  <UML:TaggedValue.dataValue>file name of source video file without path</UML:TaggedValue.dataValue>
+                  <UML:TaggedValue.type>
+                    <UML:TagDefinition xmi.idref = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A0E'/>
+                  </UML:TaggedValue.type>
+                </UML:TaggedValue>
+              </UML:ModelElement.taggedValue>
+              <UML:StructuralFeature.type>
+                <UML:DataType href = 'http://argouml.org/profiles/uml14/default-uml14.xmi#-84-17--56-5-43645a83:11466542d86:-8000:000000000000087E'/>
+              </UML:StructuralFeature.type>
+            </UML:Attribute>
+            <UML:Attribute xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000001134'
+              name = 'fullFileName' visibility = 'public' isSpecification = 'false' ownerScope = 'instance'
+              changeability = 'changeable' targetScope = 'instance'>
+              <UML:StructuralFeature.multiplicity>
+                <UML:Multiplicity xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000001135'>
+                  <UML:Multiplicity.range>
+                    <UML:MultiplicityRange xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000001136'
+                      lower = '1' upper = '1'/>
+                  </UML:Multiplicity.range>
+                </UML:Multiplicity>
+              </UML:StructuralFeature.multiplicity>
+              <UML:ModelElement.taggedValue>
+                <UML:TaggedValue xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000001138'
+                  isSpecification = 'false'>
+                  <UML:TaggedValue.dataValue>file name of source file including the path</UML:TaggedValue.dataValue>
+                  <UML:TaggedValue.type>
+                    <UML:TagDefinition xmi.idref = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A0E'/>
+                  </UML:TaggedValue.type>
+                </UML:TaggedValue>
+              </UML:ModelElement.taggedValue>
+              <UML:StructuralFeature.type>
+                <UML:DataType href = 'http://argouml.org/profiles/uml14/default-uml14.xmi#-84-17--56-5-43645a83:11466542d86:-8000:000000000000087E'/>
+              </UML:StructuralFeature.type>
+            </UML:Attribute>
+          </UML:Classifier.feature>
+        </UML:Class>
+        <UML:Generalization xmi.id = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000AB5'
+          isSpecification = 'false'>
+          <UML:Generalization.child>
+            <UML:Class xmi.idref = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000AB1'/>
+          </UML:Generalization.child>
+          <UML:Generalization.parent>
+            <UML:Class xmi.idref = '-64--88-56-1-e3a56dd:151f862b087:-8000:0000000000000A0D'/>
+          </UML:Generalization.parent>
+        </UML:Generalization>
+      </UML:Namespace.ownedElement>
+    </UML:Model>
+  </XMI.content>
+</XMI>

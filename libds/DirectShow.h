@@ -188,7 +188,7 @@ public:
 	int Play();
 	int Pause();
 	int Stop();
-
+	
 	long GetDShowEventCode(LONG_PTR*, LONG_PTR*);
 	void FreeDShowEventParams(long, LONG_PTR, LONG_PTR);
 
